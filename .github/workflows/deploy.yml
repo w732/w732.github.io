@@ -5,11 +5,16 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
@@ -17,8 +22,13 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: latest
           extended: true
+
+      - name: Debug
+        run: |
+          pwd
+          ls -la
 
       - name: Build
         run: hugo --minify
