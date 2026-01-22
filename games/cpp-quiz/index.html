@@ -5,83 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>C++ Trivials Quiz Game</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
-
         #game-container {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
         }
-
-        #game-container canvas {
-            display: block;
+        /* Desktop */
+        @media (min-width: 769px) {
+            #game-container {
+                width: 800px; height: 650px; border-radius: 16px; overflow: hidden;
+                box-shadow: 0 0 60px rgba(74, 158, 255, 0.3), 0 0 100px rgba(74, 158, 255, 0.1);
+                border: 1px solid rgba(74, 158, 255, 0.2);
+            }
+            #game-container canvas { border-radius: 16px; }
         }
-
-        #game-container {
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
+        /* Mobile */
+        @media (max-width: 768px) {
+            #game-container { width: 100vw; height: 100vh; }
         }
-
         #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #1a1a2e;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: #4a9eff;
-            font-size: 24px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a1a2e; display: flex; justify-content: center; align-items: center;
+            z-index: 1000; color: #4a9eff; font-size: 20px;
         }
-
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(74, 158, 255, 0.3);
-            border-top-color: #4a9eff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 15px;
+            width: 40px; height: 40px; border: 3px solid rgba(74, 158, 255, 0.3);
+            border-top-color: #4a9eff; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-right: 12px;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div id="loading">
-        <div class="spinner"></div>
-        Loading...
-    </div>
+    <div id="loading"><div class="spinner"></div>Loading...</div>
     <div id="game-container"></div>
-
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
     <script>
-// ==================== Questions Data ====================
 const allQuestions = [
     { id: 1, category: "基础类型", question: "sizeof('a') 在 C++ 中是多少？", options: ["1（char类型）", "4（int类型）", "2（short类型）", "取决于编译器"], correct: 0, explanation: "C中是int(4)，C++中是char(1)" },
     { id: 2, category: "基础类型", question: "char 默认是 signed 还是 unsigned？", options: ["signed", "unsigned", "implementation-defined", "总是 signed char"], correct: 2, explanation: "implementation-defined，最好显式声明" },
@@ -186,614 +149,398 @@ const allQuestions = [
 ];
 
 function getRandomQuestions(count) {
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
+    return [...allQuestions].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-// ==================== Game State ====================
-let gameState = {
-    questions: [],
-    currentIndex: 0,
-    score: 0,
-    answers: [],
-    totalQuestions: 20
+let gameState = { questions: [], currentIndex: 0, score: 0, answers: [], totalQuestions: 20 };
+
+// Detect mobile
+const isMobile = window.innerWidth <= 768;
+const GAME_WIDTH = isMobile ? window.innerWidth : 800;
+const GAME_HEIGHT = isMobile ? window.innerHeight : 650;
+
+// Font sizes - different for mobile and desktop
+const FONT = {
+    title: isMobile ? 52 : 56,
+    subtitle: isMobile ? 32 : 32,
+    info: isMobile ? 20 : 18,
+    category: isMobile ? 18 : 15,
+    question: isMobile ? 22 : 20,
+    option: isMobile ? 20 : 17,
+    optionLabel: isMobile ? 22 : 18,
+    button: isMobile ? 24 : 22,
+    explanation: isMobile ? 18 : 15,
+    score: isMobile ? 64 : 64,
+    percent: isMobile ? 28 : 26,
+    review: isMobile ? 16 : 14,
+    reviewSmall: isMobile ? 14 : 12
 };
 
-// ==================== Font Scale Helper ====================
-function getFontScale(width) {
-    if (width < 400) return 1.4;
-    if (width < 500) return 1.3;
-    if (width < 600) return 1.2;
-    if (width < 800) return 1.1;
-    return 1.0;
-}
-
-// ==================== Boot Scene ====================
 class BootScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'BootScene' });
-    }
-
+    constructor() { super({ key: 'BootScene' }); }
     create() {
         document.getElementById('loading').style.display = 'none';
         this.scene.start('MenuScene');
     }
 }
 
-// ==================== Menu Scene ====================
 class MenuScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'MenuScene' });
-    }
+    constructor() { super({ key: 'MenuScene' }); }
 
     create() {
         const { width, height } = this.cameras.main;
-        const s = getFontScale(width);
-        this.createBackground();
+        this.createBg();
 
-        const title = this.add.text(width / 2, height * 0.12, 'C++ Trivials', {
-            fontSize: `${Math.floor(48 * s)}px`,
-            fontFamily: 'Arial Black, sans-serif',
-            color: '#00d4ff',
-            stroke: '#0066cc',
-            strokeThickness: 3
+        const title = this.add.text(width / 2, height * 0.15, 'C++ Trivials', {
+            fontSize: FONT.title + 'px', fontFamily: 'Arial Black', color: '#00d4ff', stroke: '#0066cc', strokeThickness: 4
+        }).setOrigin(0.5);
+        this.tweens.add({ targets: title, alpha: 0.8, duration: 1500, yoyo: true, repeat: -1 });
+
+        this.add.text(width / 2, height * 0.26, 'Quiz Game', {
+            fontSize: FONT.subtitle + 'px', fontFamily: 'Arial', color: '#fff'
         }).setOrigin(0.5);
 
-        this.tweens.add({
-            targets: title,
-            alpha: 0.8,
-            duration: 1500,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        this.add.text(width / 2, height * 0.22, 'Quiz Game', {
-            fontSize: `${Math.floor(28 * s)}px`,
-            fontFamily: 'Arial, sans-serif',
-            color: '#ffffff'
+        this.add.text(width / 2, height * 0.38, '100 C++ Knowledge Points\nRandom 20 Questions Per Game', {
+            fontSize: FONT.info + 'px', fontFamily: 'Arial', color: '#888', align: 'center', lineSpacing: 6
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, height * 0.34, '100 C++ Knowledge Points\nRandom 20 Questions Per Game', {
-            fontSize: `${Math.floor(18 * s)}px`,
-            fontFamily: 'Arial, sans-serif',
-            color: '#888888',
-            align: 'center',
-            lineSpacing: 8
-        }).setOrigin(0.5);
-
-        const categories = [
-            'Types & Expressions', 'Memory Management',
-            'STL Containers', 'Functions',
-            'C++11-20 Features', 'Templates', 'Common UB'
-        ];
-
-        const startY = height * 0.48;
-        const lineH = Math.floor(26 * s);
-        categories.forEach((cat, i) => {
-            this.add.text(width / 2, startY + i * lineH, cat, {
-                fontSize: `${Math.floor(16 * s)}px`,
-                fontFamily: 'Arial, sans-serif',
-                color: '#4a9eff'
+        const cats = ['Types & Expressions', 'Memory Management', 'STL Containers', 'Functions', 'C++11-20 Features', 'Templates', 'Common UB'];
+        const startY = height * 0.50;
+        cats.forEach((c, i) => {
+            this.add.text(width / 2, startY + i * (isMobile ? 28 : 24), c, {
+                fontSize: FONT.category + 'px', fontFamily: 'Arial', color: '#4a9eff'
             }).setOrigin(0.5);
         });
 
-        this.createButton(width / 2, height * 0.88, 'Start Game', s, () => this.startGame());
+        this.createBtn(width / 2, height * 0.88, 'Start Game', () => {
+            gameState = { questions: getRandomQuestions(20), currentIndex: 0, score: 0, answers: [], totalQuestions: 20 };
+            this.cameras.main.fadeOut(400);
+            this.time.delayedCall(400, () => this.scene.start('GameScene'));
+        });
+
         this.createParticles();
     }
 
-    createBackground() {
+    createBg() {
         const { width, height } = this.cameras.main;
-        const graphics = this.add.graphics();
+        const g = this.add.graphics();
         for (let i = 0; i < height; i++) {
-            const ratio = i / height;
-            graphics.fillStyle(Phaser.Display.Color.GetColor(26 + ratio * 10, 26 + ratio * 15, 46 + ratio * 20));
-            graphics.fillRect(0, i, width, 1);
+            const r = i / height;
+            g.fillStyle(Phaser.Display.Color.GetColor(26 + r * 10, 26 + r * 15, 46 + r * 20));
+            g.fillRect(0, i, width, 1);
         }
-        for (let i = 0; i < 5; i++) {
-            this.add.circle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), Phaser.Math.Between(50, 150), 0x4a9eff, 0.03);
-        }
+        for (let i = 0; i < 5; i++) this.add.circle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), Phaser.Math.Between(40, 120), 0x4a9eff, 0.03);
     }
 
-    createButton(x, y, text, s, callback) {
-        const bw = Math.floor(200 * s), bh = Math.floor(50 * s);
-        const btn = this.add.container(x, y);
+    createBtn(x, y, text, cb) {
+        const bw = isMobile ? 220 : 200, bh = isMobile ? 56 : 50;
+        const c = this.add.container(x, y);
         const bg = this.add.graphics();
-        bg.fillStyle(0x4a9eff, 1);
-        bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 12);
-        const btnText = this.add.text(0, 0, text, {
-            fontSize: `${Math.floor(22 * s)}px`,
-            fontFamily: 'Arial, sans-serif',
-            color: '#ffffff'
-        }).setOrigin(0.5);
-        btn.add([bg, btnText]);
-        btn.setSize(bw, bh);
-        btn.setInteractive({ useHandCursor: true });
-        btn.on('pointerover', () => { bg.clear(); bg.fillStyle(0x6ab4ff, 1); bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 12); });
-        btn.on('pointerout', () => { bg.clear(); bg.fillStyle(0x4a9eff, 1); bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 12); });
-        btn.on('pointerdown', callback);
-        return btn;
+        bg.fillStyle(0x4a9eff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 12);
+        c.add([bg, this.add.text(0, 0, text, { fontSize: FONT.button + 'px', fontFamily: 'Arial', color: '#fff' }).setOrigin(0.5)]);
+        c.setSize(bw, bh).setInteractive({ useHandCursor: true });
+        c.on('pointerover', () => { bg.clear().fillStyle(0x6ab4ff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 12); });
+        c.on('pointerout', () => { bg.clear().fillStyle(0x4a9eff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 12); });
+        c.on('pointerdown', cb);
     }
 
     createParticles() {
         const { width, height } = this.cameras.main;
         for (let i = 0; i < 15; i++) {
             const p = this.add.circle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), Phaser.Math.Between(2, 4), 0x4a9eff, 0.5);
-            this.tweens.add({
-                targets: p, y: p.y - Phaser.Math.Between(50, 150), alpha: 0,
-                duration: Phaser.Math.Between(3000, 6000), repeat: -1,
+            this.tweens.add({ targets: p, y: p.y - 100, alpha: 0, duration: Phaser.Math.Between(3000, 5000), repeat: -1,
                 onRepeat: () => { p.x = Phaser.Math.Between(0, width); p.y = height + 20; p.alpha = 0.5; }
             });
         }
     }
-
-    startGame() {
-        gameState.questions = getRandomQuestions(20);
-        gameState.currentIndex = 0;
-        gameState.score = 0;
-        gameState.answers = [];
-        this.cameras.main.fadeOut(400, 0, 0, 0);
-        this.time.delayedCall(400, () => this.scene.start('GameScene'));
-    }
 }
 
-// ==================== Game Scene ====================
 class GameScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'GameScene' });
-        this.optionButtons = [];
-        this.canAnswer = true;
-    }
+    constructor() { super({ key: 'GameScene' }); this.btns = []; this.canAnswer = true; }
 
     create() {
         const { width, height } = this.cameras.main;
-        this.s = getFontScale(width);
         this.cameras.main.fadeIn(400);
-        this.createBackground();
+        this.createBg();
 
-        // Progress bar
-        const barY = height * 0.03;
-        const barH = Math.max(16, Math.floor(16 * this.s));
-        this.progressBg = this.add.graphics();
-        this.progressBg.fillStyle(0x333355, 1);
-        this.progressBg.fillRoundedRect(20, barY, width - 40, barH, 8);
+        const barY = height * 0.03, barH = isMobile ? 18 : 16;
+        this.add.graphics().fillStyle(0x333355, 1).fillRoundedRect(20, barY, width - 40, barH, 8);
         this.progressBar = this.add.graphics();
 
-        // Question number and score
-        const infoY = barY + barH + 10;
-        this.questionNumText = this.add.text(20, infoY, '', {
-            fontSize: `${Math.floor(18 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#888888'
-        });
-        this.scoreText = this.add.text(width - 20, infoY, '', {
-            fontSize: `${Math.floor(18 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#4a9eff'
-        }).setOrigin(1, 0);
+        const infoY = barY + barH + 8;
+        this.numTxt = this.add.text(20, infoY, '', { fontSize: FONT.info + 'px', fontFamily: 'Arial', color: '#888' });
+        this.scoreTxt = this.add.text(width - 20, infoY, '', { fontSize: FONT.info + 'px', fontFamily: 'Arial', color: '#4a9eff' }).setOrigin(1, 0);
+        this.catTxt = this.add.text(width / 2, infoY + (isMobile ? 30 : 26), '', { fontSize: FONT.category + 'px', fontFamily: 'Arial', color: '#666' }).setOrigin(0.5);
 
-        // Category
-        this.categoryText = this.add.text(width / 2, infoY + Math.floor(28 * this.s), '', {
-            fontSize: `${Math.floor(16 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#666666'
-        }).setOrigin(0.5);
-
-        // Question box
-        const qBoxY = height * 0.15;
-        const qBoxH = height * 0.22;
-        this.questionBg = this.add.graphics();
-        this.questionBg.fillStyle(0x252540, 0.9);
-        this.questionBg.fillRoundedRect(15, qBoxY, width - 30, qBoxH, 12);
-
-        this.questionText = this.add.text(width / 2, qBoxY + qBoxH / 2, '', {
-            fontSize: `${Math.floor(20 * this.s)}px`,
-            fontFamily: 'Arial, sans-serif',
-            color: '#ffffff',
-            wordWrap: { width: width - 50 },
-            align: 'center',
-            lineSpacing: 6
+        const qY = height * 0.15, qH = height * 0.20;
+        this.add.graphics().fillStyle(0x252540, 0.9).fillRoundedRect(15, qY, width - 30, qH, 12);
+        this.qTxt = this.add.text(width / 2, qY + qH / 2, '', {
+            fontSize: FONT.question + 'px', fontFamily: 'Arial', color: '#fff', wordWrap: { width: width - 50 }, align: 'center', lineSpacing: 4
         }).setOrigin(0.5);
 
         this.createOptions();
 
-        // Explanation
         const expY = height * 0.92;
-        this.explanationContainer = this.add.container(width / 2, expY);
-        this.explanationContainer.setVisible(false);
-        const expBg = this.add.graphics();
-        expBg.fillStyle(0x333355, 0.9);
-        expBg.fillRoundedRect(-(width/2 - 15), -25, width - 30, 50, 8);
-        this.explanationText = this.add.text(0, 0, '', {
-            fontSize: `${Math.floor(16 * this.s)}px`,
-            fontFamily: 'Arial, sans-serif',
-            color: '#aaaaaa',
-            wordWrap: { width: width - 60 },
-            align: 'center'
-        }).setOrigin(0.5);
-        this.explanationContainer.add([expBg, this.explanationText]);
+        this.expC = this.add.container(width / 2, expY).setVisible(false);
+        const expBg = this.add.graphics().fillStyle(0x333355, 0.9).fillRoundedRect(-(width/2 - 15), -22, width - 30, 44, 8);
+        this.expTxt = this.add.text(0, 0, '', { fontSize: FONT.explanation + 'px', fontFamily: 'Arial', color: '#aaa', wordWrap: { width: width - 50 }, align: 'center' }).setOrigin(0.5);
+        this.expC.add([expBg, this.expTxt]);
 
-        this.showQuestion();
+        this.showQ();
     }
 
-    createBackground() {
+    createBg() {
         const { width, height } = this.cameras.main;
-        const graphics = this.add.graphics();
+        const g = this.add.graphics();
         for (let i = 0; i < height; i++) {
-            const ratio = i / height;
-            graphics.fillStyle(Phaser.Display.Color.GetColor(26 + ratio * 10, 26 + ratio * 15, 46 + ratio * 20));
-            graphics.fillRect(0, i, width, 1);
+            const r = i / height;
+            g.fillStyle(Phaser.Display.Color.GetColor(26 + r * 10, 26 + r * 15, 46 + r * 20));
+            g.fillRect(0, i, width, 1);
         }
     }
 
     createOptions() {
         const { width, height } = this.cameras.main;
-        const startY = height * 0.40;
-        const spacing = height * 0.125;
-        const btnW = width - 30;
-        const btnH = Math.floor(52 * this.s);
-        this.optionButtons = [];
+        const startY = height * 0.38, spacing = height * 0.13;
+        const bw = width - 30, bh = isMobile ? 58 : 50;
+        this.btns = [];
 
         for (let i = 0; i < 4; i++) {
             const y = startY + i * spacing;
-            const container = this.add.container(width / 2, y);
-
-            const bg = this.add.graphics();
-            bg.fillStyle(0x2a2a4a, 1);
-            bg.lineStyle(2, 0x4a9eff, 0.5);
-            bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-            bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-
-            const label = this.add.text(-btnW / 2 + 15, 0, String.fromCharCode(65 + i) + '.', {
-                fontSize: `${Math.floor(20 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: '#4a9eff'
+            const c = this.add.container(width / 2, y);
+            const bg = this.add.graphics().fillStyle(0x2a2a4a, 1).lineStyle(2, 0x4a9eff, 0.5)
+                .fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10);
+            const lbl = this.add.text(-bw/2 + 15, 0, String.fromCharCode(65 + i) + '.', {
+                fontSize: FONT.optionLabel + 'px', fontFamily: 'Arial Black', color: '#4a9eff'
+            }).setOrigin(0, 0.5);
+            const txt = this.add.text(-bw/2 + (isMobile ? 50 : 45), 0, '', {
+                fontSize: FONT.option + 'px', fontFamily: 'Arial', color: '#fff', wordWrap: { width: bw - 70 }
             }).setOrigin(0, 0.5);
 
-            const text = this.add.text(-btnW / 2 + 50, 0, '', {
-                fontSize: `${Math.floor(18 * this.s)}px`,
-                fontFamily: 'Arial, sans-serif',
-                color: '#ffffff',
-                wordWrap: { width: btnW - 70 }
-            }).setOrigin(0, 0.5);
+            c.add([bg, lbl, txt]).setSize(bw, bh).setInteractive({ useHandCursor: true });
+            c.bg = bg; c.txt = txt; c.lbl = lbl; c.bw = bw; c.bh = bh; c.idx = i;
 
-            container.add([bg, label, text]);
-            container.setSize(btnW, btnH);
-            container.setInteractive({ useHandCursor: true });
-            container.bg = bg; container.text = text; container.label = label; container.index = i;
-            container.btnW = btnW; container.btnH = btnH;
+            c.on('pointerover', () => { if (!this.canAnswer) return; bg.clear().fillStyle(0x3a3a5a, 1).lineStyle(2, 0x6ab4ff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10); });
+            c.on('pointerout', () => { if (!this.canAnswer) return; bg.clear().fillStyle(0x2a2a4a, 1).lineStyle(2, 0x4a9eff, 0.5).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10); });
+            c.on('pointerdown', () => { if (this.canAnswer) this.answer(i); });
 
-            container.on('pointerover', () => {
-                if (!this.canAnswer) return;
-                bg.clear(); bg.fillStyle(0x3a3a5a, 1); bg.lineStyle(2, 0x6ab4ff, 1);
-                bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-            });
-            container.on('pointerout', () => {
-                if (!this.canAnswer) return;
-                bg.clear(); bg.fillStyle(0x2a2a4a, 1); bg.lineStyle(2, 0x4a9eff, 0.5);
-                bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-            });
-            container.on('pointerdown', () => { if (this.canAnswer) this.selectAnswer(i); });
-
-            this.optionButtons.push(container);
+            this.btns.push(c);
         }
     }
 
-    showQuestion() {
+    showQ() {
         const { width, height } = this.cameras.main;
         const q = gameState.questions[gameState.currentIndex];
-        const barY = height * 0.03;
-        const barH = Math.max(16, Math.floor(16 * this.s));
+        const barY = height * 0.03, barH = isMobile ? 18 : 16;
 
-        const progress = gameState.currentIndex / gameState.totalQuestions;
-        this.progressBar.clear();
-        this.progressBar.fillStyle(0x4a9eff, 1);
-        if (progress > 0) this.progressBar.fillRoundedRect(20, barY, (width - 40) * progress, barH, 8);
+        const prog = gameState.currentIndex / gameState.totalQuestions;
+        this.progressBar.clear().fillStyle(0x4a9eff, 1);
+        if (prog > 0) this.progressBar.fillRoundedRect(20, barY, (width - 40) * prog, barH, 8);
 
-        this.questionNumText.setText(`${gameState.currentIndex + 1}/${gameState.totalQuestions}`);
-        this.scoreText.setText(`Score: ${gameState.score}`);
-        this.categoryText.setText(q.category);
-        this.questionText.setText(q.question);
+        this.numTxt.setText(`${gameState.currentIndex + 1}/${gameState.totalQuestions}`);
+        this.scoreTxt.setText(`Score: ${gameState.score}`);
+        this.catTxt.setText(q.category);
+        this.qTxt.setText(q.question);
 
         this.canAnswer = true;
-        this.explanationContainer.setVisible(false);
+        this.expC.setVisible(false);
 
-        this.optionButtons.forEach((btn, i) => {
-            btn.text.setText(q.options[i]);
-            btn.setAlpha(1);
-            const { btnW, btnH } = btn;
-            btn.bg.clear(); btn.bg.fillStyle(0x2a2a4a, 1); btn.bg.lineStyle(2, 0x4a9eff, 0.5);
-            btn.bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-            btn.bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-            btn.label.setColor('#4a9eff');
-            btn.text.setColor('#ffffff');
-
-            btn.setAlpha(0);
-            btn.x = width / 2 + 30;
-            this.tweens.add({ targets: btn, alpha: 1, x: width / 2, duration: 250, delay: i * 60, ease: 'Back.easeOut' });
+        this.btns.forEach((b, i) => {
+            const { bw, bh } = b;
+            b.txt.setText(q.options[i]);
+            b.setAlpha(0).x = width / 2 + 30;
+            b.bg.clear().fillStyle(0x2a2a4a, 1).lineStyle(2, 0x4a9eff, 0.5).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10);
+            b.lbl.setColor('#4a9eff');
+            b.txt.setColor('#fff');
+            this.tweens.add({ targets: b, alpha: 1, x: width / 2, duration: 200, delay: i * 50, ease: 'Back.easeOut' });
         });
     }
 
-    selectAnswer(index) {
+    answer(idx) {
         this.canAnswer = false;
-        const { width } = this.cameras.main;
         const q = gameState.questions[gameState.currentIndex];
-        const isCorrect = index === q.correct;
+        const ok = idx === q.correct;
+        gameState.answers.push({ question: q, selected: idx, correct: ok });
+        if (ok) { gameState.score++; this.scoreTxt.setText(`Score: ${gameState.score}`); }
 
-        gameState.answers.push({ question: q, selected: index, correct: isCorrect });
-        if (isCorrect) { gameState.score++; this.scoreText.setText(`Score: ${gameState.score}`); }
-
-        this.optionButtons.forEach((btn, i) => {
-            const { btnW, btnH } = btn;
+        this.btns.forEach((b, i) => {
+            const { bw, bh } = b;
             if (i === q.correct) {
-                btn.bg.clear(); btn.bg.fillStyle(0x2a5a2a, 1); btn.bg.lineStyle(3, 0x4aff4a, 1);
-                btn.bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                btn.bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                btn.label.setColor('#4aff4a');
-                if (isCorrect) this.createCorrectEffect(btn.x, btn.y);
-            } else if (i === index && !isCorrect) {
-                btn.bg.clear(); btn.bg.fillStyle(0x5a2a2a, 1); btn.bg.lineStyle(3, 0xff4a4a, 1);
-                btn.bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                btn.bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 10);
-                btn.label.setColor('#ff4a4a'); btn.text.setColor('#ff8888');
-                this.tweens.add({ targets: btn, x: btn.x + 8, duration: 40, yoyo: true, repeat: 3 });
+                b.bg.clear().fillStyle(0x2a5a2a, 1).lineStyle(3, 0x4aff4a, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10);
+                b.lbl.setColor('#4aff4a');
+                if (ok) this.burst(b.x, b.y);
+            } else if (i === idx) {
+                b.bg.clear().fillStyle(0x5a2a2a, 1).lineStyle(3, 0xff4a4a, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10).strokeRoundedRect(-bw/2, -bh/2, bw, bh, 10);
+                b.lbl.setColor('#ff4a4a'); b.txt.setColor('#ff8888');
+                this.tweens.add({ targets: b, x: b.x + 8, duration: 40, yoyo: true, repeat: 3 });
             } else {
-                btn.setAlpha(0.4);
+                b.setAlpha(0.4);
             }
         });
 
-        this.explanationText.setText(q.explanation);
-        this.explanationContainer.setVisible(true);
-        this.explanationContainer.setAlpha(0);
-        this.tweens.add({ targets: this.explanationContainer, alpha: 1, duration: 250 });
-
-        this.time.delayedCall(1800, () => this.nextQuestion());
+        this.expTxt.setText(q.explanation);
+        this.expC.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.expC, alpha: 1, duration: 200 });
+        this.time.delayedCall(1600, () => this.next());
     }
 
-    createCorrectEffect(x, y) {
-        for (let i = 0; i < 10; i++) {
-            const angle = (i / 10) * Math.PI * 2;
+    burst(x, y) {
+        for (let i = 0; i < 8; i++) {
+            const a = (i / 8) * Math.PI * 2;
             const p = this.add.circle(x, y, 5, 0x4aff4a);
-            this.tweens.add({
-                targets: p, x: x + Math.cos(angle) * 60, y: y + Math.sin(angle) * 30,
-                alpha: 0, scale: 0, duration: 400, ease: 'Power2', onComplete: () => p.destroy()
-            });
+            this.tweens.add({ targets: p, x: x + Math.cos(a) * 50, y: y + Math.sin(a) * 25, alpha: 0, scale: 0, duration: 350, onComplete: () => p.destroy() });
         }
     }
 
-    nextQuestion() {
+    next() {
         gameState.currentIndex++;
         if (gameState.currentIndex >= gameState.totalQuestions) {
-            this.cameras.main.fadeOut(400, 0, 0, 0);
+            this.cameras.main.fadeOut(400);
             this.time.delayedCall(400, () => this.scene.start('ResultScene'));
         } else {
-            const { width } = this.cameras.main;
-            this.optionButtons.forEach((btn, i) => {
-                this.tweens.add({
-                    targets: btn, x: -150, alpha: 0, duration: 150, delay: i * 40,
-                    onComplete: () => { if (i === 3) this.showQuestion(); }
-                });
+            this.btns.forEach((b, i) => {
+                this.tweens.add({ targets: b, x: -100, alpha: 0, duration: 120, delay: i * 30, onComplete: () => { if (i === 3) this.showQ(); } });
             });
         }
     }
 }
 
-// ==================== Result Scene ====================
 class ResultScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'ResultScene' });
-    }
+    constructor() { super({ key: 'ResultScene' }); }
 
     create() {
         const { width, height } = this.cameras.main;
-        this.s = getFontScale(width);
         this.cameras.main.fadeIn(400);
-        this.createBackground();
+        this.createBg();
 
-        const percentage = Math.round((gameState.score / gameState.totalQuestions) * 100);
-        let title, titleColor;
-        if (percentage >= 90) { title = 'Excellent!'; titleColor = '#4aff4a'; }
-        else if (percentage >= 70) { title = 'Great Job!'; titleColor = '#4a9eff'; }
-        else if (percentage >= 50) { title = 'Good Try!'; titleColor = '#ffaa4a'; }
-        else { title = 'Keep Learning!'; titleColor = '#ff6a6a'; }
+        const pct = Math.round((gameState.score / gameState.totalQuestions) * 100);
+        let title, color;
+        if (pct >= 90) { title = 'Excellent!'; color = '#4aff4a'; }
+        else if (pct >= 70) { title = 'Great Job!'; color = '#4a9eff'; }
+        else if (pct >= 50) { title = 'Good Try!'; color = '#ffaa4a'; }
+        else { title = 'Keep Learning!'; color = '#ff6a6a'; }
 
-        this.add.text(width / 2, height * 0.12, title, {
-            fontSize: `${Math.floor(40 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: titleColor
-        }).setOrigin(0.5);
+        this.add.text(width / 2, height * 0.12, title, { fontSize: (isMobile ? 44 : 42) + 'px', fontFamily: 'Arial Black', color }).setOrigin(0.5);
 
-        this.scoreDisplay = this.add.text(width / 2, height * 0.24, '0', {
-            fontSize: `${Math.floor(60 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: '#ffffff'
-        }).setOrigin(0.5);
+        this.scoreDisp = this.add.text(width / 2, height * 0.26, '0', { fontSize: FONT.score + 'px', fontFamily: 'Arial Black', color: '#fff' }).setOrigin(0.5);
+        this.add.text(width / 2, height * 0.34, `out of ${gameState.totalQuestions}`, { fontSize: (isMobile ? 22 : 20) + 'px', fontFamily: 'Arial', color: '#888' }).setOrigin(0.5);
 
-        this.add.text(width / 2, height * 0.32, `out of ${gameState.totalQuestions}`, {
-            fontSize: `${Math.floor(22 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#888888'
-        }).setOrigin(0.5);
+        let disp = 0;
+        this.time.addEvent({ delay: 40, repeat: gameState.score, callback: () => { disp++; this.scoreDisp.setText(disp.toString()); } });
 
-        let displayScore = 0;
-        this.time.addEvent({
-            delay: 40, repeat: gameState.score,
-            callback: () => { displayScore++; this.scoreDisplay.setText(displayScore.toString()); }
-        });
+        this.drawCircle(width / 2, height * 0.50, pct);
 
-        this.createPercentageCircle(width / 2, height * 0.48, percentage);
+        const correct = gameState.answers.filter(a => a.correct).length;
+        const wrong = gameState.totalQuestions - correct;
+        this.add.text(width / 2 - 60, height * 0.66, `Correct: ${correct}`, { fontSize: (isMobile ? 20 : 18) + 'px', fontFamily: 'Arial', color: '#4aff4a' }).setOrigin(0.5);
+        this.add.text(width / 2 + 60, height * 0.66, `Wrong: ${wrong}`, { fontSize: (isMobile ? 20 : 18) + 'px', fontFamily: 'Arial', color: '#ff6a6a' }).setOrigin(0.5);
 
-        const correctCount = gameState.answers.filter(a => a.correct).length;
-        const wrongCount = gameState.answers.filter(a => !a.correct).length;
+        const btnY = height * 0.80;
+        this.createBtn(width / 2 - 75, btnY, 'Again', () => { this.cameras.main.fadeOut(400); this.time.delayedCall(400, () => this.scene.start('MenuScene')); });
+        this.createBtn(width / 2 + 75, btnY, 'Review', () => this.showReview());
 
-        this.add.text(width / 2 - 60, height * 0.64, `Correct: ${correctCount}`, {
-            fontSize: `${Math.floor(20 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#4aff4a'
-        }).setOrigin(0.5);
-        this.add.text(width / 2 + 60, height * 0.64, `Wrong: ${wrongCount}`, {
-            fontSize: `${Math.floor(20 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#ff6a6a'
-        }).setOrigin(0.5);
-
-        const btnY = height * 0.78;
-        this.createButton(width / 2 - 80, btnY, 'Again', () => {
-            this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => this.scene.start('MenuScene'));
-        });
-        this.createButton(width / 2 + 80, btnY, 'Review', () => this.showReview());
-
-        if (percentage >= 70) this.createCelebration();
+        if (pct >= 70) this.confetti();
     }
 
-    createBackground() {
+    createBg() {
         const { width, height } = this.cameras.main;
-        const graphics = this.add.graphics();
+        const g = this.add.graphics();
         for (let i = 0; i < height; i++) {
-            const ratio = i / height;
-            graphics.fillStyle(Phaser.Display.Color.GetColor(26 + ratio * 10, 26 + ratio * 15, 46 + ratio * 20));
-            graphics.fillRect(0, i, width, 1);
+            const r = i / height;
+            g.fillStyle(Phaser.Display.Color.GetColor(26 + r * 10, 26 + r * 15, 46 + r * 20));
+            g.fillRect(0, i, width, 1);
         }
     }
 
-    createPercentageCircle(x, y, percentage) {
-        const radius = Math.floor(50 * this.s);
-        const bgCircle = this.add.graphics();
-        bgCircle.lineStyle(8, 0x333355, 1);
-        bgCircle.arc(x, y, radius, 0, Math.PI * 2);
-        bgCircle.strokePath();
-
-        const progressCircle = this.add.graphics();
-        const color = percentage >= 70 ? 0x4aff4a : percentage >= 50 ? 0xffaa4a : 0xff6a6a;
-
+    drawCircle(x, y, pct) {
+        const rad = isMobile ? 55 : 50;
+        this.add.graphics().lineStyle(8, 0x333355, 1).arc(x, y, rad, 0, Math.PI * 2).strokePath();
+        const pg = this.add.graphics();
+        const col = pct >= 70 ? 0x4aff4a : pct >= 50 ? 0xffaa4a : 0xff6a6a;
         this.tweens.addCounter({
-            from: -Math.PI / 2,
-            to: -Math.PI / 2 + (percentage / 100) * Math.PI * 2,
-            duration: 800,
-            ease: 'Power2',
-            onUpdate: (tween) => {
-                progressCircle.clear();
-                progressCircle.lineStyle(8, color, 1);
-                progressCircle.beginPath();
-                progressCircle.arc(x, y, radius, -Math.PI / 2, tween.getValue());
-                progressCircle.strokePath();
-            }
+            from: -Math.PI / 2, to: -Math.PI / 2 + (pct / 100) * Math.PI * 2, duration: 700,
+            onUpdate: t => { pg.clear().lineStyle(8, col, 1).beginPath().arc(x, y, rad, -Math.PI / 2, t.getValue()).strokePath(); }
         });
-
-        this.add.text(x, y, `${percentage}%`, {
-            fontSize: `${Math.floor(24 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: '#ffffff'
-        }).setOrigin(0.5);
+        this.add.text(x, y, pct + '%', { fontSize: FONT.percent + 'px', fontFamily: 'Arial Black', color: '#fff' }).setOrigin(0.5);
     }
 
-    createButton(x, y, text, callback) {
-        const bw = Math.floor(120 * this.s), bh = Math.floor(44 * this.s);
-        const btn = this.add.container(x, y);
-        const bg = this.add.graphics();
-        bg.fillStyle(0x4a9eff, 1);
-        bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 10);
-        const btnText = this.add.text(0, 0, text, {
-            fontSize: `${Math.floor(18 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#ffffff'
-        }).setOrigin(0.5);
-        btn.add([bg, btnText]);
-        btn.setSize(bw, bh);
-        btn.setInteractive({ useHandCursor: true });
-        btn.on('pointerover', () => { bg.clear(); bg.fillStyle(0x6ab4ff, 1); bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 10); });
-        btn.on('pointerout', () => { bg.clear(); bg.fillStyle(0x4a9eff, 1); bg.fillRoundedRect(-bw/2, -bh/2, bw, bh, 10); });
-        btn.on('pointerdown', callback);
-        return btn;
+    createBtn(x, y, text, cb) {
+        const bw = isMobile ? 130 : 110, bh = isMobile ? 48 : 42;
+        const c = this.add.container(x, y);
+        const bg = this.add.graphics().fillStyle(0x4a9eff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10);
+        c.add([bg, this.add.text(0, 0, text, { fontSize: (isMobile ? 20 : 18) + 'px', fontFamily: 'Arial', color: '#fff' }).setOrigin(0.5)]);
+        c.setSize(bw, bh).setInteractive({ useHandCursor: true });
+        c.on('pointerover', () => bg.clear().fillStyle(0x6ab4ff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10));
+        c.on('pointerout', () => bg.clear().fillStyle(0x4a9eff, 1).fillRoundedRect(-bw/2, -bh/2, bw, bh, 10));
+        c.on('pointerdown', cb);
     }
 
-    createCelebration() {
+    confetti() {
         const { width, height } = this.cameras.main;
-        const colors = [0x4aff4a, 0x4a9eff, 0xffaa4a, 0xff6aff, 0xffff4a];
+        const cols = [0x4aff4a, 0x4a9eff, 0xffaa4a, 0xff6aff, 0xffff4a];
         for (let i = 0; i < 20; i++) {
             const px = Phaser.Math.Between(0, width);
-            const color = Phaser.Utils.Array.GetRandom(colors);
-            const p = this.add.rectangle(px, -20, 6, 6, color);
-            p.setRotation(Phaser.Math.DegToRad(45));
-            this.tweens.add({
-                targets: p, y: height + 50, x: px + Phaser.Math.Between(-80, 80),
-                rotation: p.rotation + Math.PI * 2,
-                duration: Phaser.Math.Between(1500, 3000),
-                delay: Phaser.Math.Between(0, 1500), repeat: -1
-            });
+            const p = this.add.rectangle(px, -10, 6, 6, Phaser.Utils.Array.GetRandom(cols)).setRotation(Math.PI / 4);
+            this.tweens.add({ targets: p, y: height + 30, x: px + Phaser.Math.Between(-60, 60), rotation: p.rotation + Math.PI * 2, duration: Phaser.Math.Between(1500, 2500), delay: Phaser.Math.Between(0, 1000), repeat: -1 });
         }
     }
 
     showReview() {
         this.children.removeAll();
         const { width, height } = this.cameras.main;
-        this.createBackground();
+        this.createBg();
 
-        this.add.text(width / 2, 25, 'Review', {
-            fontSize: `${Math.floor(28 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: '#4a9eff'
-        }).setOrigin(0.5);
+        this.add.text(width / 2, 22, 'Review', { fontSize: (isMobile ? 28 : 26) + 'px', fontFamily: 'Arial Black', color: '#4a9eff' }).setOrigin(0.5);
 
         let scrollY = 0;
-        const itemH = Math.floor(100 * this.s);
-        const contentHeight = gameState.answers.length * itemH + 80;
-        const container = this.add.container(0, 55);
+        const itemH = isMobile ? 105 : 90;
+        const contentH = gameState.answers.length * itemH + 60;
+        const cont = this.add.container(0, 50);
 
-        gameState.answers.forEach((answer, i) => {
+        gameState.answers.forEach((a, i) => {
             const y = i * itemH;
-            const isCorrect = answer.correct;
-
-            const bg = this.add.graphics();
-            bg.fillStyle(isCorrect ? 0x2a4a2a : 0x4a2a2a, 0.8);
-            bg.fillRoundedRect(10, y, width - 20, itemH - 8, 8);
-            container.add(bg);
-
-            const status = isCorrect ? '\u2713' : '\u2717';
-            const statusColor = isCorrect ? '#4aff4a' : '#ff6a6a';
-            container.add(this.add.text(20, y + 8, `${i + 1}. ${status}`, {
-                fontSize: `${Math.floor(18 * this.s)}px`, fontFamily: 'Arial Black, sans-serif', color: statusColor
-            }));
-
-            container.add(this.add.text(20, y + 32, answer.question.question, {
-                fontSize: `${Math.floor(14 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#ffffff',
-                wordWrap: { width: width - 40 }
-            }));
-
-            const correctAnswer = answer.question.options[answer.question.correct];
-            if (!isCorrect) {
-                const yourAnswer = answer.question.options[answer.selected];
-                container.add(this.add.text(20, y + 58, `Your: ${yourAnswer}`, {
-                    fontSize: `${Math.floor(12 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#ff8888'
-                }));
-                container.add(this.add.text(20, y + 76, `Correct: ${correctAnswer}`, {
-                    fontSize: `${Math.floor(12 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#88ff88'
-                }));
+            const ok = a.correct;
+            cont.add(this.add.graphics().fillStyle(ok ? 0x2a4a2a : 0x4a2a2a, 0.8).fillRoundedRect(10, y, width - 20, itemH - 8, 8));
+            cont.add(this.add.text(18, y + 6, `${i + 1}. ${ok ? '\u2713' : '\u2717'}`, { fontSize: FONT.review + 'px', fontFamily: 'Arial Black', color: ok ? '#4aff4a' : '#ff6a6a' }));
+            cont.add(this.add.text(18, y + 28, a.question.question, { fontSize: FONT.review + 'px', fontFamily: 'Arial', color: '#fff', wordWrap: { width: width - 36 } }));
+            const ans = a.question.options[a.question.correct];
+            if (!ok) {
+                cont.add(this.add.text(18, y + 54, `Your: ${a.question.options[a.selected]}`, { fontSize: FONT.reviewSmall + 'px', fontFamily: 'Arial', color: '#ff8888' }));
+                cont.add(this.add.text(18, y + 72, `Correct: ${ans}`, { fontSize: FONT.reviewSmall + 'px', fontFamily: 'Arial', color: '#88ff88' }));
             } else {
-                container.add(this.add.text(20, y + 62, `Answer: ${correctAnswer}`, {
-                    fontSize: `${Math.floor(12 * this.s)}px`, fontFamily: 'Arial, sans-serif', color: '#88ff88'
-                }));
+                cont.add(this.add.text(18, y + 58, `Answer: ${ans}`, { fontSize: FONT.reviewSmall + 'px', fontFamily: 'Arial', color: '#88ff88' }));
             }
         });
 
-        this.input.on('wheel', (pointer, go, dx, dy) => {
-            scrollY -= dy * 0.5;
-            scrollY = Phaser.Math.Clamp(scrollY, -(contentHeight - height + 120), 0);
-            container.y = 55 + scrollY;
+        this.input.on('wheel', (p, g, dx, dy) => {
+            scrollY = Phaser.Math.Clamp(scrollY - dy * 0.5, -(contentH - height + 100), 0);
+            cont.y = 50 + scrollY;
         });
 
-        // Touch scroll support
-        let startY = 0, startScrollY = 0;
-        this.input.on('pointerdown', (pointer) => { startY = pointer.y; startScrollY = scrollY; });
-        this.input.on('pointermove', (pointer) => {
-            if (pointer.isDown) {
-                scrollY = startScrollY + (pointer.y - startY);
-                scrollY = Phaser.Math.Clamp(scrollY, -(contentHeight - height + 120), 0);
-                container.y = 55 + scrollY;
+        let startY = 0, startScroll = 0;
+        this.input.on('pointerdown', p => { startY = p.y; startScroll = scrollY; });
+        this.input.on('pointermove', p => {
+            if (p.isDown) {
+                scrollY = Phaser.Math.Clamp(startScroll + (p.y - startY), -(contentH - height + 100), 0);
+                cont.y = 50 + scrollY;
             }
         });
 
-        this.createButton(width / 2, height - 35, 'Back', () => {
-            this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => this.scene.start('MenuScene'));
-        });
+        this.createBtn(width / 2, height - 32, 'Back', () => { this.cameras.main.fadeOut(400); this.time.delayedCall(400, () => this.scene.start('MenuScene')); });
     }
 }
 
-// ==================== Start Game ====================
 const config = {
     type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
     parent: 'game-container',
     backgroundColor: '#1a1a2e',
     scene: [BootScene, MenuScene, GameScene, ResultScene],
-    scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
-    }
+    scale: isMobile ? { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH } : { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }
 };
 
-const game = new Phaser.Game(config);
+new Phaser.Game(config);
     </script>
 </body>
 </html>
