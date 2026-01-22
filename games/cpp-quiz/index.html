@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Trivials Quiz Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #game-container {
+            width: 900px;
+            max-width: 100vw;
+            height: 700px;
+            max-height: 100vh;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 60px rgba(74, 158, 255, 0.3),
+                0 0 100px rgba(74, 158, 255, 0.1),
+                inset 0 0 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+        }
+
+        #game-container canvas {
+            display: block;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 920px) {
+            #game-container {
+                border-radius: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+            #game-container canvas {
+                border-radius: 0;
+            }
+        }
+
+        #game-container {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #4a9eff;
+            font-size: 24px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(74, 158, 255, 0.3);
+            border-top-color: #4a9eff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        Loading Game...
+    </div>
+    <div id="game-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script>
+// ==================== Questions Data ====================
+const allQuestions = [
+    // 一、基础类型 & 表达式（1-15）
+    {
+        id: 1,
+        category: "基础类型 & 表达式",
+        question: "sizeof('a') 在 C++ 中是多少？",
+        options: ["1（char类型）", "4（int类型）", "2（short类型）", "取决于编译器"],
+        correct: 0,
+        explanation: "C中是int(4)，C++中是char(1)"
+    },
+    {
+        id: 2,
+        category: "基础类型 & 表达式",
+        question: "char 默认是 signed 还是 unsigned？",
+        options: ["signed", "unsigned", "implementation-defined（实现定义）", "总是 signed char"],
+        correct: 2,
+        explanation: "implementation-defined，最好显式 signed char / unsigned char"
+    },
+    {
+        id: 3,
+        category: "基础类型 & 表达式",
+        question: "-1 < 1u 的结果是什么？",
+        options: ["true", "false", "编译错误", "未定义行为"],
+        correct: 1,
+        explanation: "-1 转成 unsigned 后变成极大正数，所以结果是 false"
+    },
+    {
+        id: 4,
+        category: "基础类型 & 表达式",
+        question: "uint8_t + uint8_t 的结果类型是什么？",
+        options: ["uint8_t", "uint16_t", "int（整型提升）", "unsigned int"],
+        correct: 2,
+        explanation: "整型提升(Integer Promotion)会将小整数类型提升为int再运算"
+    },
+    {
+        id: 5,
+        category: "基础类型 & 表达式",
+        question: "在C++17及之前，1 << 31 是什么行为？（假设int是32位）",
+        options: ["等于 INT_MIN", "等于 0", "未定义行为(UB)", "编译错误"],
+        correct: 2,
+        explanation: "signed int 左移导致溢出是UB（C++20后已标准化）"
+    },
+    {
+        id: 6,
+        category: "基础类型 & 表达式",
+        question: "0.1 + 0.2 == 0.3 的结果是什么？",
+        options: ["true", "false", "编译错误", "取决于编译器"],
+        correct: 1,
+        explanation: "false，浮点精度问题导致 0.1+0.2 不精确等于 0.3"
+    },
+    {
+        id: 7,
+        category: "基础类型 & 表达式",
+        question: "int a=1; a=a++ + ++a; 的结果是什么？",
+        options: ["4", "5", "3", "未定义行为(UB)"],
+        correct: 3,
+        explanation: "多次修改同一变量无序点，是未定义行为"
+    },
+    {
+        id: 8,
+        category: "基础类型 & 表达式",
+        question: "nullptr 的类型是什么？",
+        options: ["void*", "int", "std::nullptr_t", "NULL"],
+        correct: 2,
+        explanation: "std::nullptr_t，可隐式转换成任意指针类型"
+    },
+    {
+        id: 9,
+        category: "基础类型 & 表达式",
+        question: "sizeof(bool) 的值是什么？",
+        options: ["总是 1", "总是 4", "implementation-defined（通常1）", "总是 0"],
+        correct: 2,
+        explanation: "implementation-defined，通常是1字节"
+    },
+    {
+        id: 10,
+        category: "基础类型 & 表达式",
+        question: "0xFFFFFFFF 在 signed 32-bit int 中是什么值？",
+        options: ["4294967295", "-1", "0", "溢出错误"],
+        correct: 1,
+        explanation: "signed: -1；unsigned: 4294967295"
+    },
+    {
+        id: 11,
+        category: "基础类型 & 表达式",
+        question: "true + true 的结果是什么？",
+        options: ["true", "2", "编译错误", "未定义行为"],
+        correct: 1,
+        explanation: "布尔值可参与整数运算，true被提升为1"
+    },
+    {
+        id: 12,
+        category: "基础类型 & 表达式",
+        question: "如果 char 是 signed，char c = 255; 后 c 的值是？",
+        options: ["255", "-1", "0", "未定义行为"],
+        correct: 1,
+        explanation: "signed char范围是-128到127，255会溢出变成-1"
+    },
+    {
+        id: 13,
+        category: "基础类型 & 表达式",
+        question: "int* p = 0; 与 int* p = nullptr; 的主要区别是什么？",
+        options: ["功能不同", "nullptr 类型安全", "0 更快", "没有区别"],
+        correct: 1,
+        explanation: "语义上相同，但 nullptr 类型安全，不会被误解为整数"
+    },
+    {
+        id: 14,
+        category: "基础类型 & 表达式",
+        question: "auto x = {1, 2}; x 的类型是什么？",
+        options: ["int[]", "std::vector<int>", "std::initializer_list<int>", "std::array<int,2>"],
+        correct: 2,
+        explanation: "使用花括号初始化列表时，auto推导为std::initializer_list"
+    },
+    {
+        id: 15,
+        category: "基础类型 & 表达式",
+        question: "const int* p 表示什么？",
+        options: ["指针本身是常量", "被指向的对象是常量", "两者都是常量", "语法错误"],
+        correct: 1,
+        explanation: "const修饰左边→被指向对象const；int* const p→指针自身const"
+    },
+    // 二、对象生命周期 & 内存（16-30）
+    {
+        id: 16,
+        category: "对象生命周期 & 内存",
+        question: "malloc 和 new 的主要区别是什么？",
+        options: ["没有区别", "malloc不调用构造函数", "new不分配内存", "malloc更快"],
+        correct: 1,
+        explanation: "malloc只分配内存不调用构造；new分配内存并调用构造函数"
+    },
+    {
+        id: 17,
+        category: "对象生命周期 & 内存",
+        question: "用 new[] 分配的数组，用 delete 释放会怎样？",
+        options: ["正常释放", "未定义行为(UB)", "编译错误", "只释放第一个元素"],
+        correct: 1,
+        explanation: "delete和delete[]必须匹配使用，否则是UB"
+    },
+    {
+        id: 18,
+        category: "对象生命周期 & 内存",
+        question: "返回局部变量的引用会怎样？",
+        options: ["正常工作", "编译错误", "未定义行为(UB)", "返回副本"],
+        correct: 2,
+        explanation: "函数返回后栈空间释放，引用指向已释放内存，是UB"
+    },
+    {
+        id: 19,
+        category: "对象生命周期 & 内存",
+        question: "placement new 的作用是什么？",
+        options: ["分配更大的内存", "在已分配内存上构造对象", "自动释放内存", "创建多个对象"],
+        correct: 1,
+        explanation: "placement new在已分配的内存上构造对象，不分配新内存"
+    },
+    {
+        id: 20,
+        category: "对象生命周期 & 内存",
+        question: "用 memset 初始化 std::string 对象会怎样？",
+        options: ["正常工作", "未定义行为(UB)", "编译错误", "字符串变空"],
+        correct: 1,
+        explanation: "memset只能用在trivial对象上，对std::string是UB"
+    },
+    {
+        id: 21,
+        category: "对象生命周期 & 内存",
+        question: "空类(class Empty{};)的大小是多少？",
+        options: ["0", "1", "4", "8"],
+        correct: 1,
+        explanation: "1字节，保证每个对象地址不同"
+    },
+    {
+        id: 22,
+        category: "对象生命周期 & 内存",
+        question: "派生类对象析构时，析构函数的调用顺序是？",
+        options: ["基类→派生类", "派生类→基类", "同时调用", "只调用派生类"],
+        correct: 1,
+        explanation: "析构顺序是派生类→基类（与构造相反）"
+    },
+    {
+        id: 23,
+        category: "对象生命周期 & 内存",
+        question: "不同翻译单元中静态对象的销毁顺序是？",
+        options: ["按声明顺序", "按字母顺序", "不确定", "同时销毁"],
+        correct: 2,
+        explanation: "同一翻译单元按声明顺序，不同翻译单元顺序不确定"
+    },
+    {
+        id: 24,
+        category: "对象生命周期 & 内存",
+        question: "volatile 关键字能保证线程安全吗？",
+        options: ["能", "不能", "只在某些平台能", "取决于编译器"],
+        correct: 1,
+        explanation: "volatile只禁止编译器优化，不保证线程安全"
+    },
+    {
+        id: 25,
+        category: "对象生命周期 & 内存",
+        question: "对象被 delete 后再访问是什么行为？",
+        options: ["返回默认值", "未定义行为(UB)", "抛出异常", "返回NULL"],
+        correct: 1,
+        explanation: "use-after-free是未定义行为"
+    },
+    {
+        id: 26,
+        category: "对象生命周期 & 内存",
+        question: "什么是悬垂引用？",
+        options: ["空引用", "引用绑定已释放对象", "const引用", "临时引用"],
+        correct: 1,
+        explanation: "引用绑定已释放对象→悬垂引用→UB"
+    },
+    {
+        id: 27,
+        category: "对象生命周期 & 内存",
+        question: "关于引用，以下哪项是正确的？",
+        options: ["引用可以不初始化", "引用必须初始化", "引用可以重新绑定", "引用可以为null"],
+        correct: 1,
+        explanation: "引用必须在声明时初始化，且不能重新绑定"
+    },
+    {
+        id: 28,
+        category: "对象生命周期 & 内存",
+        question: "移动语义相比拷贝语义的优势是什么？",
+        options: ["更安全", "窃取资源避免拷贝", "代码更简洁", "兼容性更好"],
+        correct: 1,
+        explanation: "移动语义'窃取资源'，避免不必要的深拷贝"
+    },
+    {
+        id: 29,
+        category: "对象生命周期 & 内存",
+        question: "拷贝构造和拷贝赋值的区别是什么？",
+        options: ["没有区别", "构造新对象 vs 赋值已有对象", "一个用=一个用()", "效率不同"],
+        correct: 1,
+        explanation: "拷贝构造创建新对象，拷贝赋值给已存在的对象赋值"
+    },
+    {
+        id: 30,
+        category: "对象生命周期 & 内存",
+        question: "T t; 和 T t{}; 的区别是什么？",
+        options: ["没有区别", "default初始化 vs value初始化", "语法糖", "编译器优化"],
+        correct: 1,
+        explanation: "T t;是default初始化，T t{};是value初始化（会零初始化）"
+    },
+    // 三、STL 容器与迭代器（31-50）
+    {
+        id: 31,
+        category: "STL 容器与迭代器",
+        question: "vector push_back 可能导致什么失效？",
+        options: ["只有iterator失效", "iterator、pointer、reference都可能失效", "不会失效", "只有reference失效"],
+        correct: 1,
+        explanation: "重新分配内存时，iterator、pointer、reference都会失效"
+    },
+    {
+        id: 32,
+        category: "STL 容器与迭代器",
+        question: "deque 在两端插入时，什么会失效？",
+        options: ["什么都不失效", "iterator失效，reference不失效", "全部失效", "只有pointer失效"],
+        correct: 1,
+        explanation: "deque两端插入时Iterator失效，但Reference不失效"
+    },
+    {
+        id: 33,
+        category: "STL 容器与迭代器",
+        question: "list 插入元素时，现有迭代器是否失效？",
+        options: ["会失效", "不失效（除被删除节点）", "部分失效", "取决于位置"],
+        correct: 1,
+        explanation: "list是链表结构，插入/删除不影响其他节点的迭代器"
+    },
+    {
+        id: 34,
+        category: "STL 容器与迭代器",
+        question: "map 的 operator[] 访问不存在的 key 会怎样？",
+        options: ["抛出异常", "返回默认值", "插入默认值", "返回end()"],
+        correct: 2,
+        explanation: "operator[]会插入一个默认值的元素"
+    },
+    {
+        id: 35,
+        category: "STL 容器与迭代器",
+        question: "map 的 find 和 operator[] 的区别是什么？",
+        options: ["没有区别", "find不插入，operator[]会插入", "find更快", "operator[]更安全"],
+        correct: 1,
+        explanation: "find不存在时返回end()，不插入；operator[]会插入"
+    },
+    {
+        id: 36,
+        category: "STL 容器与迭代器",
+        question: "unordered_map 的迭代顺序是怎样的？",
+        options: ["按key排序", "按插入顺序", "不稳定/不确定", "按hash值排序"],
+        correct: 2,
+        explanation: "unordered_map基于哈希表，迭代顺序不稳定"
+    },
+    {
+        id: 37,
+        category: "STL 容器与迭代器",
+        question: "vector 的 reserve 和 resize 的区别是什么？",
+        options: ["没有区别", "reserve改capacity，resize改size", "reserve更快", "resize改capacity"],
+        correct: 1,
+        explanation: "reserve只改变capacity，resize改变size并可能构造/销毁元素"
+    },
+    {
+        id: 38,
+        category: "STL 容器与迭代器",
+        question: "什么是 string 的小字符串优化(SSO)？",
+        options: ["压缩字符串", "小字符串存对象内部避免堆分配", "缓存字符串", "延迟分配"],
+        correct: 1,
+        explanation: "SSO将小字符串直接存储在string对象内部，避免堆分配"
+    },
+    {
+        id: 39,
+        category: "STL 容器与迭代器",
+        question: "erase-remove 惯用法的正确写法是？",
+        options: [
+            "v.remove(x)",
+            "v.erase(std::remove(v.begin(), v.end(), x), v.end())",
+            "std::erase(v, x)",
+            "v.erase(x)"
+        ],
+        correct: 1,
+        explanation: "remove只移动元素，返回新的逻辑末尾，需要erase真正删除"
+    },
+    {
+        id: 40,
+        category: "STL 容器与迭代器",
+        question: "vector 中间插入元素时，迭代器会怎样？",
+        options: ["不失效", "全部失效", "插入点之后的失效", "只有end()失效"],
+        correct: 2,
+        explanation: "vector中间插入会导致插入点之后的迭代器失效"
+    },
+    {
+        id: 41,
+        category: "STL 容器与迭代器",
+        question: "std::array 相比 C 风格数组的优势是什么？",
+        options: ["大小可变", "支持STL算法，有size()方法", "自动扩容", "更省内存"],
+        correct: 1,
+        explanation: "std::array是固定大小，但支持STL算法和迭代器"
+    },
+    {
+        id: 42,
+        category: "STL 容器与迭代器",
+        question: "vector 的 swap 操作的时间复杂度是？",
+        options: ["O(n)", "O(1)", "O(log n)", "O(n^2)"],
+        correct: 1,
+        explanation: "swap只交换内部指针，是O(1)操作"
+    },
+    {
+        id: 43,
+        category: "STL 容器与迭代器",
+        question: "priority_queue 能直接修改元素吗？",
+        options: ["能", "不能，需要pop后重新push", "只能修改top", "可以通过迭代器修改"],
+        correct: 1,
+        explanation: "priority_queue不支持直接修改，需要取出后重新插入"
+    },
+    {
+        id: 44,
+        category: "STL 容器与迭代器",
+        question: "stack.pop() 的返回值是什么？",
+        options: ["栈顶元素", "void", "bool表示是否成功", "新的栈顶"],
+        correct: 1,
+        explanation: "pop()返回void，需要先用top()获取元素"
+    },
+    {
+        id: 45,
+        category: "STL 容器与迭代器",
+        question: "unordered_set 的 erase 返回什么？",
+        options: ["void", "被删除的元素", "下一个有效iterator", "bool"],
+        correct: 2,
+        explanation: "erase返回下一个有效的iterator"
+    },
+    {
+        id: 46,
+        category: "STL 容器与迭代器",
+        question: "set.lower_bound(key) 返回什么？",
+        options: ["第一个 < key 的元素", "第一个 >= key 的元素", "第一个 > key 的元素", "第一个 == key 的元素"],
+        correct: 1,
+        explanation: "lower_bound返回>=key的第一个元素，upper_bound返回>key的第一个"
+    },
+    {
+        id: 47,
+        category: "STL 容器与迭代器",
+        question: "map insert 的返回值是什么？",
+        options: ["void", "iterator", "pair<iterator, bool>", "bool"],
+        correct: 2,
+        explanation: "返回pair，iterator指向元素，bool表示是否成功插入"
+    },
+    {
+        id: 48,
+        category: "STL 容器与迭代器",
+        question: "emplace 相比 insert 的优势是什么？",
+        options: ["更安全", "原地构造，减少拷贝", "更简洁", "更快的查找"],
+        correct: 1,
+        explanation: "emplace直接在容器内构造元素，避免临时对象"
+    },
+    {
+        id: 49,
+        category: "STL 容器与迭代器",
+        question: "std::array 的 swap 时间复杂度是？",
+        options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+        correct: 1,
+        explanation: "array存储在栈上，swap需要逐元素交换，是O(n)"
+    },
+    {
+        id: 50,
+        category: "STL 容器与迭代器",
+        question: "vector shrink_to_fit 能保证释放多余内存吗？",
+        options: ["能保证", "不能保证，只是提示", "总是失败", "取决于元素类型"],
+        correct: 1,
+        explanation: "shrink_to_fit是非强制的，只是建议编译器回收capacity"
+    },
+    // 四、函数 & 调用约定（51-65）
+    {
+        id: 51,
+        category: "函数 & 调用约定",
+        question: "虚函数的默认参数何时绑定？",
+        options: ["运行时", "编译期", "链接期", "取决于调用方式"],
+        correct: 1,
+        explanation: "默认参数在编译期绑定，不随虚函数多态改变"
+    },
+    {
+        id: 52,
+        category: "函数 & 调用约定",
+        question: "虚函数表(vtable)通常存放在对象的什么位置？",
+        options: ["对象末尾", "对象开头", "静态区域", "堆上"],
+        correct: 1,
+        explanation: "实现依赖但通常在对象开头存放vptr指向vtable"
+    },
+    {
+        id: 53,
+        category: "函数 & 调用约定",
+        question: "inline 关键字能保证函数被内联吗？",
+        options: ["能保证", "不能保证，只是建议", "只在debug模式生效", "取决于函数大小"],
+        correct: 1,
+        explanation: "inline只是允许多定义+给编译器建议，不保证内联"
+    },
+    {
+        id: 54,
+        category: "函数 & 调用约定",
+        question: "函数重载时，哪种匹配优先？",
+        options: ["隐式转换匹配", "精确匹配", "模板匹配", "默认参数匹配"],
+        correct: 1,
+        explanation: "重载解析：精确匹配优先→隐式转换→..."
+    },
+    {
+        id: 55,
+        category: "函数 & 调用约定",
+        question: "当函数模板和普通函数都能匹配时，优先选择哪个？",
+        options: ["函数模板", "普通函数", "编译错误", "随机选择"],
+        correct: 1,
+        explanation: "普通函数比模板优先匹配"
+    },
+    {
+        id: 56,
+        category: "函数 & 调用约定",
+        question: "模板参数推导时，传值和传引用有什么区别？",
+        options: ["没有区别", "会影响const和引用的推导", "传值更快", "传引用会失败"],
+        correct: 1,
+        explanation: "值传递、引用传递、const修饰都会影响类型推导"
+    },
+    {
+        id: 57,
+        category: "函数 & 调用约定",
+        question: "右值引用 && 的主要用途是什么？",
+        options: ["逻辑与运算", "完美转发和移动语义", "取地址", "类型转换"],
+        correct: 1,
+        explanation: "&&用于完美转发、move语义、接收临时对象"
+    },
+    {
+        id: 58,
+        category: "函数 & 调用约定",
+        question: "explicit 关键字的作用是什么？",
+        options: ["导出函数", "禁止隐式类型转换", "强制内联", "声明虚函数"],
+        correct: 1,
+        explanation: "explicit禁止构造函数的隐式类型转换"
+    },
+    {
+        id: 59,
+        category: "函数 & 调用约定",
+        question: "constexpr 和 const 的区别是什么？",
+        options: ["没有区别", "constexpr必须编译期，const可能运行期", "const更快", "constexpr只能用于函数"],
+        correct: 1,
+        explanation: "constexpr必须是编译期常量，const可能是运行时常量"
+    },
+    {
+        id: 60,
+        category: "函数 & 调用约定",
+        question: "C++20 的 consteval 有什么特点？",
+        options: ["可以在运行期求值", "必须在编译期求值", "等同于constexpr", "只能返回void"],
+        correct: 1,
+        explanation: "consteval函数必须在编译期求值，不能延迟到运行期"
+    },
+    {
+        id: 61,
+        category: "函数 & 调用约定",
+        question: "mutable 成员变量有什么特点？",
+        options: ["不能被修改", "即使对象是const也能修改", "只能是static", "必须初始化"],
+        correct: 1,
+        explanation: "mutable成员可以在const成员函数中被修改"
+    },
+    {
+        id: 62,
+        category: "函数 & 调用约定",
+        question: "[[nodiscard]] 属性的作用是什么？",
+        options: ["禁止丢弃对象", "返回值必须使用，否则警告", "函数不能抛异常", "标记为废弃"],
+        correct: 1,
+        explanation: "[[nodiscard]]要求调用者使用返回值，否则编译器警告"
+    },
+    {
+        id: 63,
+        category: "函数 & 调用约定",
+        question: "[[maybe_unused]] 属性的作用是什么？",
+        options: ["标记必须使用", "忽略未使用变量警告", "延迟初始化", "优化提示"],
+        correct: 1,
+        explanation: "[[maybe_unused]]告诉编译器变量可能不使用，抑制警告"
+    },
+    {
+        id: 64,
+        category: "函数 & 调用约定",
+        question: "std::function 相比函数指针的优势是什么？",
+        options: ["更快", "支持lambda和捕获环境", "更省内存", "更简洁"],
+        correct: 1,
+        explanation: "std::function可以包装任何可调用对象，包括带捕获的lambda"
+    },
+    {
+        id: 65,
+        category: "函数 & 调用约定",
+        question: "lambda 按值捕获和按引用捕获的区别是什么？",
+        options: ["没有区别", "值捕获拷贝，引用捕获要注意生命周期", "引用捕获更快", "值捕获不能修改"],
+        correct: 1,
+        explanation: "值捕获会拷贝变量，引用捕获绑定原对象需注意生命周期"
+    },
+    // 五、C++11/14/17/20 新特性（66-80）
+    {
+        id: 66,
+        category: "C++11/14/17/20 新特性",
+        question: "auto x = expr; 类型推导会保留 const 和引用吗？",
+        options: ["会保留", "不会，cv-ref会被去除", "只保留const", "只保留引用"],
+        correct: 1,
+        explanation: "auto拷贝推导会去除const、volatile和引用"
+    },
+    {
+        id: 67,
+        category: "C++11/14/17/20 新特性",
+        question: "decltype(expr) 会保留表达式的精确类型吗？",
+        options: ["不会", "会，包括ref和const", "只保留基本类型", "取决于表达式"],
+        correct: 1,
+        explanation: "decltype保留表达式的精确类型，包括引用和const"
+    },
+    {
+        id: 68,
+        category: "C++11/14/17/20 新特性",
+        question: "range-based for 循环本质上是什么？",
+        options: ["while循环", "调用begin/end的语法糖", "递归", "goto语句"],
+        correct: 1,
+        explanation: "range-based for是调用begin()和end()的语法糖"
+    },
+    {
+        id: 69,
+        category: "C++11/14/17/20 新特性",
+        question: "nullptr 相比 NULL 的优势是什么？",
+        options: ["更快", "类型安全，不会被当作整数0", "更省内存", "兼容性更好"],
+        correct: 1,
+        explanation: "nullptr是std::nullptr_t类型，类型安全；NULL是宏定义的0"
+    },
+    {
+        id: 70,
+        category: "C++11/14/17/20 新特性",
+        question: "enum class 相比普通 enum 的优势是什么？",
+        options: ["更快", "强类型，作用域限定", "更省内存", "支持浮点"],
+        correct: 1,
+        explanation: "enum class是强类型枚举，枚举值在类作用域内"
+    },
+    {
+        id: 71,
+        category: "C++11/14/17/20 新特性",
+        question: "std::move 实际上做了什么？",
+        options: ["移动对象", "只是cast成右值引用", "复制对象", "删除对象"],
+        correct: 1,
+        explanation: "std::move只是类型转换，真正移动发生在移动构造/赋值中"
+    },
+    {
+        id: 72,
+        category: "C++11/14/17/20 新特性",
+        question: "std::forward 的作用是什么？",
+        options: ["前向声明", "完美转发，保留左右值属性", "循环遍历", "类型转换"],
+        correct: 1,
+        explanation: "std::forward用于完美转发，保留参数的左值/右值属性"
+    },
+    {
+        id: 73,
+        category: "C++11/14/17/20 新特性",
+        question: "std::optional 未初始化时访问值会怎样？",
+        options: ["返回默认值", "返回nullptr", "抛出异常", "未定义行为"],
+        correct: 2,
+        explanation: "访问空的optional会抛出std::bad_optional_access异常"
+    },
+    {
+        id: 74,
+        category: "C++11/14/17/20 新特性",
+        question: "std::variant 相比 union 的优势是什么？",
+        options: ["更省内存", "类型安全", "更快", "支持更多类型"],
+        correct: 1,
+        explanation: "std::variant是类型安全的union，会跟踪当前存储的类型"
+    },
+    {
+        id: 75,
+        category: "C++11/14/17/20 新特性",
+        question: "structured bindings (auto [a,b] = ...) 是哪个版本引入的？",
+        options: ["C++11", "C++14", "C++17", "C++20"],
+        correct: 2,
+        explanation: "结构化绑定是C++17引入的特性"
+    },
+    {
+        id: 76,
+        category: "C++11/14/17/20 新特性",
+        question: "if constexpr 的作用是什么？",
+        options: ["运行时条件判断", "编译期条件分支", "异常处理", "类型检查"],
+        correct: 1,
+        explanation: "if constexpr在编译期决定分支，未选中分支不编译"
+    },
+    {
+        id: 77,
+        category: "C++11/14/17/20 新特性",
+        question: "inline variables (C++17) 解决了什么问题？",
+        options: ["内联函数", "头文件中定义变量可多次包含", "常量折叠", "模板实例化"],
+        correct: 1,
+        explanation: "inline变量允许在头文件定义，多个翻译单元共享同一实例"
+    },
+    {
+        id: 78,
+        category: "C++11/14/17/20 新特性",
+        question: "C++20 的 concept 用于什么？",
+        options: ["面向对象", "模板约束", "内存管理", "并发编程"],
+        correct: 1,
+        explanation: "concept用于约束模板参数，提供更好的错误信息"
+    },
+    {
+        id: 79,
+        category: "C++11/14/17/20 新特性",
+        question: "C++20 的 bit_cast 相比 reinterpret_cast 的优势是什么？",
+        options: ["更快", "类型安全，避免strict aliasing UB", "更通用", "支持更多类型"],
+        correct: 1,
+        explanation: "bit_cast提供安全的位级类型转换，避免strict aliasing问题"
+    },
+    {
+        id: 80,
+        category: "C++11/14/17/20 新特性",
+        question: "C++20 协程使用哪些关键字？",
+        options: ["async/await", "co_await/co_yield/co_return", "yield/resume", "coroutine/suspend"],
+        correct: 1,
+        explanation: "C++20协程使用co_await、co_yield、co_return关键字"
+    },
+    // 六、模板 & 类型系统（81-90）
+    {
+        id: 81,
+        category: "模板 & 类型系统",
+        question: "SFINAE 是什么的缩写？",
+        options: [
+            "Standard Function Interface And Native Extension",
+            "Substitution Failure Is Not An Error",
+            "Static Function Inline And Nested Expression",
+            "Simple Format Input And Numeric Evaluation"
+        ],
+        correct: 1,
+        explanation: "SFINAE = Substitution Failure Is Not An Error（替换失败不是错误）"
+    },
+    {
+        id: 82,
+        category: "模板 & 类型系统",
+        question: "模板偏特化和完全特化的区别是什么？",
+        options: ["没有区别", "偏特化匹配部分参数，完全特化匹配所有", "偏特化更快", "完全特化只能用于类"],
+        correct: 1,
+        explanation: "偏特化匹配部分模板参数，完全特化匹配所有模板参数"
+    },
+    {
+        id: 83,
+        category: "模板 & 类型系统",
+        question: "非类型模板参数可以是什么类型？",
+        options: ["只能是int", "integral/pointer/reference等", "任意类型", "只能是类类型"],
+        correct: 1,
+        explanation: "非类型模板参数可以是整型、指针、引用等"
+    },
+    {
+        id: 84,
+        category: "模板 & 类型系统",
+        question: "decltype(auto) 和 auto 的区别是什么？",
+        options: ["没有区别", "decltype(auto)保留ref/const", "auto更精确", "decltype(auto)更快"],
+        correct: 1,
+        explanation: "decltype(auto)保留表达式的精确类型包括引用"
+    },
+    {
+        id: 85,
+        category: "模板 & 类型系统",
+        question: "T&& 在模板中可能推导成什么？",
+        options: ["只能是右值引用", "可能是左值引用或右值引用", "只能是左值引用", "会编译错误"],
+        correct: 1,
+        explanation: "T&&是转发引用，根据传入参数可推导为左值或右值引用"
+    },
+    {
+        id: 86,
+        category: "模板 & 类型系统",
+        question: "sizeof...(Args) 的作用是什么？",
+        options: ["求参数总字节数", "求参数包中参数的数量", "求最大参数大小", "语法错误"],
+        correct: 1,
+        explanation: "sizeof...(Args)返回参数包中的参数数量"
+    },
+    {
+        id: 87,
+        category: "模板 & 类型系统",
+        question: "fold expression 是哪个版本引入的？",
+        options: ["C++11", "C++14", "C++17", "C++20"],
+        correct: 2,
+        explanation: "折叠表达式是C++17引入，用于参数包展开"
+    },
+    {
+        id: 88,
+        category: "模板 & 类型系统",
+        question: "variadic templates 允许什么？",
+        options: ["可变返回类型", "可变数量的模板参数", "可变函数名", "可变作用域"],
+        correct: 1,
+        explanation: "可变参数模板允许接受任意数量的模板参数"
+    },
+    {
+        id: 89,
+        category: "模板 & 类型系统",
+        question: "std::enable_if 的作用是什么？",
+        options: ["启用函数", "SFINAE控制模板选择", "启用优化", "启用异常"],
+        correct: 1,
+        explanation: "enable_if利用SFINAE来有条件地启用或禁用模板"
+    },
+    {
+        id: 90,
+        category: "模板 & 类型系统",
+        question: "以下哪个不是 type traits？",
+        options: ["std::is_same", "std::is_base_of", "std::is_function", "std::is_allocated"],
+        correct: 3,
+        explanation: "std::is_allocated不存在；其他都是标准type traits"
+    },
+    // 七、常见 UB / 高频陷阱（91-100）
+    {
+        id: 91,
+        category: "常见 UB / 高频陷阱",
+        question: "signed integer overflow 是什么行为？",
+        options: ["定义为回绕", "未定义行为(UB)", "抛出异常", "返回最大值"],
+        correct: 1,
+        explanation: "有符号整数溢出是未定义行为"
+    },
+    {
+        id: 92,
+        category: "常见 UB / 高频陷阱",
+        question: "访问已释放的内存是什么行为？",
+        options: ["返回0", "未定义行为(UB)", "抛出异常", "程序终止"],
+        correct: 1,
+        explanation: "use-after-free是未定义行为"
+    },
+    {
+        id: 93,
+        category: "常见 UB / 高频陷阱",
+        question: "数组越界访问是什么行为？",
+        options: ["返回默认值", "未定义行为(UB)", "抛出异常", "自动扩容"],
+        correct: 1,
+        explanation: "数组越界访问是未定义行为"
+    },
+    {
+        id: 94,
+        category: "常见 UB / 高频陷阱",
+        question: "使用悬垂指针是什么行为？",
+        options: ["返回NULL", "未定义行为(UB)", "编译错误", "抛出异常"],
+        correct: 1,
+        explanation: "悬垂指针/引用的使用是未定义行为"
+    },
+    {
+        id: 95,
+        category: "常见 UB / 高频陷阱",
+        question: "违反 strict aliasing 规则是什么行为？",
+        options: ["性能下降", "未定义行为(UB)", "编译警告", "类型转换"],
+        correct: 1,
+        explanation: "通过不兼容类型的指针访问对象违反strict aliasing是UB"
+    },
+    {
+        id: 96,
+        category: "常见 UB / 高频陷阱",
+        question: "多线程中的 data race 是什么行为？",
+        options: ["程序变慢", "未定义行为(UB)", "死锁", "结果不确定但定义明确"],
+        correct: 1,
+        explanation: "data race（非同步访问共享数据且至少一个是写）是UB"
+    },
+    {
+        id: 97,
+        category: "常见 UB / 高频陷阱",
+        question: "左移位数 >= 类型位宽是什么行为？",
+        options: ["结果为0", "未定义行为(UB)", "循环移位", "编译错误"],
+        correct: 1,
+        explanation: "移位数>=类型位宽是未定义行为"
+    },
+    {
+        id: 98,
+        category: "常见 UB / 高频陷阱",
+        question: "使用被容器操作 invalidate 的迭代器是什么行为？",
+        options: ["返回end()", "未定义行为(UB)", "抛出异常", "自动更新"],
+        correct: 1,
+        explanation: "使用失效的迭代器是未定义行为"
+    },
+    {
+        id: 99,
+        category: "常见 UB / 高频陷阱",
+        question: "函数返回局部对象的指针是什么行为？",
+        options: ["返回副本", "未定义行为(UB)", "编译错误", "返回NULL"],
+        correct: 1,
+        explanation: "返回局部对象的指针/引用，栈释放后是UB"
+    },
+    {
+        id: 100,
+        category: "常见 UB / 高频陷阱",
+        question: "在同一表达式中多次修改同一变量（无序列点）是什么行为？",
+        options: ["从左到右求值", "未定义行为(UB)", "编译错误", "随机结果"],
+        correct: 1,
+        explanation: "如 i = i++ + ++i，多次修改同一变量无序列点是UB"
+    }
+];
+
+function getRandomQuestions(count) {
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+}
+
+// ==================== Game State ====================
+let gameState = {
+    questions: [],
+    currentIndex: 0,
+    score: 0,
+    answers: [],
+    totalQuestions: 20
+};
+
+// ==================== Boot Scene ====================
+class BootScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'BootScene' });
+    }
+
+    create() {
+        document.getElementById('loading').style.display = 'none';
+        this.scene.start('MenuScene');
+    }
+}
+
+// ==================== Menu Scene ====================
+class MenuScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'MenuScene' });
+    }
+
+    create() {
+        const { width, height } = this.cameras.main;
+        this.createBackground();
+
+        // Title
+        const title = this.add.text(width / 2, 120, 'C++ Trivials', {
+            fontSize: '64px',
+            fontFamily: 'Arial Black, sans-serif',
+            color: '#00d4ff',
+            stroke: '#0066cc',
+            strokeThickness: 4
+        }).setOrigin(0.5);
+
+        this.tweens.add({
+            targets: title,
+            alpha: 0.8,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        this.add.text(width / 2, 190, 'Quiz Game', {
+            fontSize: '36px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        this.add.text(width / 2, 280, '100 C++ Knowledge Points', {
+            fontSize: '20px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#888888'
+        }).setOrigin(0.5);
+
+        this.add.text(width / 2, 320, 'Random 20 Questions Per Game', {
+            fontSize: '18px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#666666'
+        }).setOrigin(0.5);
+
+        const categories = [
+            'Basic Types & Expressions',
+            'Object Lifecycle & Memory',
+            'STL Containers & Iterators',
+            'Functions & Calling Conventions',
+            'C++11/14/17/20 Features',
+            'Templates & Type System',
+            'Common UB & Pitfalls'
+        ];
+
+        categories.forEach((cat, i) => {
+            this.add.text(width / 2, 380 + i * 28, cat, {
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif',
+                color: '#4a9eff'
+            }).setOrigin(0.5);
+        });
+
+        this.createButton(width / 2, 600, 'Start Game', () => this.startGame());
+        this.createParticles();
+    }
+
+    createBackground() {
+        const { width, height } = this.cameras.main;
+        const graphics = this.add.graphics();
+
+        for (let i = 0; i < height; i++) {
+            const ratio = i / height;
+            const r = Math.floor(26 + ratio * 10);
+            const g = Math.floor(26 + ratio * 15);
+            const b = Math.floor(46 + ratio * 20);
+            graphics.fillStyle(Phaser.Display.Color.GetColor(r, g, b));
+            graphics.fillRect(0, i, width, 1);
+        }
+
+        for (let i = 0; i < 5; i++) {
+            this.add.circle(
+                Phaser.Math.Between(0, width),
+                Phaser.Math.Between(0, height),
+                Phaser.Math.Between(50, 150),
+                0x4a9eff, 0.03
+            );
+        }
+    }
+
+    createButton(x, y, text, callback) {
+        const btn = this.add.container(x, y);
+        const bg = this.add.graphics();
+        bg.fillStyle(0x4a9eff, 1);
+        bg.fillRoundedRect(-120, -30, 240, 60, 15);
+
+        const btnText = this.add.text(0, 0, text, {
+            fontSize: '24px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        btn.add([bg, btnText]);
+        btn.setSize(240, 60);
+        btn.setInteractive({ useHandCursor: true });
+
+        btn.on('pointerover', () => {
+            this.tweens.add({ targets: btn, scaleX: 1.05, scaleY: 1.05, duration: 100 });
+            bg.clear();
+            bg.fillStyle(0x6ab4ff, 1);
+            bg.fillRoundedRect(-120, -30, 240, 60, 15);
+        });
+
+        btn.on('pointerout', () => {
+            this.tweens.add({ targets: btn, scaleX: 1, scaleY: 1, duration: 100 });
+            bg.clear();
+            bg.fillStyle(0x4a9eff, 1);
+            bg.fillRoundedRect(-120, -30, 240, 60, 15);
+        });
+
+        btn.on('pointerdown', callback);
+        return btn;
+    }
+
+    createParticles() {
+        const { width, height } = this.cameras.main;
+
+        for (let i = 0; i < 20; i++) {
+            const particle = this.add.circle(
+                Phaser.Math.Between(0, width),
+                Phaser.Math.Between(0, height),
+                Phaser.Math.Between(2, 5),
+                0x4a9eff, 0.5
+            );
+
+            this.tweens.add({
+                targets: particle,
+                y: particle.y - Phaser.Math.Between(50, 150),
+                alpha: 0,
+                duration: Phaser.Math.Between(3000, 6000),
+                repeat: -1,
+                onRepeat: () => {
+                    particle.x = Phaser.Math.Between(0, width);
+                    particle.y = height + 20;
+                    particle.alpha = 0.5;
+                }
+            });
+        }
+    }
+
+    startGame() {
+        gameState.questions = getRandomQuestions(20);
+        gameState.currentIndex = 0;
+        gameState.score = 0;
+        gameState.answers = [];
+
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.time.delayedCall(500, () => this.scene.start('GameScene'));
+    }
+}
+
+// ==================== Game Scene ====================
+class GameScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'GameScene' });
+        this.optionButtons = [];
+        this.canAnswer = true;
+    }
+
+    create() {
+        const { width, height } = this.cameras.main;
+        this.cameras.main.fadeIn(500);
+        this.createBackground();
+
+        // Progress bar
+        this.progressBg = this.add.graphics();
+        this.progressBg.fillStyle(0x333355, 1);
+        this.progressBg.fillRoundedRect(50, 20, width - 100, 20, 10);
+        this.progressBar = this.add.graphics();
+
+        // Texts
+        this.questionNumText = this.add.text(50, 55, '', {
+            fontSize: '18px', fontFamily: 'Arial, sans-serif', color: '#888888'
+        });
+
+        this.scoreText = this.add.text(width - 50, 55, '', {
+            fontSize: '18px', fontFamily: 'Arial, sans-serif', color: '#4a9eff'
+        }).setOrigin(1, 0);
+
+        this.categoryText = this.add.text(width / 2, 95, '', {
+            fontSize: '16px', fontFamily: 'Arial, sans-serif', color: '#666666'
+        }).setOrigin(0.5);
+
+        // Question box
+        this.questionBg = this.add.graphics();
+        this.questionBg.fillStyle(0x252540, 0.9);
+        this.questionBg.fillRoundedRect(40, 120, width - 80, 140, 15);
+
+        this.questionText = this.add.text(width / 2, 190, '', {
+            fontSize: '22px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ffffff',
+            wordWrap: { width: width - 120 },
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.createOptions();
+
+        // Explanation
+        this.explanationContainer = this.add.container(width / 2, 620);
+        this.explanationContainer.setVisible(false);
+
+        const expBg = this.add.graphics();
+        expBg.fillStyle(0x333355, 0.9);
+        expBg.fillRoundedRect(-380, -30, 760, 60, 10);
+
+        this.explanationText = this.add.text(0, 0, '', {
+            fontSize: '16px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#aaaaaa',
+            wordWrap: { width: 720 },
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.explanationContainer.add([expBg, this.explanationText]);
+        this.showQuestion();
+    }
+
+    createBackground() {
+        const { width, height } = this.cameras.main;
+        const graphics = this.add.graphics();
+
+        for (let i = 0; i < height; i++) {
+            const ratio = i / height;
+            const r = Math.floor(26 + ratio * 10);
+            const g = Math.floor(26 + ratio * 15);
+            const b = Math.floor(46 + ratio * 20);
+            graphics.fillStyle(Phaser.Display.Color.GetColor(r, g, b));
+            graphics.fillRect(0, i, width, 1);
+        }
+    }
+
+    createOptions() {
+        const { width } = this.cameras.main;
+        const startY = 290;
+        const spacing = 75;
+        this.optionButtons = [];
+
+        for (let i = 0; i < 4; i++) {
+            const btn = this.createOptionButton(width / 2, startY + i * spacing, i);
+            this.optionButtons.push(btn);
+        }
+    }
+
+    createOptionButton(x, y, index) {
+        const { width } = this.cameras.main;
+        const btnWidth = width - 100;
+        const container = this.add.container(x, y);
+
+        const bg = this.add.graphics();
+        bg.fillStyle(0x2a2a4a, 1);
+        bg.lineStyle(2, 0x4a9eff, 0.5);
+        bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+        bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+
+        const label = this.add.text(-btnWidth / 2 + 20, 0, String.fromCharCode(65 + index) + '.', {
+            fontSize: '20px', fontFamily: 'Arial Black, sans-serif', color: '#4a9eff'
+        }).setOrigin(0, 0.5);
+
+        const text = this.add.text(-btnWidth / 2 + 55, 0, '', {
+            fontSize: '18px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ffffff',
+            wordWrap: { width: btnWidth - 80 }
+        }).setOrigin(0, 0.5);
+
+        container.add([bg, label, text]);
+        container.setSize(btnWidth, 56);
+        container.setInteractive({ useHandCursor: true });
+
+        container.bg = bg;
+        container.text = text;
+        container.label = label;
+        container.index = index;
+
+        container.on('pointerover', () => {
+            if (!this.canAnswer) return;
+            bg.clear();
+            bg.fillStyle(0x3a3a5a, 1);
+            bg.lineStyle(2, 0x6ab4ff, 1);
+            bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+            bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+        });
+
+        container.on('pointerout', () => {
+            if (!this.canAnswer) return;
+            bg.clear();
+            bg.fillStyle(0x2a2a4a, 1);
+            bg.lineStyle(2, 0x4a9eff, 0.5);
+            bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+            bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+        });
+
+        container.on('pointerdown', () => {
+            if (this.canAnswer) this.selectAnswer(index);
+        });
+
+        return container;
+    }
+
+    showQuestion() {
+        const q = gameState.questions[gameState.currentIndex];
+        const { width } = this.cameras.main;
+        const btnWidth = width - 100;
+
+        const progress = gameState.currentIndex / gameState.totalQuestions;
+        this.progressBar.clear();
+        this.progressBar.fillStyle(0x4a9eff, 1);
+        this.progressBar.fillRoundedRect(50, 20, (width - 100) * progress, 20, 10);
+
+        this.questionNumText.setText(`Question ${gameState.currentIndex + 1}/${gameState.totalQuestions}`);
+        this.scoreText.setText(`Score: ${gameState.score}`);
+        this.categoryText.setText(q.category);
+        this.questionText.setText(q.question);
+
+        this.canAnswer = true;
+        this.explanationContainer.setVisible(false);
+
+        this.optionButtons.forEach((btn, i) => {
+            btn.text.setText(q.options[i]);
+            btn.setAlpha(1);
+            btn.bg.clear();
+            btn.bg.fillStyle(0x2a2a4a, 1);
+            btn.bg.lineStyle(2, 0x4a9eff, 0.5);
+            btn.bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+            btn.bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+            btn.label.setColor('#4a9eff');
+            btn.text.setColor('#ffffff');
+        });
+
+        this.optionButtons.forEach((btn, i) => {
+            btn.setAlpha(0);
+            btn.x = width / 2 + 50;
+            this.tweens.add({
+                targets: btn,
+                alpha: 1,
+                x: width / 2,
+                duration: 300,
+                delay: i * 80,
+                ease: 'Back.easeOut'
+            });
+        });
+    }
+
+    selectAnswer(index) {
+        this.canAnswer = false;
+        const q = gameState.questions[gameState.currentIndex];
+        const isCorrect = index === q.correct;
+        const { width } = this.cameras.main;
+        const btnWidth = width - 100;
+
+        gameState.answers.push({ question: q, selected: index, correct: isCorrect });
+
+        if (isCorrect) {
+            gameState.score++;
+            this.scoreText.setText(`Score: ${gameState.score}`);
+        }
+
+        this.optionButtons.forEach((btn, i) => {
+            if (i === q.correct) {
+                btn.bg.clear();
+                btn.bg.fillStyle(0x2a5a2a, 1);
+                btn.bg.lineStyle(3, 0x4aff4a, 1);
+                btn.bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+                btn.bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+                btn.label.setColor('#4aff4a');
+
+                if (isCorrect) this.createCorrectEffect(btn.x, btn.y);
+            } else if (i === index && !isCorrect) {
+                btn.bg.clear();
+                btn.bg.fillStyle(0x5a2a2a, 1);
+                btn.bg.lineStyle(3, 0xff4a4a, 1);
+                btn.bg.fillRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+                btn.bg.strokeRoundedRect(-btnWidth / 2, -28, btnWidth, 56, 12);
+                btn.label.setColor('#ff4a4a');
+                btn.text.setColor('#ff8888');
+
+                this.tweens.add({
+                    targets: btn,
+                    x: btn.x + 10,
+                    duration: 50,
+                    yoyo: true,
+                    repeat: 3
+                });
+            } else {
+                btn.setAlpha(0.4);
+            }
+        });
+
+        this.explanationText.setText(q.explanation);
+        this.explanationContainer.setVisible(true);
+        this.explanationContainer.setAlpha(0);
+        this.tweens.add({ targets: this.explanationContainer, alpha: 1, duration: 300 });
+
+        this.time.delayedCall(2000, () => this.nextQuestion());
+    }
+
+    createCorrectEffect(x, y) {
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const particle = this.add.circle(x, y, 6, 0x4aff4a);
+
+            this.tweens.add({
+                targets: particle,
+                x: x + Math.cos(angle) * 80,
+                y: y + Math.sin(angle) * 40,
+                alpha: 0,
+                scale: 0,
+                duration: 500,
+                ease: 'Power2',
+                onComplete: () => particle.destroy()
+            });
+        }
+
+        for (let i = 0; i < 6; i++) {
+            const star = this.add.text(x, y, '\u2605', {
+                fontSize: '24px',
+                color: '#ffff00'
+            }).setOrigin(0.5);
+
+            const angle = (i / 6) * Math.PI * 2;
+            this.tweens.add({
+                targets: star,
+                x: x + Math.cos(angle) * 100,
+                y: y + Math.sin(angle) * 50,
+                alpha: 0,
+                rotation: Math.PI,
+                duration: 600,
+                ease: 'Power2',
+                onComplete: () => star.destroy()
+            });
+        }
+    }
+
+    nextQuestion() {
+        gameState.currentIndex++;
+
+        if (gameState.currentIndex >= gameState.totalQuestions) {
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+            this.time.delayedCall(500, () => this.scene.start('ResultScene'));
+        } else {
+            this.optionButtons.forEach((btn, i) => {
+                this.tweens.add({
+                    targets: btn,
+                    x: -200,
+                    alpha: 0,
+                    duration: 200,
+                    delay: i * 50,
+                    onComplete: () => { if (i === 3) this.showQuestion(); }
+                });
+            });
+        }
+    }
+}
+
+// ==================== Result Scene ====================
+class ResultScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'ResultScene' });
+    }
+
+    create() {
+        const { width, height } = this.cameras.main;
+        this.cameras.main.fadeIn(500);
+        this.createBackground();
+
+        const percentage = Math.round((gameState.score / gameState.totalQuestions) * 100);
+        let title, titleColor;
+
+        if (percentage >= 90) { title = 'Excellent!'; titleColor = '#4aff4a'; }
+        else if (percentage >= 70) { title = 'Great Job!'; titleColor = '#4a9eff'; }
+        else if (percentage >= 50) { title = 'Good Try!'; titleColor = '#ffaa4a'; }
+        else { title = 'Keep Learning!'; titleColor = '#ff6a6a'; }
+
+        this.add.text(width / 2, 100, title, {
+            fontSize: '48px',
+            fontFamily: 'Arial Black, sans-serif',
+            color: titleColor
+        }).setOrigin(0.5);
+
+        this.scoreDisplay = this.add.text(width / 2, 180, '0', {
+            fontSize: '72px',
+            fontFamily: 'Arial Black, sans-serif',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        this.add.text(width / 2, 240, `out of ${gameState.totalQuestions}`, {
+            fontSize: '24px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#888888'
+        }).setOrigin(0.5);
+
+        let displayScore = 0;
+        this.time.addEvent({
+            delay: 50,
+            repeat: gameState.score,
+            callback: () => {
+                displayScore++;
+                this.scoreDisplay.setText(displayScore.toString());
+            }
+        });
+
+        this.createPercentageCircle(width / 2, 360, percentage);
+
+        const correctCount = gameState.answers.filter(a => a.correct).length;
+        const wrongCount = gameState.answers.filter(a => !a.correct).length;
+
+        this.add.text(width / 2 - 100, 470, `Correct: ${correctCount}`, {
+            fontSize: '20px', fontFamily: 'Arial, sans-serif', color: '#4aff4a'
+        }).setOrigin(0.5);
+
+        this.add.text(width / 2 + 100, 470, `Wrong: ${wrongCount}`, {
+            fontSize: '20px', fontFamily: 'Arial, sans-serif', color: '#ff6a6a'
+        }).setOrigin(0.5);
+
+        this.createButton(width / 2 - 130, 560, 'Play Again', () => {
+            this.cameras.main.fadeOut(500);
+            this.time.delayedCall(500, () => this.scene.start('MenuScene'));
+        });
+
+        this.createButton(width / 2 + 130, 560, 'Review', () => this.showReview());
+
+        if (percentage >= 70) this.createCelebration();
+    }
+
+    createBackground() {
+        const { width, height } = this.cameras.main;
+        const graphics = this.add.graphics();
+
+        for (let i = 0; i < height; i++) {
+            const ratio = i / height;
+            const r = Math.floor(26 + ratio * 10);
+            const g = Math.floor(26 + ratio * 15);
+            const b = Math.floor(46 + ratio * 20);
+            graphics.fillStyle(Phaser.Display.Color.GetColor(r, g, b));
+            graphics.fillRect(0, i, width, 1);
+        }
+    }
+
+    createPercentageCircle(x, y, percentage) {
+        const radius = 60;
+
+        const bgCircle = this.add.graphics();
+        bgCircle.lineStyle(10, 0x333355, 1);
+        bgCircle.arc(x, y, radius, 0, Math.PI * 2);
+        bgCircle.strokePath();
+
+        const progressCircle = this.add.graphics();
+        const color = percentage >= 70 ? 0x4aff4a : percentage >= 50 ? 0xffaa4a : 0xff6a6a;
+
+        this.tweens.addCounter({
+            from: -Math.PI / 2,
+            to: -Math.PI / 2 + (percentage / 100) * Math.PI * 2,
+            duration: 1000,
+            ease: 'Power2',
+            onUpdate: (tween) => {
+                progressCircle.clear();
+                progressCircle.lineStyle(10, color, 1);
+                progressCircle.beginPath();
+                progressCircle.arc(x, y, radius, -Math.PI / 2, tween.getValue());
+                progressCircle.strokePath();
+            }
+        });
+
+        this.add.text(x, y, `${percentage}%`, {
+            fontSize: '28px',
+            fontFamily: 'Arial Black, sans-serif',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+    }
+
+    createButton(x, y, text, callback) {
+        const btn = this.add.container(x, y);
+        const bg = this.add.graphics();
+        bg.fillStyle(0x4a9eff, 1);
+        bg.fillRoundedRect(-100, -25, 200, 50, 12);
+
+        const btnText = this.add.text(0, 0, text, {
+            fontSize: '20px', fontFamily: 'Arial, sans-serif', color: '#ffffff'
+        }).setOrigin(0.5);
+
+        btn.add([bg, btnText]);
+        btn.setSize(200, 50);
+        btn.setInteractive({ useHandCursor: true });
+
+        btn.on('pointerover', () => {
+            bg.clear();
+            bg.fillStyle(0x6ab4ff, 1);
+            bg.fillRoundedRect(-100, -25, 200, 50, 12);
+        });
+
+        btn.on('pointerout', () => {
+            bg.clear();
+            bg.fillStyle(0x4a9eff, 1);
+            bg.fillRoundedRect(-100, -25, 200, 50, 12);
+        });
+
+        btn.on('pointerdown', callback);
+        return btn;
+    }
+
+    createCelebration() {
+        const { width, height } = this.cameras.main;
+        const colors = [0x4aff4a, 0x4a9eff, 0xffaa4a, 0xff6aff, 0xffff4a];
+
+        for (let i = 0; i < 30; i++) {
+            const x = Phaser.Math.Between(0, width);
+            const color = Phaser.Utils.Array.GetRandom(colors);
+            const particle = this.add.rectangle(x, -20, 8, 8, color);
+            particle.setRotation(Phaser.Math.DegToRad(45));
+
+            this.tweens.add({
+                targets: particle,
+                y: height + 50,
+                x: x + Phaser.Math.Between(-100, 100),
+                rotation: particle.rotation + Math.PI * 2,
+                duration: Phaser.Math.Between(2000, 4000),
+                delay: Phaser.Math.Between(0, 2000),
+                repeat: -1
+            });
+        }
+    }
+
+    showReview() {
+        this.children.removeAll();
+        const { width, height } = this.cameras.main;
+        this.createBackground();
+
+        this.add.text(width / 2, 30, 'Review Answers', {
+            fontSize: '32px',
+            fontFamily: 'Arial Black, sans-serif',
+            color: '#4a9eff'
+        }).setOrigin(0.5);
+
+        let scrollY = 0;
+        const contentHeight = gameState.answers.length * 120 + 100;
+        const container = this.add.container(0, 70);
+
+        gameState.answers.forEach((answer, i) => {
+            const y = i * 120;
+            const isCorrect = answer.correct;
+
+            const bg = this.add.graphics();
+            bg.fillStyle(isCorrect ? 0x2a4a2a : 0x4a2a2a, 0.8);
+            bg.fillRoundedRect(30, y, width - 60, 110, 10);
+            container.add(bg);
+
+            const status = isCorrect ? '\u2713' : '\u2717';
+            const statusColor = isCorrect ? '#4aff4a' : '#ff6a6a';
+            container.add(this.add.text(50, y + 10, `${i + 1}. ${status}`, {
+                fontSize: '18px', fontFamily: 'Arial Black, sans-serif', color: statusColor
+            }));
+
+            container.add(this.add.text(50, y + 35, answer.question.question, {
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif',
+                color: '#ffffff',
+                wordWrap: { width: width - 100 }
+            }));
+
+            const correctAnswer = answer.question.options[answer.question.correct];
+
+            if (!isCorrect) {
+                const yourAnswer = answer.question.options[answer.selected];
+                container.add(this.add.text(50, y + 70, `Your: ${yourAnswer}`, {
+                    fontSize: '12px', fontFamily: 'Arial, sans-serif', color: '#ff8888'
+                }));
+                container.add(this.add.text(50, y + 90, `Correct: ${correctAnswer}`, {
+                    fontSize: '12px', fontFamily: 'Arial, sans-serif', color: '#88ff88'
+                }));
+            } else {
+                container.add(this.add.text(50, y + 75, `Answer: ${correctAnswer}`, {
+                    fontSize: '12px', fontFamily: 'Arial, sans-serif', color: '#88ff88'
+                }));
+            }
+        });
+
+        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) => {
+            scrollY -= deltaY * 0.5;
+            scrollY = Phaser.Math.Clamp(scrollY, -(contentHeight - height + 150), 0);
+            container.y = 70 + scrollY;
+        });
+
+        this.createButton(width / 2, height - 40, 'Back to Menu', () => {
+            this.cameras.main.fadeOut(500);
+            this.time.delayedCall(500, () => this.scene.start('MenuScene'));
+        });
+    }
+}
+
+// ==================== Start Game ====================
+const config = {
+    type: Phaser.AUTO,
+    width: 900,
+    height: 700,
+    parent: 'game-container',
+    backgroundColor: '#1a1a2e',
+    scene: [BootScene, MenuScene, GameScene, ResultScene],
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+};
+
+const game = new Phaser.Game(config);
+    </script>
+</body>
+</html>
