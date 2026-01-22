@@ -1,58 +1,49 @@
-<!doctype html><html lang=en dir=auto data-theme=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>C++ Trivials Quiz Game - 100道C++知识点问答游戏 | 贝哥郎里格朗</title><meta name=keywords content="C++,游戏,学习工具"><meta name=description content="今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。
-游戏特点
+<!doctype html><html lang=en dir=auto data-theme=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>C++ Trivials Quiz Game - 100 C++ Knowledge Questions | 贝哥郎里格朗</title><meta name=keywords content="C++,Game,Learning Tool"><meta name=description content="A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.
+Features
 
-100 道 C++ 选择题，每次随机抽取 20 题
-涵盖 7 大类知识点：
+100 C++ multiple-choice questions, 20 randomly selected per game
+Covers 7 major categories:
 
-基础类型 & 表达式
-对象生命周期 & 内存
-STL 容器与迭代器
-函数 & 调用约定
-C++11/14/17/20 新特性
-模板 & 类型系统
-常见 UB / 高频陷阱
-
-
-使用 Phaser.js 游戏引擎，支持动画和特效
-答对有庆祝特效，答错有震动效果
-结果页面展示得分和正确率
-支持回顾所有答题记录
-
-开始游戏
-点击下方链接开始挑战：
-开始游戏
-适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。
-祝你玩得开心，学有所获！"><meta name=author content="贝哥郎里格朗"><link rel=canonical href=https://w732.github.io/posts/cpp-quiz-game/><link crossorigin=anonymous href=/assets/css/stylesheet.da3211e5ef867bf2b75fd5a6515cfed7195c011e8ab735694e203810a827097b.css integrity="sha256-2jIR5e+Ge/K3X9WmUVz+1xlcAR6KtzVpTiA4EKgnCXs=" rel="preload stylesheet" as=style><link rel=icon href=https://w732.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://w732.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://w732.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://w732.github.io/apple-touch-icon.png><link rel=mask-icon href=https://w732.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://w732.github.io/posts/cpp-quiz-game/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}@media(prefers-color-scheme:light){.list::-webkit-scrollbar-thumb{border-color:var(--code-bg)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><meta property="og:url" content="https://w732.github.io/posts/cpp-quiz-game/"><meta property="og:site_name" content="贝哥郎里格朗"><meta property="og:title" content="C++ Trivials Quiz Game - 100道C++知识点问答游戏"><meta property="og:description" content="今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。
-游戏特点 100 道 C++ 选择题，每次随机抽取 20 题 涵盖 7 大类知识点： 基础类型 & 表达式 对象生命周期 & 内存 STL 容器与迭代器 函数 & 调用约定 C++11/14/17/20 新特性 模板 & 类型系统 常见 UB / 高频陷阱 使用 Phaser.js 游戏引擎，支持动画和特效 答对有庆祝特效，答错有震动效果 结果页面展示得分和正确率 支持回顾所有答题记录 开始游戏 点击下方链接开始挑战：
-开始游戏
-适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。
-祝你玩得开心，学有所获！"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-01-22T00:00:00+00:00"><meta property="article:modified_time" content="2026-01-22T00:00:00+00:00"><meta property="article:tag" content="C++"><meta property="article:tag" content="游戏"><meta property="article:tag" content="学习工具"><meta name=twitter:card content="summary"><meta name=twitter:title content="C++ Trivials Quiz Game - 100道C++知识点问答游戏"><meta name=twitter:description content="今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。
-游戏特点
-
-100 道 C++ 选择题，每次随机抽取 20 题
-涵盖 7 大类知识点：
-
-基础类型 & 表达式
-对象生命周期 & 内存
-STL 容器与迭代器
-函数 & 调用约定
-C++11/14/17/20 新特性
-模板 & 类型系统
-常见 UB / 高频陷阱
+Basic Types & Expressions
+Object Lifetime & Memory
+STL Containers & Iterators
+Functions & Calling Conventions
+C++11/14/17/20 New Features
+Templates & Type System
+Common UB / Frequent Pitfalls
 
 
-使用 Phaser.js 游戏引擎，支持动画和特效
-答对有庆祝特效，答错有震动效果
-结果页面展示得分和正确率
-支持回顾所有答题记录
+Built with Phaser.js game engine, supports animations and effects
+Celebration effects for correct answers, shake effect for wrong answers
+Result page shows score and accuracy
+Review all your answers after the game
 
-开始游戏
-点击下方链接开始挑战：
-开始游戏
-适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。
-祝你玩得开心，学有所获！"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://w732.github.io/posts/"},{"@type":"ListItem","position":2,"name":"C++ Trivials Quiz Game - 100道C++知识点问答游戏","item":"https://w732.github.io/posts/cpp-quiz-game/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"C++ Trivials Quiz Game - 100道C++知识点问答游戏","name":"C\u002b\u002b Trivials Quiz Game - 100道C\u002b\u002b知识点问答游戏","description":"今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。\n游戏特点 100 道 C++ 选择题，每次随机抽取 20 题 涵盖 7 大类知识点： 基础类型 \u0026amp; 表达式 对象生命周期 \u0026amp; 内存 STL 容器与迭代器 函数 \u0026amp; 调用约定 C++11/14/17/20 新特性 模板 \u0026amp; 类型系统 常见 UB / 高频陷阱 使用 Phaser.js 游戏引擎，支持动画和特效 答对有庆祝特效，答错有震动效果 结果页面展示得分和正确率 支持回顾所有答题记录 开始游戏 点击下方链接开始挑战：\n开始游戏\n适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。\n祝你玩得开心，学有所获！\n","keywords":["C++","游戏","学习工具"],"articleBody":"今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。\n游戏特点 100 道 C++ 选择题，每次随机抽取 20 题 涵盖 7 大类知识点： 基础类型 \u0026 表达式 对象生命周期 \u0026 内存 STL 容器与迭代器 函数 \u0026 调用约定 C++11/14/17/20 新特性 模板 \u0026 类型系统 常见 UB / 高频陷阱 使用 Phaser.js 游戏引擎，支持动画和特效 答对有庆祝特效，答错有震动效果 结果页面展示得分和正确率 支持回顾所有答题记录 开始游戏 点击下方链接开始挑战：\n开始游戏\n适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。\n祝你玩得开心，学有所获！\n","wordCount":"52","inLanguage":"en","datePublished":"2026-01-22T00:00:00Z","dateModified":"2026-01-22T00:00:00Z","author":{"@type":"Person","name":"贝哥郎里格朗"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://w732.github.io/posts/cpp-quiz-game/"},"publisher":{"@type":"Organization","name":"贝哥郎里格朗","logo":{"@type":"ImageObject","url":"https://w732.github.io/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=nav><div class=logo><a href=https://w732.github.io/ accesskey=h title="贝哥郎里格朗 (Alt + H)">贝哥郎里格朗</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+Play Now
+Click the link below to start the challenge:"><meta name=author content="贝哥郎里格朗"><link rel=canonical href=https://w732.github.io/posts/cpp-quiz-game/><link crossorigin=anonymous href=/assets/css/stylesheet.da3211e5ef867bf2b75fd5a6515cfed7195c011e8ab735694e203810a827097b.css integrity="sha256-2jIR5e+Ge/K3X9WmUVz+1xlcAR6KtzVpTiA4EKgnCXs=" rel="preload stylesheet" as=style><link rel=icon href=https://w732.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://w732.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://w732.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://w732.github.io/apple-touch-icon.png><link rel=mask-icon href=https://w732.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://w732.github.io/posts/cpp-quiz-game/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}@media(prefers-color-scheme:light){.list::-webkit-scrollbar-thumb{border-color:var(--code-bg)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><meta property="og:url" content="https://w732.github.io/posts/cpp-quiz-game/"><meta property="og:site_name" content="贝哥郎里格朗"><meta property="og:title" content="C++ Trivials Quiz Game - 100 C++ Knowledge Questions"><meta property="og:description" content="A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.
+Features 100 C++ multiple-choice questions, 20 randomly selected per game Covers 7 major categories: Basic Types & Expressions Object Lifetime & Memory STL Containers & Iterators Functions & Calling Conventions C++11/14/17/20 New Features Templates & Type System Common UB / Frequent Pitfalls Built with Phaser.js game engine, supports animations and effects Celebration effects for correct answers, shake effect for wrong answers Result page shows score and accuracy Review all your answers after the game Play Now Click the link below to start the challenge:"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-01-22T00:00:00+00:00"><meta property="article:modified_time" content="2026-01-22T00:00:00+00:00"><meta property="article:tag" content="C++"><meta property="article:tag" content="Game"><meta property="article:tag" content="Learning Tool"><meta name=twitter:card content="summary"><meta name=twitter:title content="C++ Trivials Quiz Game - 100 C++ Knowledge Questions"><meta name=twitter:description content="A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.
+Features
+
+100 C++ multiple-choice questions, 20 randomly selected per game
+Covers 7 major categories:
+
+Basic Types & Expressions
+Object Lifetime & Memory
+STL Containers & Iterators
+Functions & Calling Conventions
+C++11/14/17/20 New Features
+Templates & Type System
+Common UB / Frequent Pitfalls
+
+
+Built with Phaser.js game engine, supports animations and effects
+Celebration effects for correct answers, shake effect for wrong answers
+Result page shows score and accuracy
+Review all your answers after the game
+
+Play Now
+Click the link below to start the challenge:"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://w732.github.io/posts/"},{"@type":"ListItem","position":2,"name":"C++ Trivials Quiz Game - 100 C++ Knowledge Questions","item":"https://w732.github.io/posts/cpp-quiz-game/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"C++ Trivials Quiz Game - 100 C++ Knowledge Questions","name":"C\u002b\u002b Trivials Quiz Game - 100 C\u002b\u002b Knowledge Questions","description":"A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.\nFeatures 100 C++ multiple-choice questions, 20 randomly selected per game Covers 7 major categories: Basic Types \u0026amp; Expressions Object Lifetime \u0026amp; Memory STL Containers \u0026amp; Iterators Functions \u0026amp; Calling Conventions C++11/14/17/20 New Features Templates \u0026amp; Type System Common UB / Frequent Pitfalls Built with Phaser.js game engine, supports animations and effects Celebration effects for correct answers, shake effect for wrong answers Result page shows score and accuracy Review all your answers after the game Play Now Click the link below to start the challenge:\n","keywords":["C++","Game","Learning Tool"],"articleBody":"A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.\nFeatures 100 C++ multiple-choice questions, 20 randomly selected per game Covers 7 major categories: Basic Types \u0026 Expressions Object Lifetime \u0026 Memory STL Containers \u0026 Iterators Functions \u0026 Calling Conventions C++11/14/17/20 New Features Templates \u0026 Type System Common UB / Frequent Pitfalls Built with Phaser.js game engine, supports animations and effects Celebration effects for correct answers, shake effect for wrong answers Result page shows score and accuracy Review all your answers after the game Play Now Click the link below to start the challenge:\nStart Game\nPerfect for students learning C++ or developers looking to review and reinforce their C++ knowledge.\nHave fun and learn something new!\n","wordCount":"121","inLanguage":"en","datePublished":"2026-01-22T00:00:00Z","dateModified":"2026-01-22T00:00:00Z","author":{"@type":"Person","name":"贝哥郎里格朗"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://w732.github.io/posts/cpp-quiz-game/"},"publisher":{"@type":"Organization","name":"贝哥郎里格朗","logo":{"@type":"ImageObject","url":"https://w732.github.io/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=nav><div class=logo><a href=https://w732.github.io/ accesskey=h title="贝哥郎里格朗 (Alt + H)">贝哥郎里格朗</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
 <svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">C++ Trivials Quiz Game - 100道C++知识点问答游戏</h1><div class=post-meta><span title='2026-01-22 00:00:00 +0000 UTC'>January 22, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>贝哥郎里格朗</span></div></header><div class=post-content><p>今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。</p><h2 id=游戏特点>游戏特点<a hidden class=anchor aria-hidden=true href=#游戏特点>#</a></h2><ul><li>100 道 C++ 选择题，每次随机抽取 20 题</li><li>涵盖 7 大类知识点：<ul><li>基础类型 & 表达式</li><li>对象生命周期 & 内存</li><li>STL 容器与迭代器</li><li>函数 & 调用约定</li><li>C++11/14/17/20 新特性</li><li>模板 & 类型系统</li><li>常见 UB / 高频陷阱</li></ul></li><li>使用 Phaser.js 游戏引擎，支持动画和特效</li><li>答对有庆祝特效，答错有震动效果</li><li>结果页面展示得分和正确率</li><li>支持回顾所有答题记录</li></ul><h2 id=开始游戏>开始游戏<a hidden class=anchor aria-hidden=true href=#开始游戏>#</a></h2><p>点击下方链接开始挑战：</p><p><strong><a href=/games/cpp-quiz/>开始游戏</a></strong></p><p>适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。</p><p>祝你玩得开心，学有所获！</p></div><footer class=post-footer><ul class=post-tags><li><a href=https://w732.github.io/tags/c++/>C++</a></li><li><a href=https://w732.github.io/tags/%E6%B8%B8%E6%88%8F/>游戏</a></li><li><a href=https://w732.github.io/tags/%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7/>学习工具</a></li></ul></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://w732.github.io/>贝哥郎里格朗</a></span> ·
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">C++ Trivials Quiz Game - 100 C++ Knowledge Questions</h1><div class=post-meta><span title='2026-01-22 00:00:00 +0000 UTC'>January 22, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>贝哥郎里格朗</span></div></header><div class=post-content><p>A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.</p><h2 id=features>Features<a hidden class=anchor aria-hidden=true href=#features>#</a></h2><ul><li>100 C++ multiple-choice questions, 20 randomly selected per game</li><li>Covers 7 major categories:<ul><li>Basic Types & Expressions</li><li>Object Lifetime & Memory</li><li>STL Containers & Iterators</li><li>Functions & Calling Conventions</li><li>C++11/14/17/20 New Features</li><li>Templates & Type System</li><li>Common UB / Frequent Pitfalls</li></ul></li><li>Built with Phaser.js game engine, supports animations and effects</li><li>Celebration effects for correct answers, shake effect for wrong answers</li><li>Result page shows score and accuracy</li><li>Review all your answers after the game</li></ul><h2 id=play-now>Play Now<a hidden class=anchor aria-hidden=true href=#play-now>#</a></h2><p>Click the link below to start the challenge:</p><p><strong><a href=/games/cpp-quiz/>Start Game</a></strong></p><p>Perfect for students learning C++ or developers looking to review and reinforce their C++ knowledge.</p><p>Have fun and learn something new!</p></div><footer class=post-footer><ul class=post-tags><li><a href=https://w732.github.io/tags/c++/>C++</a></li><li><a href=https://w732.github.io/tags/game/>Game</a></li><li><a href=https://w732.github.io/tags/learning-tool/>Learning Tool</a></li></ul></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://w732.github.io/>贝哥郎里格朗</a></span> ·
 <span>Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
 <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
