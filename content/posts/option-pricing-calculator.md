@@ -8,7 +8,7 @@ I'm sharing an option pricing calculator I built that supports both European and
 
 ## Features
 
-- **Pricing Models**: Black-Scholes for European options, Binomial tree for American options
+- **Pricing Models**: Black-Scholes for European options, Trinomial tree for American options
 - **Full Greeks**: Delta, Gamma, Vega, Theta, Rho and more
 - **Implied Volatility**: Calculate IV from market price
 - **Intraday Precision**: Supports trading hours and current time for precise DTE calculation
@@ -33,8 +33,7 @@ Click the link below to open the calculator:
 ## Technical Notes
 
 - The calculator uses a high-performance pricing engine written in JavaScript
-- American options are priced using a binomial tree model with 255 time steps
-- Greeks are calculated using finite difference methods
+- American options are priced using a Black-Scholes or Trinomial tree model
 - All calculations run locally in your browser - no data is sent to any server
 
 Useful for options traders, quants, and anyone learning about derivatives pricing.
