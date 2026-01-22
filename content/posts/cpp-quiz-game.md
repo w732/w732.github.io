@@ -1,33 +1,33 @@
 ---
-title: "C++ Trivials Quiz Game - 100道C++知识点问答游戏"
+title: "C++ Trivials Quiz Game - 100 C++ Knowledge Questions"
 date: 2026-01-22
-tags: ["C++", "游戏", "学习工具"]
+tags: ["C++", "Game", "Learning Tool"]
 ---
 
-今天分享一个自己制作的 C++ 知识点问答游戏，涵盖了 100 道精选的 C++ 知识点。
+A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.
 
-## 游戏特点
+## Features
 
-- 100 道 C++ 选择题，每次随机抽取 20 题
-- 涵盖 7 大类知识点：
-  - 基础类型 & 表达式
-  - 对象生命周期 & 内存
-  - STL 容器与迭代器
-  - 函数 & 调用约定
-  - C++11/14/17/20 新特性
-  - 模板 & 类型系统
-  - 常见 UB / 高频陷阱
-- 使用 Phaser.js 游戏引擎，支持动画和特效
-- 答对有庆祝特效，答错有震动效果
-- 结果页面展示得分和正确率
-- 支持回顾所有答题记录
+- 100 C++ multiple-choice questions, 20 randomly selected per game
+- Covers 7 major categories:
+  - Basic Types & Expressions
+  - Object Lifetime & Memory
+  - STL Containers & Iterators
+  - Functions & Calling Conventions
+  - C++11/14/17/20 New Features
+  - Templates & Type System
+  - Common UB / Frequent Pitfalls
+- Built with Phaser.js game engine, supports animations and effects
+- Celebration effects for correct answers, shake effect for wrong answers
+- Result page shows score and accuracy
+- Review all your answers after the game
 
-## 开始游戏
+## Play Now
 
-点击下方链接开始挑战：
+Click the link below to start the challenge:
 
-**[开始游戏](/games/cpp-quiz/)**
+**[Start Game](/games/cpp-quiz/)**
 
-适合正在学习 C++ 的同学或者想要复习巩固 C++ 知识的开发者。
+Perfect for students learning C++ or developers looking to review and reinforce their C++ knowledge.
 
-祝你玩得开心，学有所获！
+Have fun and learn something new!
