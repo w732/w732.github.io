@@ -254,7 +254,25 @@ Piece.prototype.update = function() {
     landed = true;
     this.y = Math.floor(this.y);
     if (this.lockDelay >= settings['Lock Delay']) {
+      // Track combo - count lines before and after
+      var linesBefore = (typeof lines !== 'undefined') ? lines : 0;
       stack.addPiece(this.tetro);
+      var linesAfter = (typeof lines !== 'undefined') ? lines : 0;
+      var linesCleared = linesAfter - linesBefore;
+
+      // Update combo count
+      if (linesCleared > 0) {
+        window.AI_COMBO_COUNT = (window.AI_COMBO_COUNT || 0) + 1;
+        if (window.AI_COMBO_COUNT > 1) {
+          console.log('[AI] Combo x' + window.AI_COMBO_COUNT + '!');
+        }
+      } else {
+        if (window.AI_COMBO_COUNT > 1) {
+          console.log('[AI] Combo ended at x' + window.AI_COMBO_COUNT);
+        }
+        window.AI_COMBO_COUNT = 0;
+      }
+
       this.new(preview.next());
     } else {
       var a = 1 / setting['Lock Delay'][settings['Lock Delay']];
@@ -320,6 +338,9 @@ window.AI_PLANNED_MOVE = null; // { x, y, tetro }
 // AI move queue for animated movement
 window.AI_MOVE_QUEUE = []; // array of actions: 'rotate', 'left', 'right', 'drop'
 window.AI_IS_ANIMATING = false;
+
+// Combo tracking for AI evaluation
+window.AI_COMBO_COUNT = 0; // current combo count (consecutive line clears)
 
 // ===================== Claude AI Integration =====================
 
@@ -713,7 +734,8 @@ const AI_WEIGHT_PRESETS = {
         aggregateHeight: -0.5,
         coveredCells: -1,
         tSpin: 4,
-        tSpinMini: 1
+        tSpinMini: 1,
+        combo: 1
     },
     conservative: {
         landingHeight: -1.5,
@@ -727,7 +749,8 @@ const AI_WEIGHT_PRESETS = {
         aggregateHeight: -0.8,
         coveredCells: -2,
         tSpin: 2,
-        tSpinMini: 0.5
+        tSpinMini: 0.5,
+        combo: 0.5
     },
     aggressive: {
         landingHeight: -0.5,
@@ -741,7 +764,8 @@ const AI_WEIGHT_PRESETS = {
         aggregateHeight: -0.3,
         coveredCells: -0.5,
         tSpin: 6,
-        tSpinMini: 2
+        tSpinMini: 2,
+        combo: 2
     }
 };
 
@@ -785,7 +809,17 @@ function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
         }
     }
 
+    // Combo bonus calculation
+    // If lines cleared, combo continues and gives bonus
+    // Bonus scales with current combo count
+    let comboBonus = 0;
+    const currentCombo = window.AI_COMBO_COUNT || 0;
     const w = window.AI_WEIGHTS;
+    if (rowsCleared > 0 && (w.combo || 0) > 0) {
+        // Combo bonus = weight * (comboCount + 1) * linesCleared
+        // This rewards continuing combos
+        comboBonus = (w.combo || 1) * (currentCombo + 1) * rowsCleared;
+    }
 
     // Sum up the weighted scores
     return (
@@ -799,7 +833,8 @@ function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
         w.holeDepth * holeDepth +
         (w.aggregateHeight || 0) * aggregateHeight +
         (w.coveredCells || 0) * coveredCells +
-        tSpinBonus
+        tSpinBonus +
+        comboBonus
     );
 }
 
