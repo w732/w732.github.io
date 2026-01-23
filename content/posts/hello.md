@@ -1,12 +1,12 @@
 ---
-title: "你好，世界"
+title: "Hello, World"
 date: 2026-01-12
-tags: ["随笔"]
+tags: ["Essays"]
 ---
 
-这是我的第一篇博客文章。
+This is my first blog post.
 
-我会在这里记录：
-- 技术
-- 思考
-- 学习笔记
+I will record here:
+- Technology
+- Thoughts
+- Study Notes
