@@ -654,6 +654,51 @@ function calculateBumpiness(grid, heights) {
     return bumpiness;
 }
 
+// T-Spin detection
+// T-piece index is 5, T-Spin requires 3+ corners filled around T center
+function detectTSpin(grid, pieceIndex, tetro, x, y, rowsCleared) {
+    // Only T-piece can T-Spin
+    if (pieceIndex !== 5) return { isTSpin: false, isMini: false };
+    if (rowsCleared === 0) return { isTSpin: false, isMini: false };
+
+    // T-piece center is at (1,1) in its 3x3 bounding box
+    const cx = x + 1;
+    const cy = y + 1;
+
+    // Check 4 corners around T center
+    const corners = [
+        { x: cx - 1, y: cy - 1 }, // top-left
+        { x: cx + 1, y: cy - 1 }, // top-right
+        { x: cx - 1, y: cy + 1 }, // bottom-left
+        { x: cx + 1, y: cy + 1 }  // bottom-right
+    ];
+
+    let filledCorners = 0;
+    let frontCornersFilled = 0; // corners in front of T (depends on rotation)
+
+    for (let i = 0; i < corners.length; i++) {
+        const corner = corners[i];
+        // Out of bounds counts as filled
+        if (corner.x < 0 || corner.x >= GRID_WIDTH ||
+            corner.y < 0 || corner.y >= GRID_HEIGHT ||
+            grid[corner.x][corner.y]) {
+            filledCorners++;
+            // Front corners are the two corners where T points
+            // For simplicity, count top corners as front (covers most T-spin cases)
+            if (i < 2) frontCornersFilled++;
+        }
+    }
+
+    // T-Spin: 3+ corners filled
+    // T-Spin Mini: 3 corners but only 1 front corner
+    if (filledCorners >= 3) {
+        const isMini = (filledCorners === 3 && frontCornersFilled < 2);
+        return { isTSpin: true, isMini: isMini };
+    }
+
+    return { isTSpin: false, isMini: false };
+}
+
 // Weight presets - tuned for stable play
 const AI_WEIGHT_PRESETS = {
     balanced: {
@@ -666,7 +711,9 @@ const AI_WEIGHT_PRESETS = {
         bumpiness: -0.5,
         holeDepth: -1,
         aggregateHeight: -0.5,
-        coveredCells: -1
+        coveredCells: -1,
+        tSpin: 4,
+        tSpinMini: 1
     },
     conservative: {
         landingHeight: -1.5,
@@ -678,7 +725,9 @@ const AI_WEIGHT_PRESETS = {
         bumpiness: -1,
         holeDepth: -2,
         aggregateHeight: -0.8,
-        coveredCells: -2
+        coveredCells: -2,
+        tSpin: 2,
+        tSpinMini: 0.5
     },
     aggressive: {
         landingHeight: -0.5,
@@ -690,7 +739,9 @@ const AI_WEIGHT_PRESETS = {
         bumpiness: -0.3,
         holeDepth: -0.5,
         aggregateHeight: -0.3,
-        coveredCells: -0.5
+        coveredCells: -0.5,
+        tSpin: 6,
+        tSpinMini: 2
     }
 };
 
@@ -699,8 +750,8 @@ if (window.AI_WEIGHTS === undefined) {
     window.AI_WEIGHTS = Object.assign({}, AI_WEIGHT_PRESETS.balanced);
 }
 
-// AI evaluate function - now accepts landingY and tetro for accurate landing height
-function aiEvaluate(grid, landingY, tetro) {
+// AI evaluate function - now accepts landingY, tetro, pieceIndex, and x for T-Spin detection
+function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
     // Pre-calculate column heights for reuse
     const heights = calculateColumnHeights(grid);
 
@@ -718,6 +769,22 @@ function aiEvaluate(grid, landingY, tetro) {
     const aggregateHeight = calculateAggregateHeight(grid, heights);
     const coveredCells = calculateCoveredCells(grid);
 
+    // T-Spin detection (needs original grid before line clear for accurate corner check)
+    let tSpinBonus = 0;
+    if (pieceIndex === 5 && x !== undefined && landingY !== undefined) {
+        const tSpinResult = detectTSpin(grid, pieceIndex, tetro, x, landingY, rowsCleared);
+        if (tSpinResult.isTSpin) {
+            const w = window.AI_WEIGHTS;
+            if (tSpinResult.isMini) {
+                tSpinBonus = (w.tSpinMini || 1) * rowsCleared;
+                // console.log('[AI] T-Spin Mini detected! Lines: ' + rowsCleared);
+            } else {
+                tSpinBonus = (w.tSpin || 4) * rowsCleared;
+                // console.log('[AI] T-Spin detected! Lines: ' + rowsCleared);
+            }
+        }
+    }
+
     const w = window.AI_WEIGHTS;
 
     // Sum up the weighted scores
@@ -731,7 +798,8 @@ function aiEvaluate(grid, landingY, tetro) {
         w.bumpiness * bumpiness +
         w.holeDepth * holeDepth +
         (w.aggregateHeight || 0) * aggregateHeight +
-        (w.coveredCells || 0) * coveredCells
+        (w.coveredCells || 0) * coveredCells +
+        tSpinBonus
     );
 }
 
@@ -879,7 +947,7 @@ function getAllPlacements(tetro, grid, moveValidSim) {
 }
 
 // Evaluate a single placement (used for lookahead)
-function evaluatePlacement(grid, placement, enablePruning) {
+function evaluatePlacement(grid, placement, enablePruning, pieceIndex) {
     const { x, y, tetro } = placement;
 
     // Early pruning: skip if placement creates too many holes
@@ -889,17 +957,17 @@ function evaluatePlacement(grid, placement, enablePruning) {
     }
 
     const result = aiSimulate(grid, tetro, x, y);
-    return aiEvaluate(result.grid, result.landingY, tetro);
+    return aiEvaluate(result.grid, result.landingY, tetro, pieceIndex, x);
 }
 
 // Find best placement for a grid state (no lookahead)
-function findBestPlacement(tetro, grid, moveValidSim, enablePruning) {
+function findBestPlacement(tetro, grid, moveValidSim, enablePruning, pieceIndex) {
     const placements = getAllPlacements(tetro, grid, moveValidSim);
     let best = null;
     let bestScore = -Infinity;
 
     for (const placement of placements) {
-        const score = evaluatePlacement(grid, placement, enablePruning);
+        const score = evaluatePlacement(grid, placement, enablePruning, pieceIndex);
         if (score > bestScore) {
             bestScore = score;
             best = placement;
@@ -928,7 +996,7 @@ Piece.prototype.getBestMoveWithLookahead = function(nextPieceIndex) {
         if (quickHoles > 3) continue;
 
         const result = aiSimulate(grid, tetro, x, y);
-        let score = aiEvaluate(result.grid, result.landingY, tetro);
+        let score = aiEvaluate(result.grid, result.landingY, tetro, this.index, x);
 
         // 2-step lookahead: evaluate best move for next piece
         if (nextTetro) {
@@ -936,7 +1004,8 @@ Piece.prototype.getBestMoveWithLookahead = function(nextPieceIndex) {
                 nextTetro,
                 result.grid,
                 this.moveValidSim.bind(this),
-                true
+                true,
+                nextPieceIndex
             );
             if (nextResult.score !== -Infinity) {
                 score += window.AI_LOOKAHEAD_DISCOUNT * nextResult.score;
@@ -957,7 +1026,8 @@ Piece.prototype.getBestMove = function() {
         this.tetro,
         stack.grid,
         this.moveValidSim.bind(this),
-        true
+        true,
+        this.index
     );
     return result.placement;
 };
@@ -975,7 +1045,7 @@ Piece.prototype.shouldUseHold = function() {
     // Score for current piece
     const currentMove = this.getBestMoveWithLookahead(nextPieceIndex);
     const currentScore = currentMove
-        ? evaluatePlacement(grid, currentMove, false)
+        ? evaluatePlacement(grid, currentMove, false, this.index)
         : -Infinity;
 
     // Score for hold piece (or next piece if hold is empty)
@@ -993,7 +1063,8 @@ Piece.prototype.shouldUseHold = function() {
         holdTetro,
         grid,
         this.moveValidSim.bind(this),
-        true
+        true,
+        holdPieceIndex
     );
 
     // Use hold if it gives significantly better score
@@ -1104,7 +1175,7 @@ Piece.prototype.aiMove = function() {
 
             // Evaluate this placement
             const result = aiSimulate(grid, testTetro, testX, testY);
-            const score = aiEvaluate(result.grid, result.landingY, testTetro);
+            const score = aiEvaluate(result.grid, result.landingY, testTetro, this.index, testX);
 
             validPlacements++;
             if (score > bestScore) {
