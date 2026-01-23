@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Algorithms on w732</title><link>https://w732.github.io/tags/algorithms/</link><description>Recent content in Algorithms on w732</description><generator>Hugo -- 0.154.5</generator><language>zh-cn</language><lastBuildDate>Fri, 23 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://w732.github.io/tags/algorithms/index.xml" rel="self" type="application/rss+xml"/><item><title>Building a Tetris AI: Heuristic Evaluation and Search Strategies</title><link>https://w732.github.io/posts/tetris-ai-technical/</link><pubDate>Fri, 23 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/tetris-ai-technical/</guid><description>&lt;p&gt;This article provides a comprehensive technical deep-dive into building an AI for Tetris. We&amp;rsquo;ll cover the fundamental mechanics of modern Tetris, the heuristic evaluation approach, and how to combine multiple features into an effective AI player.&lt;/p&gt;
+&lt;h2 id="table-of-contents"&gt;Table of Contents&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="#tetris-fundamentals"&gt;Tetris Fundamentals&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#ai-architecture-overview"&gt;AI Architecture Overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#heuristic-features"&gt;Heuristic Features&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#search-algorithm"&gt;Search Algorithm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#weight-tuning"&gt;Weight Tuning&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#advanced-techniques"&gt;Advanced Techniques&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#implementation-details"&gt;Implementation Details&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="tetris-fundamentals"&gt;Tetris Fundamentals&lt;/h2&gt;
+&lt;p&gt;Before diving into AI strategies, let&amp;rsquo;s understand the core mechanics of modern Tetris (specifically the Tetris Guideline standard).&lt;/p&gt;</description></item></channel></rss>
