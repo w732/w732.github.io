@@ -774,8 +774,16 @@ if (window.AI_WEIGHTS === undefined) {
     window.AI_WEIGHTS = Object.assign({}, AI_WEIGHT_PRESETS.balanced);
 }
 
-// AI evaluate function - now accepts landingY, tetro, pieceIndex, and x for T-Spin detection
-function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
+// AI evaluate function
+// Parameters:
+//   grid - board state after placement
+//   landingY - Y position where piece landed
+//   tetro - tetromino shape
+//   pieceIndex - piece type index (0-6)
+//   x - X position of placement
+//   simulatedCombo - optional simulated combo count for lookahead (if undefined, uses actual)
+// Returns: { score, linesCleared } for combo simulation in lookahead
+function aiEvaluate(grid, landingY, tetro, pieceIndex, x, simulatedCombo) {
     // Pre-calculate column heights for reuse
     const heights = calculateColumnHeights(grid);
 
@@ -801,19 +809,16 @@ function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
             const w = window.AI_WEIGHTS;
             if (tSpinResult.isMini) {
                 tSpinBonus = (w.tSpinMini || 1) * rowsCleared;
-                // console.log('[AI] T-Spin Mini detected! Lines: ' + rowsCleared);
             } else {
                 tSpinBonus = (w.tSpin || 4) * rowsCleared;
-                // console.log('[AI] T-Spin detected! Lines: ' + rowsCleared);
             }
         }
     }
 
     // Combo bonus calculation
-    // If lines cleared, combo continues and gives bonus
-    // Bonus scales with current combo count
+    // Use simulated combo for lookahead, or actual combo for current move
     let comboBonus = 0;
-    const currentCombo = window.AI_COMBO_COUNT || 0;
+    const currentCombo = (simulatedCombo !== undefined) ? simulatedCombo : (window.AI_COMBO_COUNT || 0);
     const w = window.AI_WEIGHTS;
     if (rowsCleared > 0 && (w.combo || 0) > 0) {
         // Combo bonus = weight * (comboCount + 1) * linesCleared
@@ -822,7 +827,7 @@ function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
     }
 
     // Sum up the weighted scores
-    return (
+    const score = (
         w.landingHeight * landingHeight +
         w.rowsCleared * rowsCleared +
         w.rowTransitions * rowTransitions +
@@ -836,6 +841,9 @@ function aiEvaluate(grid, landingY, tetro, pieceIndex, x) {
         tSpinBonus +
         comboBonus
     );
+
+    // Return object with score and linesCleared for combo simulation in lookahead
+    return { score: score, linesCleared: rowsCleared };
 }
 
 // Quick hole count for early pruning (faster than full calculation)
@@ -982,41 +990,48 @@ function getAllPlacements(tetro, grid, moveValidSim) {
 }
 
 // Evaluate a single placement (used for lookahead)
-function evaluatePlacement(grid, placement, enablePruning, pieceIndex) {
+// Returns { score, linesCleared } or { score: -Infinity, linesCleared: 0 } if pruned
+function evaluatePlacement(grid, placement, enablePruning, pieceIndex, simulatedCombo) {
     const { x, y, tetro } = placement;
 
     // Early pruning: skip if placement creates too many holes
     if (enablePruning) {
         const quickHoles = quickHoleCount(grid, tetro, x, y);
-        if (quickHoles > 3) return -Infinity;
+        if (quickHoles > 3) return { score: -Infinity, linesCleared: 0 };
     }
 
     const result = aiSimulate(grid, tetro, x, y);
-    return aiEvaluate(result.grid, result.landingY, tetro, pieceIndex, x);
+    return aiEvaluate(result.grid, result.landingY, tetro, pieceIndex, x, simulatedCombo);
 }
 
 // Find best placement for a grid state (no lookahead)
-function findBestPlacement(tetro, grid, moveValidSim, enablePruning, pieceIndex) {
+function findBestPlacement(tetro, grid, moveValidSim, enablePruning, pieceIndex, simulatedCombo) {
     const placements = getAllPlacements(tetro, grid, moveValidSim);
     let best = null;
     let bestScore = -Infinity;
+    let bestLinesCleared = 0;
 
     for (const placement of placements) {
-        const score = evaluatePlacement(grid, placement, enablePruning, pieceIndex);
-        if (score > bestScore) {
-            bestScore = score;
+        const evalResult = evaluatePlacement(grid, placement, enablePruning, pieceIndex, simulatedCombo);
+        if (evalResult.score > bestScore) {
+            bestScore = evalResult.score;
+            bestLinesCleared = evalResult.linesCleared;
             best = placement;
         }
     }
-    return { placement: best, score: bestScore };
+    return { placement: best, score: bestScore, linesCleared: bestLinesCleared };
 }
 
 // AI: find the best move with 2-step lookahead
+// Now simulates combo state for lookahead evaluation
 Piece.prototype.getBestMoveWithLookahead = function(nextPieceIndex) {
     const grid = stack.grid;
     const placements = getAllPlacements(this.tetro, grid, this.moveValidSim.bind(this));
     let best = null;
     let bestScore = -Infinity;
+
+    // Current combo count for evaluation
+    const currentCombo = window.AI_COMBO_COUNT || 0;
 
     // Get next piece tetromino
     const nextTetro = (nextPieceIndex !== undefined && pieces[nextPieceIndex])
@@ -1031,16 +1046,24 @@ Piece.prototype.getBestMoveWithLookahead = function(nextPieceIndex) {
         if (quickHoles > 3) continue;
 
         const result = aiSimulate(grid, tetro, x, y);
-        let score = aiEvaluate(result.grid, result.landingY, tetro, this.index, x);
+        // Evaluate current placement with current combo
+        const evalResult = aiEvaluate(result.grid, result.landingY, tetro, this.index, x, currentCombo);
+        let score = evalResult.score;
 
         // 2-step lookahead: evaluate best move for next piece
         if (nextTetro) {
+            // Calculate simulated combo for next piece:
+            // If current placement clears lines, combo continues (combo + 1)
+            // If not, combo resets to 0
+            const nextCombo = (evalResult.linesCleared > 0) ? (currentCombo + 1) : 0;
+
             const nextResult = findBestPlacement(
                 nextTetro,
                 result.grid,
                 this.moveValidSim.bind(this),
                 true,
-                nextPieceIndex
+                nextPieceIndex,
+                nextCombo  // Pass simulated combo to lookahead
             );
             if (nextResult.score !== -Infinity) {
                 score += window.AI_LOOKAHEAD_DISCOUNT * nextResult.score;
@@ -1057,12 +1080,14 @@ Piece.prototype.getBestMoveWithLookahead = function(nextPieceIndex) {
 
 // AI: find the best move for the current piece (simple version, no lookahead)
 Piece.prototype.getBestMove = function() {
+    const currentCombo = window.AI_COMBO_COUNT || 0;
     const result = findBestPlacement(
         this.tetro,
         stack.grid,
         this.moveValidSim.bind(this),
         true,
-        this.index
+        this.index,
+        currentCombo
     );
     return result.placement;
 };
@@ -1073,15 +1098,17 @@ Piece.prototype.shouldUseHold = function() {
     if (typeof hold === 'undefined') return false;
 
     const grid = stack.grid;
+    const currentCombo = window.AI_COMBO_COUNT || 0;
     const nextPieceIndex = (typeof preview !== 'undefined' && preview.grabBag && preview.grabBag.length > 0)
         ? preview.grabBag[0]
         : undefined;
 
     // Score for current piece
     const currentMove = this.getBestMoveWithLookahead(nextPieceIndex);
-    const currentScore = currentMove
-        ? evaluatePlacement(grid, currentMove, false, this.index)
-        : -Infinity;
+    const currentEval = currentMove
+        ? evaluatePlacement(grid, currentMove, false, this.index, currentCombo)
+        : { score: -Infinity, linesCleared: 0 };
+    const currentScore = currentEval.score;
 
     // Score for hold piece (or next piece if hold is empty)
     let holdPieceIndex;
@@ -1099,7 +1126,8 @@ Piece.prototype.shouldUseHold = function() {
         grid,
         this.moveValidSim.bind(this),
         true,
-        holdPieceIndex
+        holdPieceIndex,
+        currentCombo
     );
 
     // Use hold if it gives significantly better score
@@ -1177,6 +1205,7 @@ Piece.prototype.aiMove = function() {
     }
 
     const grid = stack.grid;
+    const currentCombo = window.AI_COMBO_COUNT || 0;
     let bestScore = -Infinity;
     let bestRotations = 0;
     let bestX = this.x;
@@ -1210,7 +1239,8 @@ Piece.prototype.aiMove = function() {
 
             // Evaluate this placement
             const result = aiSimulate(grid, testTetro, testX, testY);
-            const score = aiEvaluate(result.grid, result.landingY, testTetro, this.index, testX);
+            const evalResult = aiEvaluate(result.grid, result.landingY, testTetro, this.index, testX, currentCombo);
+            const score = evalResult.score;
 
             validPlacements++;
             if (score > bestScore) {
