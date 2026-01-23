@@ -1,10 +1,10 @@
 baseURL = "https://w732.github.io/"
 languageCode = "zh-cn"
-title = "贝哥郎里格朗"
+title = "w732"
 theme = "PaperMod"
 
 [params]
-  author = "贝哥郎里格朗"
+  author = "w732"
   defaultTheme = "auto"
   ShowReadingTime = true
   ShowCodeCopyButtons = true
