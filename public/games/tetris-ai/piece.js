@@ -1061,6 +1061,15 @@ Piece.prototype.aiMove = function() {
         return;
     }
 
+    // Check if we should use hold
+    if (this.shouldUseHold()) {
+        console.log('[AI] Using HOLD - better piece available');
+        aiIsProcessing = false; // Reset flag before hold (new piece will trigger new aiMove)
+        if (aiProcessingTimeout) clearTimeout(aiProcessingTimeout);
+        this.hold();
+        return;
+    }
+
     const grid = stack.grid;
     let bestScore = -Infinity;
     let bestRotations = 0;
