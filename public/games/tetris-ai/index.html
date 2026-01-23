@@ -1,0 +1,376 @@
+<!doctype html>
+  <meta charset=utf-8>
+  <title>Tetr.js AI</title>
+  <link rel=stylesheet href=style.css>
+<!--<canvas id=bg></canvas>-->
+<!--<video id=bg src=bg.webm loop autoplay></video>-->
+<div id=content>
+
+  <!-- Canvases -->
+  <div id=d>
+    <h3>Hold</h3>
+
+    <div id=a>
+      <canvas id=hold></canvas>
+    </div>
+    <ul id=replay style=display:none>
+      <li><a onclick=replay(-1)>prev</a>
+      <li><a onclick=replay()>Play/Pause</a>
+      <li><a onclick=replay(1)>next</a>
+    </ul>
+
+    <table id=stats>
+      <tr><td id=line>0<th>Line
+      <tr><td id=piece>0<th>Piece
+      <tr><th id=time>00:00.00
+    </table>
+  </div>
+
+  <div id=b>
+    <canvas id=bgStack></canvas>
+    <canvas id=stack></canvas>
+    <canvas id=active></canvas>
+
+    <p id=msg>
+
+    <nav class='menu on'>
+      <h1>Tetr.js</h1>
+      <ul>
+        <li><a onclick=init(0)>Play Sprint</a>
+        <!--<li><a onclick=init(1)>Play Marathon</a>
+        <li><a onclick=init(2)>Play Ultra</a>-->
+        <li><a onclick=init(3)>Play Dig Race</a>
+        <li><a onclick=menu(2)><i class=></i>Controls</a>
+        <li><a onclick=menu(1)><i class=icon-cog></i>Settings</a>
+      </ul>
+      <label style="display:block;margin:16px 0 0 0;font-size:18px;">
+        <input type="checkbox" id="ai-autoplay-toggle" style="vertical-align:middle;" /> Enable AI Auto-play
+      </label>
+      <button id="ai-weights-btn" style="display:block;margin:16px auto 0 auto;font-size:16px;padding:6px 18px;border-radius:6px;">AI Weights Settings</button>
+    </nav>
+    <!-- AI Weights Modal -->
+    <div id="ai-weights-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);">
+      <div style="background:#222;margin:5% auto;padding:24px 24px 16px 24px;border-radius:10px;width:360px;color:#fff;box-shadow:0 4px 32px #000;position:relative;max-height:85vh;overflow-y:auto;">
+        <span id="ai-weights-close" style="position:absolute;right:16px;top:10px;font-size:28px;cursor:pointer;">&times;</span>
+        <h2 style="margin-top:0;">AI Settings</h2>
+        <form id="ai-weights-form">
+          <!-- Preset Selection -->
+          <div style="margin-bottom:12px;">
+            <label style="font-size:14px;">Weight Preset:</label>
+            <select id="ai-preset-select" style="width:100%;padding:6px;margin-top:4px;border-radius:4px;">
+              <option value="balanced">Balanced (Default)</option>
+              <option value="conservative">Conservative (Safe)</option>
+              <option value="aggressive">Aggressive (High Score)</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <!-- Speed Control -->
+          <div style="margin-bottom:12px;">
+            <label style="font-size:14px;">AI Speed: <span id="ai-speed-value">5</span>x</label>
+            <input type="range" id="ai-speed-slider" min="1" max="10" value="5" style="width:100%;margin-top:4px;">
+          </div>
+
+          <!-- Weights Table -->
+          <table style="width:100%;margin-bottom:10px;font-size:13px;">
+            <tr><td>Landing Height</td><td><input type="number" step="0.1" id="ai-weight-landingHeight" style="width:70px;"></td></tr>
+            <tr><td>Rows Cleared</td><td><input type="number" step="0.1" id="ai-weight-rowsCleared" style="width:70px;"></td></tr>
+            <tr><td>Row Transitions</td><td><input type="number" step="0.1" id="ai-weight-rowTransitions" style="width:70px;"></td></tr>
+            <tr><td>Col Transitions</td><td><input type="number" step="0.1" id="ai-weight-columnTransitions" style="width:70px;"></td></tr>
+            <tr><td>Holes</td><td><input type="number" step="0.1" id="ai-weight-holes" style="width:70px;"></td></tr>
+            <tr><td>Well Sums</td><td><input type="number" step="0.1" id="ai-weight-wellSums" style="width:70px;"></td></tr>
+            <tr><td>Bumpiness</td><td><input type="number" step="0.1" id="ai-weight-bumpiness" style="width:70px;"></td></tr>
+            <tr><td>Hole Depth</td><td><input type="number" step="0.1" id="ai-weight-holeDepth" style="width:70px;"></td></tr>
+            <tr><td>Aggregate Height</td><td><input type="number" step="0.01" id="ai-weight-aggregateHeight" style="width:70px;"></td></tr>
+            <tr><td>Covered Cells</td><td><input type="number" step="0.1" id="ai-weight-coveredCells" style="width:70px;"></td></tr>
+          </table>
+
+          <label style="display:block;margin:8px 0 8px 0;font-size:14px;">
+            <input type="checkbox" id="ai-harddrop-toggle" style="vertical-align:middle;" /> AI uses hard drop
+          </label>
+
+          <!-- Claude AI Section -->
+          <div style="border-top:1px solid #444;margin:12px 0;padding-top:12px;">
+            <h3 style="margin:0 0 8px 0;font-size:15px;">🤖 Claude AI Mode</h3>
+            <label style="display:block;margin:8px 0;font-size:14px;">
+              <input type="checkbox" id="ai-claude-toggle" style="vertical-align:middle;" /> Use Claude AI (requires API key)
+            </label>
+            <div id="claude-settings" style="margin:8px 0;">
+              <label style="font-size:13px;">API Key:</label>
+              <input type="password" id="ai-claude-apikey" placeholder="sk-ant-..." style="width:100%;padding:6px;margin-top:4px;border-radius:4px;border:1px solid #555;background:#333;color:#fff;">
+              <div style="margin-top:8px;">
+                <label style="font-size:13px;">Model:</label>
+                <select id="ai-claude-model" style="width:100%;padding:6px;margin-top:4px;border-radius:4px;">
+                  <option value="claude-sonnet-4-20250514">Claude Sonnet 4 (Recommended)</option>
+                  <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (Faster)</option>
+                  <option value="claude-opus-4-20250514">Claude Opus 4 (Best)</option>
+                </select>
+              </div>
+              <p style="font-size:11px;color:#888;margin:8px 0 0 0;">Note: API calls cost money. Each move ~$0.001-0.01</p>
+            </div>
+          </div>
+          <label style="display:block;margin:8px 0 8px 0;font-size:14px;">
+            <input type="checkbox" id="ai-human-mode-toggle" style="vertical-align:middle;" checked /> Human-like thinking delay
+          </label>
+          <div id="ai-think-time-controls" style="margin:8px 0 12px 0;">
+            <label style="font-size:13px;">Think time: <span id="ai-think-min-value">100</span>-<span id="ai-think-max-value">500</span>ms</label>
+            <div style="display:flex;gap:8px;margin-top:4px;">
+              <input type="range" id="ai-think-min" min="50" max="500" value="100" style="flex:1;">
+              <input type="range" id="ai-think-max" min="100" max="1000" value="500" style="flex:1;">
+            </div>
+          </div>
+          <div style="margin:8px 0 12px 0;">
+            <label style="font-size:13px;">Move delay: <span id="ai-move-delay-value">50</span>ms per action</label>
+            <input type="range" id="ai-move-delay" min="20" max="200" value="50" style="width:100%;margin-top:4px;">
+          </div>
+          <button type="button" id="ai-weights-apply" style="width:100%;margin-top:8px;padding:8px;font-size:14px;">Apply</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // AI Auto-play toggle
+        var toggle = document.getElementById('ai-autoplay-toggle');
+        if (toggle) {
+          toggle.checked = !!window.aiEnabled;
+          toggle.onchange = function() {
+            window.aiEnabled = toggle.checked;
+          };
+        }
+
+        // AI Weights modal logic
+        var btn = document.getElementById('ai-weights-btn');
+        var modal = document.getElementById('ai-weights-modal');
+        var close = document.getElementById('ai-weights-close');
+        var apply = document.getElementById('ai-weights-apply');
+        var presetSelect = document.getElementById('ai-preset-select');
+        var speedSlider = document.getElementById('ai-speed-slider');
+        var speedValue = document.getElementById('ai-speed-value');
+
+        var keys = ['landingHeight','rowsCleared','rowTransitions','columnTransitions','holes','wellSums','bumpiness','holeDepth','aggregateHeight','coveredCells'];
+        var harddropToggle = document.getElementById('ai-harddrop-toggle');
+
+        // Set initial values (default: no hard drop, use soft drop)
+        window.AI_HARDDROP_ONLY = (typeof window.AI_HARDDROP_ONLY === 'undefined') ? false : window.AI_HARDDROP_ONLY;
+        window.AI_SPEED = window.AI_SPEED || 5;
+
+        // Fill weights from preset or current values
+        function fillWeights(weights) {
+          keys.forEach(function(k) {
+            var el = document.getElementById('ai-weight-' + k);
+            if (el) el.value = weights[k] !== undefined ? weights[k] : 0;
+          });
+        }
+
+        // Get default weights
+        function getDefaultWeights() {
+          var presets = window.AI_WEIGHT_PRESETS || {
+            balanced: { landingHeight: -0.3, rowsCleared: 1.0, rowTransitions: -0.2, columnTransitions: -0.2, holes: -1.0, wellSums: -0.3, bumpiness: -0.1, holeDepth: -0.5, aggregateHeight: -0.05, coveredCells: -0.3 }
+          };
+          return presets.balanced;
+        }
+
+        // Preset change handler
+        presetSelect.onchange = function() {
+          var preset = presetSelect.value;
+          if (preset !== 'custom' && window.AI_WEIGHT_PRESETS && window.AI_WEIGHT_PRESETS[preset]) {
+            fillWeights(window.AI_WEIGHT_PRESETS[preset]);
+          }
+        };
+
+        // Mark as custom when user edits weights
+        keys.forEach(function(k) {
+          var el = document.getElementById('ai-weight-' + k);
+          if (el) {
+            el.oninput = function() {
+              presetSelect.value = 'custom';
+            };
+          }
+        });
+
+        // Speed slider handler
+        speedSlider.oninput = function() {
+          speedValue.textContent = speedSlider.value;
+        };
+
+        // Human mode controls
+        var humanModeToggle = document.getElementById('ai-human-mode-toggle');
+        var thinkMinSlider = document.getElementById('ai-think-min');
+        var thinkMaxSlider = document.getElementById('ai-think-max');
+        var thinkMinValue = document.getElementById('ai-think-min-value');
+        var thinkMaxValue = document.getElementById('ai-think-max-value');
+        var thinkTimeControls = document.getElementById('ai-think-time-controls');
+
+        humanModeToggle.onchange = function() {
+          thinkTimeControls.style.opacity = humanModeToggle.checked ? '1' : '0.5';
+        };
+
+        thinkMinSlider.oninput = function() {
+          thinkMinValue.textContent = thinkMinSlider.value;
+          if (parseInt(thinkMinSlider.value) > parseInt(thinkMaxSlider.value)) {
+            thinkMaxSlider.value = thinkMinSlider.value;
+            thinkMaxValue.textContent = thinkMaxSlider.value;
+          }
+        };
+
+        thinkMaxSlider.oninput = function() {
+          thinkMaxValue.textContent = thinkMaxSlider.value;
+          if (parseInt(thinkMaxSlider.value) < parseInt(thinkMinSlider.value)) {
+            thinkMinSlider.value = thinkMaxSlider.value;
+            thinkMinValue.textContent = thinkMinSlider.value;
+          }
+        };
+
+        // Move delay slider
+        var moveDelaySlider = document.getElementById('ai-move-delay');
+        var moveDelayValue = document.getElementById('ai-move-delay-value');
+        moveDelaySlider.oninput = function() {
+          moveDelayValue.textContent = moveDelaySlider.value;
+        };
+
+        // Claude AI controls
+        var claudeToggle = document.getElementById('ai-claude-toggle');
+        var claudeApiKey = document.getElementById('ai-claude-apikey');
+        var claudeModel = document.getElementById('ai-claude-model');
+        var claudeSettings = document.getElementById('claude-settings');
+
+        claudeToggle.onchange = function() {
+          claudeSettings.style.opacity = claudeToggle.checked ? '1' : '0.5';
+        };
+
+        btn.onclick = function() {
+          // Fill current weights
+          var weights = window.AI_WEIGHTS || getDefaultWeights();
+          fillWeights(weights);
+
+          // Set speed slider
+          speedSlider.value = window.AI_SPEED || 5;
+          speedValue.textContent = speedSlider.value;
+
+          // Set harddrop toggle
+          if (harddropToggle) harddropToggle.checked = !!window.AI_HARDDROP_ONLY;
+
+          // Set human mode settings
+          humanModeToggle.checked = window.AI_HUMAN_MODE !== false;
+          thinkMinSlider.value = window.AI_THINK_TIME_MIN || 100;
+          thinkMaxSlider.value = window.AI_THINK_TIME_MAX || 500;
+          thinkMinValue.textContent = thinkMinSlider.value;
+          thinkMaxValue.textContent = thinkMaxSlider.value;
+          thinkTimeControls.style.opacity = humanModeToggle.checked ? '1' : '0.5';
+          moveDelaySlider.value = window.AI_MOVE_DELAY || 50;
+          moveDelayValue.textContent = moveDelaySlider.value;
+
+          // Set Claude AI settings
+          claudeToggle.checked = !!window.AI_USE_CLAUDE;
+          claudeApiKey.value = window.AI_CLAUDE_API_KEY || '';
+          claudeModel.value = window.AI_CLAUDE_MODEL || 'claude-sonnet-4-20250514';
+          claudeSettings.style.opacity = claudeToggle.checked ? '1' : '0.5';
+
+          // Detect current preset
+          var presets = window.AI_WEIGHT_PRESETS || {};
+          var currentPreset = 'custom';
+          for (var p in presets) {
+            var match = true;
+            for (var k in presets[p]) {
+              if (weights[k] !== presets[p][k]) { match = false; break; }
+            }
+            if (match) { currentPreset = p; break; }
+          }
+          presetSelect.value = currentPreset;
+
+          modal.style.display = 'block';
+        };
+
+        close.onclick = function() { modal.style.display = 'none'; };
+
+        apply.onclick = function() {
+          window.AI_WEIGHTS = window.AI_WEIGHTS || {};
+          keys.forEach(function(k) {
+            var v = parseFloat(document.getElementById('ai-weight-' + k).value);
+            if (!isNaN(v)) window.AI_WEIGHTS[k] = v;
+          });
+
+          // Save speed
+          window.AI_SPEED = parseInt(speedSlider.value) || 5;
+
+          // Save harddrop toggle
+          if (harddropToggle) window.AI_HARDDROP_ONLY = harddropToggle.checked;
+
+          // Save human mode settings
+          window.AI_HUMAN_MODE = humanModeToggle.checked;
+          window.AI_THINK_TIME_MIN = parseInt(thinkMinSlider.value) || 100;
+          window.AI_THINK_TIME_MAX = parseInt(thinkMaxSlider.value) || 500;
+          window.AI_MOVE_DELAY = parseInt(moveDelaySlider.value) || 50;
+
+          // Save Claude AI settings
+          window.AI_USE_CLAUDE = claudeToggle.checked;
+          window.AI_CLAUDE_API_KEY = claudeApiKey.value.trim();
+          window.AI_CLAUDE_MODEL = claudeModel.value;
+
+          modal.style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+          if (event.target === modal) modal.style.display = 'none';
+        };
+      });
+    </script>
+
+    <div class=menu>
+      <h2>Settings</h2>
+      <div id=settings>
+      </div>
+      <div style=clear:both><a class=button onclick=menu(0)>Done</a></div>
+    </div>
+
+    <div class=menu>
+      <h2>Controls</h2>
+      <p>Click on the control you want to change, then press any key.
+      <table id=controls>
+        <tr> <th>Move Left:    <td id=moveLeft>←
+        <tr> <th>Move Right:   <td id=moveRight>→
+        <tr> <th>Move Down:    <td id=moveDown>↓
+        <tr> <th>Hard Drop:    <td id=hardDrop>Space
+        <tr> <th>Hold:         <td id=holdPiece>C
+        <tr> <th>Spin Right:   <td id=rotRight>X
+        <tr> <th>Spin Left:    <td id=rotLeft>Z
+        <tr> <th>Spin 180:     <td id=rot180>Shift
+        <tr> <th>Retry:        <td id=retry>R
+        <tr> <th>Pause:        <td id=pause>Esc
+      </table>
+      <div style=clear:both><a class=button onclick=menu(0)>Done</a></div>
+    </div>
+
+    <nav id=go class=menu>
+      <ul>
+        <li><a onclick=init(gametype)>Retry</a>
+        <li><a onclick="init('replay')">Watch Replay</a>
+        <li><a onclick=menu(0)>Main Menu</a>
+      </ul>
+    </nav>
+
+    <nav id=pause class=menu>
+      <ul>
+        <li><a onclick=unpause()>Return</a>
+        <li><a onclick=init(gametype)>Retry</a>
+        <li><a onclick=menu(0)>Main Menu</a>
+      </ul>
+    </nav>
+  </div>
+
+  <div id=c>
+    <h3>Next</h3>
+    <canvas id=preview></canvas>
+  </div>
+
+</div>
+
+<canvas id=sprite></canvas>
+<script src=tetris.js></script>
+<script src="piece.js?v=20260123u"></script>
+<script src=stack.js></script>
+<script src=hold.js></script>
+<script src=preview.js></script>
+<script src=menu.js></script>
+<script src=bg.js></script>
+<script>_gaq=[['_setAccount','UA-30472693-1'],['_trackPageview']];(function(d){var g=d.createElement('script'),s=d.scripts[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)})(document)</script>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Finance on w732</title><link>https://w732.github.io/tags/finance/</link><description>Recent content in Finance on w732</description><generator>Hugo -- 0.154.4</generator><language>zh-cn</language><lastBuildDate>Thu, 22 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://w732.github.io/tags/finance/index.xml" rel="self" type="application/rss+xml"/><item><title>Option Pricing Calculator - Black-Scholes &amp; American Options with Greeks</title><link>https://w732.github.io/posts/option-pricing-calculator/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/option-pricing-calculator/</guid><description>&lt;p&gt;I&amp;rsquo;m sharing an option pricing calculator I built that supports both European and American style options with full Greeks calculation.&lt;/p&gt;
+&lt;h2 id="features"&gt;Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Pricing Models&lt;/strong&gt;: Black-Scholes for European options, Trinomial tree for American options&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Full Greeks&lt;/strong&gt;: Delta, Gamma, Vega, Theta, Rho and more&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Implied Volatility&lt;/strong&gt;: Calculate IV from market price&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Intraday Precision&lt;/strong&gt;: Supports trading hours and current time for precise DTE calculation&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Trading Days Mode&lt;/strong&gt;: Option to use trading days (excludes weekends and holidays) instead of calendar days&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Dividend Support&lt;/strong&gt;: Add discrete dividends with ex-dividend dates&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Holiday Calendar&lt;/strong&gt;: Customizable holiday list for accurate trading day calculation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="how-to-use"&gt;How to Use&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Enter the option parameters (trade date, expiry, spot price, strike, volatility, etc.)&lt;/li&gt;
+&lt;li&gt;Choose between Call/Put and American/European style&lt;/li&gt;
+&lt;li&gt;Configure trading hours and holidays if needed&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;Calculate&amp;rdquo; to get the option price and Greeks&lt;/li&gt;
+&lt;li&gt;Use the &amp;ldquo;Implied Vol&amp;rdquo; tab to calculate implied volatility from a market price&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="try-it-out"&gt;Try It Out&lt;/h2&gt;
+&lt;p&gt;Click the link below to open the calculator:&lt;/p&gt;</description></item></channel></rss>

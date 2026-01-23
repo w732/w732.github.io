@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>C++ on w732</title><link>https://w732.github.io/tags/c++/</link><description>Recent content in C++ on w732</description><generator>Hugo -- 0.154.4</generator><language>zh-cn</language><lastBuildDate>Thu, 22 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://w732.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Trivials Quiz Game - 100 C++ Knowledge Questions</title><link>https://w732.github.io/posts/cpp-quiz-game/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/cpp-quiz-game/</guid><description>&lt;p&gt;A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.&lt;/p&gt;
+&lt;h2 id="features"&gt;Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;100 C++ multiple-choice questions, 20 randomly selected per game&lt;/li&gt;
+&lt;li&gt;Covers 7 major categories:
+&lt;ul&gt;
+&lt;li&gt;Basic Types &amp;amp; Expressions&lt;/li&gt;
+&lt;li&gt;Object Lifetime &amp;amp; Memory&lt;/li&gt;
+&lt;li&gt;STL Containers &amp;amp; Iterators&lt;/li&gt;
+&lt;li&gt;Functions &amp;amp; Calling Conventions&lt;/li&gt;
+&lt;li&gt;C++11/14/17/20 New Features&lt;/li&gt;
+&lt;li&gt;Templates &amp;amp; Type System&lt;/li&gt;
+&lt;li&gt;Common UB / Frequent Pitfalls&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Built with Phaser.js game engine, supports animations and effects&lt;/li&gt;
+&lt;li&gt;Celebration effects for correct answers, shake effect for wrong answers&lt;/li&gt;
+&lt;li&gt;Result page shows score and accuracy&lt;/li&gt;
+&lt;li&gt;Review all your answers after the game&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="play-now"&gt;Play Now&lt;/h2&gt;
+&lt;p&gt;Click the link below to start the challenge:&lt;/p&gt;</description></item></channel></rss>

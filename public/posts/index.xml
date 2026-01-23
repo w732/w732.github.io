@@ -1,25 +1,60 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Posts on 贝哥郎里格朗</title>
-    <link>http://localhost:1313/posts/</link>
-    <description>Recent content in Posts on 贝哥郎里格朗</description>
-    <generator>Hugo -- 0.154.4</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Mon, 12 Jan 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>你好，世界</title>
-      <link>http://localhost:1313/posts/hello/</link>
-      <pubDate>Mon, 12 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/hello/</guid>
-      <description>&lt;p&gt;这是我的第一篇博客文章。&lt;/p&gt;
-&lt;p&gt;我会在这里记录：&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on w732</title><link>https://w732.github.io/posts/</link><description>Recent content in Posts on w732</description><generator>Hugo -- 0.154.4</generator><language>zh-cn</language><lastBuildDate>Fri, 23 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://w732.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Tetr.js AI - Play Tetris with AI Auto-play and Claude Integration</title><link>https://w732.github.io/posts/tetris-ai/</link><pubDate>Fri, 23 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/tetris-ai/</guid><description>&lt;p&gt;A classic Tetris game enhanced with AI capabilities. Watch the AI play automatically using a heuristic-based algorithm, or connect to Claude API for AI-powered gameplay!&lt;/p&gt;
+&lt;h2 id="features"&gt;Features&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;技术&lt;/li&gt;
-&lt;li&gt;思考&lt;/li&gt;
-&lt;li&gt;学习笔记&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-  </channel>
-</rss>
+&lt;li&gt;&lt;strong&gt;Classic Tetris Gameplay&lt;/strong&gt;: Full implementation with SRS rotation, hold piece, and 6-piece preview&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Local AI&lt;/strong&gt;: Heuristic-based AI with configurable weights and 2-step lookahead&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Claude AI Mode&lt;/strong&gt;: Optional integration with Anthropic&amp;rsquo;s Claude API&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Human-like Animation&lt;/strong&gt;: Configurable think time and move delays&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Weight Presets&lt;/strong&gt;: Balanced, Conservative, and Aggressive play styles&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ghost Piece&lt;/strong&gt;: Shows AI&amp;rsquo;s planned final position&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="how-to-play"&gt;How to Play&lt;/h2&gt;
+&lt;h3 id="manual-play"&gt;Manual Play&lt;/h3&gt;
+&lt;p&gt;Use keyboard controls:&lt;/p&gt;</description></item><item><title>C++ Trivials Quiz Game - 100 C++ Knowledge Questions</title><link>https://w732.github.io/posts/cpp-quiz-game/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/cpp-quiz-game/</guid><description>&lt;p&gt;A C++ knowledge quiz game I created, featuring 100 carefully selected C++ knowledge points.&lt;/p&gt;
+&lt;h2 id="features"&gt;Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;100 C++ multiple-choice questions, 20 randomly selected per game&lt;/li&gt;
+&lt;li&gt;Covers 7 major categories:
+&lt;ul&gt;
+&lt;li&gt;Basic Types &amp;amp; Expressions&lt;/li&gt;
+&lt;li&gt;Object Lifetime &amp;amp; Memory&lt;/li&gt;
+&lt;li&gt;STL Containers &amp;amp; Iterators&lt;/li&gt;
+&lt;li&gt;Functions &amp;amp; Calling Conventions&lt;/li&gt;
+&lt;li&gt;C++11/14/17/20 New Features&lt;/li&gt;
+&lt;li&gt;Templates &amp;amp; Type System&lt;/li&gt;
+&lt;li&gt;Common UB / Frequent Pitfalls&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Built with Phaser.js game engine, supports animations and effects&lt;/li&gt;
+&lt;li&gt;Celebration effects for correct answers, shake effect for wrong answers&lt;/li&gt;
+&lt;li&gt;Result page shows score and accuracy&lt;/li&gt;
+&lt;li&gt;Review all your answers after the game&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="play-now"&gt;Play Now&lt;/h2&gt;
+&lt;p&gt;Click the link below to start the challenge:&lt;/p&gt;</description></item><item><title>Option Pricing Calculator - Black-Scholes &amp; American Options with Greeks</title><link>https://w732.github.io/posts/option-pricing-calculator/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/option-pricing-calculator/</guid><description>&lt;p&gt;I&amp;rsquo;m sharing an option pricing calculator I built that supports both European and American style options with full Greeks calculation.&lt;/p&gt;
+&lt;h2 id="features"&gt;Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Pricing Models&lt;/strong&gt;: Black-Scholes for European options, Trinomial tree for American options&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Full Greeks&lt;/strong&gt;: Delta, Gamma, Vega, Theta, Rho and more&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Implied Volatility&lt;/strong&gt;: Calculate IV from market price&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Intraday Precision&lt;/strong&gt;: Supports trading hours and current time for precise DTE calculation&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Trading Days Mode&lt;/strong&gt;: Option to use trading days (excludes weekends and holidays) instead of calendar days&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Dividend Support&lt;/strong&gt;: Add discrete dividends with ex-dividend dates&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Holiday Calendar&lt;/strong&gt;: Customizable holiday list for accurate trading day calculation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="how-to-use"&gt;How to Use&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Enter the option parameters (trade date, expiry, spot price, strike, volatility, etc.)&lt;/li&gt;
+&lt;li&gt;Choose between Call/Put and American/European style&lt;/li&gt;
+&lt;li&gt;Configure trading hours and holidays if needed&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;Calculate&amp;rdquo; to get the option price and Greeks&lt;/li&gt;
+&lt;li&gt;Use the &amp;ldquo;Implied Vol&amp;rdquo; tab to calculate implied volatility from a market price&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="try-it-out"&gt;Try It Out&lt;/h2&gt;
+&lt;p&gt;Click the link below to open the calculator:&lt;/p&gt;</description></item><item><title>Hello, World</title><link>https://w732.github.io/posts/hello/</link><pubDate>Mon, 12 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/hello/</guid><description>&lt;p&gt;This is my first blog post.&lt;/p&gt;
+&lt;p&gt;I will record here:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Technology&lt;/li&gt;
+&lt;li&gt;Thoughts&lt;/li&gt;
+&lt;li&gt;Study Notes&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
