@@ -83,6 +83,8 @@
             <tr><td>Hole Depth</td><td><input type="number" step="0.1" id="ai-weight-holeDepth" style="width:70px;"></td></tr>
             <tr><td>Aggregate Height</td><td><input type="number" step="0.01" id="ai-weight-aggregateHeight" style="width:70px;"></td></tr>
             <tr><td>Covered Cells</td><td><input type="number" step="0.1" id="ai-weight-coveredCells" style="width:70px;"></td></tr>
+            <tr><td>T-Spin Bonus</td><td><input type="number" step="0.1" id="ai-weight-tSpin" style="width:70px;"></td></tr>
+            <tr><td>T-Spin Mini</td><td><input type="number" step="0.1" id="ai-weight-tSpinMini" style="width:70px;"></td></tr>
           </table>
 
           <label style="display:block;margin:8px 0 8px 0;font-size:14px;">
@@ -147,7 +149,7 @@
         var speedSlider = document.getElementById('ai-speed-slider');
         var speedValue = document.getElementById('ai-speed-value');
 
-        var keys = ['landingHeight','rowsCleared','rowTransitions','columnTransitions','holes','wellSums','bumpiness','holeDepth','aggregateHeight','coveredCells'];
+        var keys = ['landingHeight','rowsCleared','rowTransitions','columnTransitions','holes','wellSums','bumpiness','holeDepth','aggregateHeight','coveredCells','tSpin','tSpinMini'];
         var harddropToggle = document.getElementById('ai-harddrop-toggle');
 
         // Set initial values (default: no hard drop, use soft drop)
@@ -367,7 +369,7 @@
 
 <canvas id=sprite></canvas>
 <script src=tetris.js></script>
-<script src="piece.js?v=20260123v"></script>
+<script src="piece.js?v=20260123w"></script>
 <script src=stack.js></script>
 <script src=hold.js></script>
 <script src=preview.js></script>
