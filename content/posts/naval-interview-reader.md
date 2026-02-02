@@ -1,6 +1,6 @@
 ---
 title: "Naval Ravikant Interview Reader — with Built-in SAT Vocabulary Lookup"
-date: 2026-02-01
+date: 2026-01-31
 tags: ["English", "SAT", "Vocabulary", "Tools", "Naval Ravikant"]
 ---
 
