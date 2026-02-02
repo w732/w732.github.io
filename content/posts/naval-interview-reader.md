@@ -1,6 +1,6 @@
 ---
 title: "Naval Ravikant Interview Reader — with Built-in SAT Vocabulary Lookup"
-date: 2026-02-02
+date: 2026-02-01
 tags: ["English", "SAT", "Vocabulary", "Tools", "Naval Ravikant"]
 ---
 
@@ -17,7 +17,7 @@ This tool solves that by embedding an SAT-focused word bank directly into the in
 The vocabulary comes from two curated sources totaling **~4,500 base words**:
 
 - **SAT High-Frequency Words** — extracted from official College Board materials and past exams, ranked by actual test appearance frequency. Each word carries a frequency score (e.g., *"convention"* appeared 631 times across SAT passages, *"hypothesis"* 121 times). These are the words that show up again and again on test day.
-- **Contextual Conversation Words** — additional academic and conversational vocabulary commonly tested in reading comprehension and writing sections, organized by priority level (★ to ★★★).
+- **Contextual Conversation Words** — additional academic and conversational vocabulary commonly tested in reading comprehension and writing sections, organized into three priority tiers.
 
 The build process generates morphological variants (plurals, past tense, -ing, -ly, etc.) from these base words, expanding coverage to **~57,000 lookup entries** so that inflected forms like *"hypotheses"*, *"conventional"*, or *"emphasizing"* are all recognized.
 
