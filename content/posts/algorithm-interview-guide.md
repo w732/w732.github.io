@@ -40,7 +40,7 @@ The guide includes the following topics:
 
 Click the link below to view the complete guide:
 
-**[Algorithm Interview Comprehensive Guide (Full Document)](/Algorithm_Interview_Guide.md)**
+**[Algorithm Interview Comprehensive Guide (Full Document)](/algorithm-interview-guide.html)**
 
 ---
 
