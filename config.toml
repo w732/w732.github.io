@@ -2,6 +2,7 @@ baseURL = "https://w732.github.io/"
 languageCode = "zh-cn"
 title = "w732"
 theme = "PaperMod"
+buildFuture = true
 
 [params]
   author = "w732"
