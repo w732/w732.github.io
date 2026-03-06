@@ -60,7 +60,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="试试看"&gt;试试看&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;&lt;a href="https://w732.github.io/tools/myquant-backtest.html"&gt;打开 myquant 回测平台&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Option Pricing Calculator - Black-Scholes &amp; American Options with Greeks</title><link>https://w732.github.io/posts/option-pricing-calculator/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/option-pricing-calculator/</guid><description>&lt;p&gt;I&amp;rsquo;m sharing an option pricing calculator I built that supports both European and American style options with full Greeks calculation.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href="https://w732.github.io/tools/myquant-backtest.html"&gt;打开 myquant &lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Option Pricing Calculator - Black-Scholes &amp; American Options with Greeks</title><link>https://w732.github.io/posts/option-pricing-calculator/</link><pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/option-pricing-calculator/</guid><description>&lt;p&gt;I&amp;rsquo;m sharing an option pricing calculator I built that supports both European and American style options with full Greeks calculation.&lt;/p&gt;
 &lt;h2 id="features"&gt;Features&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Pricing Models&lt;/strong&gt;: Black-Scholes for European options, Trinomial tree for American options&lt;/li&gt;
