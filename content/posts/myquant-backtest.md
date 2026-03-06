@@ -49,7 +49,7 @@ class MyStrategy extends Strategy {
 
 ## 试试看
 
-**[打开 myquant 回测平台](/tools/myquant-backtest.html)**
+**[打开 myquant ](/tools/myquant-backtest.html)**
 
 所有计算完全在浏览器本地运行，不会发送任何数据到服务器。
 
