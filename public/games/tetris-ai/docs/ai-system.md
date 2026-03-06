@@ -8,7 +8,7 @@ The AI uses a heuristic-based evaluation function to score potential piece place
 
 ## Evaluation Features
 
-The AI calculates 10 features for each potential placement:
+The AI calculates 13 features for each potential placement:
 
 | Feature | Description | Default Weight |
 |---------|-------------|----------------|
@@ -22,6 +22,9 @@ The AI calculates 10 features for each potential placement:
 | **Hole Depth** | Maximum depth of holes in each column | -1.0 |
 | **Aggregate Height** | Sum of all column heights | -0.5 |
 | **Covered Cells** | Number of filled cells above holes | -1.0 |
+| **T-Spin Bonus** | Reward for T-Spin line clears | +4.0 |
+| **T-Spin Mini** | Reward for T-Spin Mini line clears | +1.0 |
+| **Combo Bonus** | Reward for consecutive line clears | +1.0 |
 
 ## Search Algorithm
 
@@ -39,8 +42,81 @@ When preview queue is available:
 3. Find best placement for next piece in preview
 4. Combined score = current_score + 0.5 * next_best_score
 
+The lookahead also simulates combo state:
+- If current placement clears lines → next piece evaluated with combo+1
+- If current placement doesn't clear → next piece evaluated with combo=0
+
 ### Early Pruning
 Placements that create more than 3 new holes are skipped to improve performance.
+
+## Hold Decision
+
+The AI automatically evaluates whether to use the Hold feature:
+
+```javascript
+Piece.prototype.shouldUseHold = function() {
+    // Compare score of current piece vs hold piece
+    const currentScore = evaluateBestPlacement(currentPiece);
+    const holdScore = evaluateBestPlacement(holdPiece);
+
+    // Use hold if significantly better (threshold: 0.5)
+    return holdScore > currentScore + 0.5;
+}
+```
+
+This is called at the start of each AI move, allowing the AI to swap for a better piece when beneficial.
+
+## T-Spin Detection
+
+The AI detects T-Spins to award bonus points:
+
+```javascript
+function detectTSpin(grid, pieceIndex, tetro, x, y, rowsCleared) {
+    // Only T-piece (index 5) can T-Spin
+    if (pieceIndex !== 5) return { isTSpin: false, isMini: false };
+    if (rowsCleared === 0) return { isTSpin: false, isMini: false };
+
+    // Check 4 corners around T center
+    // T-Spin: 3+ corners filled
+    // T-Spin Mini: 3 corners but only 1 front corner
+}
+```
+
+T-Spin bonus calculation:
+- **T-Spin**: `tSpinWeight × linesCleared` (e.g., T-Spin Double = 4 × 2 = 8)
+- **T-Spin Mini**: `tSpinMiniWeight × linesCleared`
+
+## Combo Tracking
+
+The AI tracks and rewards consecutive line clears:
+
+### Tracking
+```javascript
+// After each piece locks:
+if (linesCleared > 0) {
+    window.AI_COMBO_COUNT++;
+} else {
+    window.AI_COMBO_COUNT = 0;
+}
+```
+
+### Bonus Calculation
+```javascript
+comboBonus = comboWeight × (comboCount + 1) × linesCleared
+```
+
+Example with combo weight = 1:
+| Combo | Lines | Bonus |
+|-------|-------|-------|
+| x0 | 1 | 1×1×1 = 1 |
+| x1 | 1 | 1×2×1 = 2 |
+| x2 | 2 | 1×3×2 = 6 |
+| x5 | 1 | 1×6×1 = 6 |
+
+### Lookahead Simulation
+The AI simulates combo state during 2-step lookahead:
+- Placement that clears lines → next piece gets higher combo bonus
+- This allows AI to "plan for combos" by favoring setups that enable consecutive clears
 
 ## Rotation System
 
@@ -88,11 +164,13 @@ When AI is enabled, the ghost piece shows the AI's planned final position:
 
 ## Code Location
 
-Main AI implementation: `piece.js:298-1416`
+Main AI implementation: `piece.js:298-1500`
 
 Key functions:
-- `aiEvaluate()` - Calculate board score
+- `aiEvaluate()` - Calculate board score (returns {score, linesCleared})
 - `aiSimulate()` - Simulate piece placement
 - `getAllPlacements()` - Generate all valid placements
-- `getBestMoveWithLookahead()` - 2-step lookahead search
+- `getBestMoveWithLookahead()` - 2-step lookahead search with combo simulation
+- `shouldUseHold()` - Evaluate whether to use Hold
+- `detectTSpin()` - Detect T-Spin placements
 - `aiMove()` - Main AI entry point with animation

@@ -54,7 +54,10 @@ window.AI_WEIGHTS = {
     bumpiness: -0.5,
     holeDepth: -1,
     aggregateHeight: -0.5,
-    coveredCells: -1
+    coveredCells: -1,
+    tSpin: 4,
+    tSpinMini: 1,
+    combo: 1
 };
 ```
 
@@ -76,7 +79,10 @@ Good for general play with moderate risk tolerance.
     bumpiness: -0.5,
     holeDepth: -1,
     aggregateHeight: -0.5,
-    coveredCells: -1
+    coveredCells: -1,
+    tSpin: 4,
+    tSpinMini: 1,
+    combo: 1
 }
 ```
 
@@ -94,7 +100,10 @@ Prioritizes clean stacking, minimizes holes and height.
     bumpiness: -1,
     holeDepth: -2,
     aggregateHeight: -0.8,
-    coveredCells: -2
+    coveredCells: -2,
+    tSpin: 2,
+    tSpinMini: 0.5,
+    combo: 0.5
 }
 ```
 
@@ -112,7 +121,10 @@ Prioritizes line clears, accepts more risk for higher scores.
     bumpiness: -0.3,
     holeDepth: -0.5,
     aggregateHeight: -0.3,
-    coveredCells: -0.5
+    coveredCells: -0.5,
+    tSpin: 6,
+    tSpinMini: 2,
+    combo: 2
 }
 ```
 
@@ -125,6 +137,7 @@ These are managed by the AI system (do not modify directly):
 | `window.AI_PLANNED_MOVE` | object/null | Current planned move `{x, y, tetro}` |
 | `window.AI_MOVE_QUEUE` | array | Pending move actions |
 | `window.AI_IS_ANIMATING` | boolean | Whether AI is executing a move |
+| `window.AI_COMBO_COUNT` | number | Current combo count (consecutive line clears) |
 
 ## Programmatic Configuration
 
@@ -141,7 +154,10 @@ window.AI_WEIGHTS = {
     bumpiness: -0.2,
     holeDepth: -1.5,
     aggregateHeight: -0.6,
-    coveredCells: -1.2
+    coveredCells: -1.2,
+    tSpin: 5,
+    tSpinMini: 1.5,
+    combo: 1.5
 };
 ```
 
@@ -169,6 +185,22 @@ window.AI_THINK_TIME_MIN = 500;
 window.AI_THINK_TIME_MAX = 1500;
 window.AI_MOVE_DELAY = 100;
 window.AI_HARDDROP_ONLY = false;
+```
+
+### Example: T-Spin Focused AI
+
+```javascript
+window.AI_WEIGHTS.tSpin = 8;      // High T-Spin reward
+window.AI_WEIGHTS.tSpinMini = 3;  // Moderate Mini reward
+window.AI_WEIGHTS.combo = 0.5;    // Lower combo priority
+```
+
+### Example: Combo Focused AI
+
+```javascript
+window.AI_WEIGHTS.combo = 3;      // High combo reward
+window.AI_WEIGHTS.rowsCleared = 2; // Lower single clear reward
+window.AI_WEIGHTS.tSpin = 2;      // Lower T-Spin priority
 ```
 
 ## UI Element IDs
