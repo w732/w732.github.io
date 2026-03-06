@@ -1,4 +1,66 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>w732</title><link>https://w732.github.io/</link><description>Recent content on w732</description><generator>Hugo -- 0.156.0</generator><language>zh-cn</language><lastBuildDate>Thu, 19 Feb 2026 17:30:00 -0500</lastBuildDate><atom:link href="https://w732.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Trading Journal - February 19, 2026</title><link>https://w732.github.io/posts/2026-02-19-trading-journal/</link><pubDate>Thu, 19 Feb 2026 17:30:00 -0500</pubDate><guid>https://w732.github.io/posts/2026-02-19-trading-journal/</guid><description>Daily PnL: +$2,244 | 14 trades | 50.0% win rate</description></item><item><title>Algorithm Interview Comprehensive Guide</title><link>https://w732.github.io/posts/algorithm-interview-guide/</link><pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/algorithm-interview-guide/</guid><description>&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>w732</title><link>https://w732.github.io/</link><description>Recent content on w732</description><generator>Hugo -- 0.157.0</generator><language>zh-cn</language><lastBuildDate>Fri, 06 Mar 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://w732.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>myquant — 浏览器端量化回测工具</title><link>https://w732.github.io/posts/myquant-backtest/</link><pubDate>Fri, 06 Mar 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/myquant-backtest/</guid><description>&lt;p&gt;一个完全运行在浏览器中的回测工具，无需安装任何依赖，打开即用。&lt;/p&gt;
+&lt;h2 id="核心功能"&gt;核心功能&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GJR-GARCH(1,1) + Student-t 数据生成&lt;/strong&gt; — 生成具有真实统计特征（肥尾、波动率聚集、杠杆效应）的模拟行情&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;8 种市场预设&lt;/strong&gt; — 稳定上涨、震荡市、牛转熊、V 型反转、黑天鹅、财报季、突破行情、高波动&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;多周期支持&lt;/strong&gt; — 日线 / 4 小时 / 1 小时 / 15 分钟 / 5 分钟 / 1 分钟&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;完整回测引擎&lt;/strong&gt; — 市价单 / 限价单 / 止损单 / 止损限价单，支持多空双向交易&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;策略编辑器&lt;/strong&gt; — 语法高亮、自动补全、语法检查，内置多个策略模板&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可视化&lt;/strong&gt; — K 线图（含买卖信号标注）、权益曲线、回撤曲线&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;策略保存/加载&lt;/strong&gt; — 保存当前策略到本地，从本地文件加载策略&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="数据生成算法"&gt;数据生成算法&lt;/h2&gt;
+&lt;p&gt;采用 GJR-GARCH(1,1) 模型配合 Student-t 分布生成价格序列，复现了 Cont (2001) 总结的金融时间序列 stylized facts：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特征&lt;/th&gt;
+&lt;th&gt;实现方式&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;肥尾分布&lt;/td&gt;
+&lt;td&gt;Student-t (df=5) 替代正态分布&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;波动率聚集&lt;/td&gt;
+&lt;td&gt;GARCH 条件方差的自回归结构&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;杠杆效应&lt;/td&gt;
+&lt;td&gt;GJR 非对称项 (γ=0.04)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;量价关系&lt;/td&gt;
+&lt;td&gt;条件方差驱动成交量 + 下跌放量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;成交量自相关&lt;/td&gt;
+&lt;td&gt;EMA 平滑 (autocorr=0.4)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;日内 J 形曲线&lt;/td&gt;
+&lt;td&gt;开盘放量 → 午间缩量 → 尾盘放量最大&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="策略-api"&gt;策略 API&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;class&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;MyStrategy&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;extends&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;Strategy&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#a6e22e"&gt;onStrategyStart&lt;/span&gt;() { &lt;span style="color:#75715e"&gt;/* 初始化 */&lt;/span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#a6e22e"&gt;onBar&lt;/span&gt;(&lt;span style="color:#a6e22e"&gt;bar&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;// bar: { datetime, open, high, low, close, volume }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;// this.bars — 历史 K 线数组
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;// this.position — 当前持仓
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;// this.portfolio — 账户信息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;this&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;buy&lt;/span&gt;(&lt;span style="color:#ae81ff"&gt;100&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#39;buy signal&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;this&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;sellLimit&lt;/span&gt;(&lt;span style="color:#ae81ff"&gt;100&lt;/span&gt;, &lt;span style="color:#a6e22e"&gt;targetPrice&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#39;take profit&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;this&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;setStop&lt;/span&gt;(&lt;span style="color:#a6e22e"&gt;stopLevel&lt;/span&gt;, &lt;span style="color:#a6e22e"&gt;StopType&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;TRAILING&lt;/span&gt;, &lt;span style="color:#a6e22e"&gt;StopMode&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;PERCENT&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;this&lt;/span&gt;.&lt;span style="color:#a6e22e"&gt;log&lt;/span&gt;(&lt;span style="color:#e6db74"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="试试看"&gt;试试看&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href="https://w732.github.io/tools/myquant-backtest.html"&gt;打开 myquant 回测平台&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>AI Trading Journal - February 19, 2026</title><link>https://w732.github.io/posts/2026-02-19-trading-journal/</link><pubDate>Thu, 19 Feb 2026 17:30:00 -0500</pubDate><guid>https://w732.github.io/posts/2026-02-19-trading-journal/</guid><description>Daily PnL: +$2,244 | 14 trades | 50.0% win rate</description></item><item><title>Algorithm Interview Comprehensive Guide</title><link>https://w732.github.io/posts/algorithm-interview-guide/</link><pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate><guid>https://w732.github.io/posts/algorithm-interview-guide/</guid><description>&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;This is a comprehensive algorithm interview guide covering 40+ classic problems with detailed analysis and template code. The guide is organized by algorithmic patterns and prioritized by company focus (Google, Meta, Amazon).&lt;/p&gt;
 &lt;h2 id="whats-covered"&gt;What&amp;rsquo;s Covered&lt;/h2&gt;
 &lt;p&gt;The guide includes the following topics:&lt;/p&gt;
