@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>myquant — 回测工具</title>
+  <title>myquant — Backtest</title>
   <style>
 /* myquant Web — 暗色主题 */
 :root {
@@ -66,6 +66,22 @@ body {
   font-size: 11px;
   background: var(--btn-primary);
   color: var(--profit);
+}
+
+.btn-lang {
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: inherit;
+  background: var(--btn-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.btn-lang:hover {
+  background: var(--btn-secondary-hover);
+  color: var(--text-primary);
 }
 
 .main-content {
@@ -721,70 +737,71 @@ input[type=number]::-webkit-outer-spin-button {
 
 <div class="app-container">
 
-  <!-- ===== 顶栏 ===== -->
+  <!-- ===== Header ===== -->
   <div class="header">
     <h1>myquant</h1>
-    <span class="mode-badge">回测模式 (模拟数据)</span>
+    <span class="mode-badge" data-i18n="header.mode">Backtest Mode (Simulated Data)</span>
     <span id="backtest-status" class="status-msg" style="margin-left:auto"></span>
+    <button id="btn-lang" class="btn-lang" title="Switch Language">EN / 中</button>
   </div>
 
-  <!-- ===== 主内容 ===== -->
+  <!-- ===== Main ===== -->
   <div class="main-content">
 
-    <!-- ===== 左侧: 数据生成 + 回测控制 ===== -->
+    <!-- ===== Left Panel ===== -->
     <div class="left-panel">
 
-      <!-- 数据生成 -->
+      <!-- Data Generation -->
       <div class="panel-section">
-        <h3>数据生成</h3>
+        <h3 data-i18n="panel.dataGen">Data Generation</h3>
 
-        <label>场景预设</label>
+        <label data-i18n="label.preset">Scenario Preset</label>
         <select id="preset-select"></select>
 
-        <label>K 线周期</label>
+        <label data-i18n="label.barSize">Bar Size</label>
         <select id="barsize-select"></select>
 
         <div class="inline-field" style="margin-top:6px">
-          <label>K 线数量</label>
+          <label data-i18n="label.barCount">Bar Count</label>
           <input type="number" id="num-bars" value="500" min="10" max="100000" step="100">
         </div>
 
         <div class="inline-field">
-          <label>初始价格</label>
+          <label data-i18n="label.initPrice">Initial Price</label>
           <input type="number" id="initial-price" value="100" min="0.1" step="10">
         </div>
 
         <div id="custom-params">
           <div class="inline-field">
-            <label>年化收益</label>
+            <label data-i18n="label.annualDrift">Annual Drift</label>
             <input type="number" id="annual-drift" value="0.08" min="-0.5" max="0.5" step="0.01">
           </div>
           <div class="inline-field">
-            <label>年化波动</label>
+            <label data-i18n="label.annualVol">Annual Volatility</label>
             <input type="number" id="annual-vol" value="0.20" min="0.05" max="0.80" step="0.01">
           </div>
         </div>
 
         <div class="inline-field" style="margin-top:6px">
           <input type="checkbox" id="use-seed">
-          <label for="use-seed" style="margin:0">固定随机种子</label>
+          <label for="use-seed" style="margin:0" data-i18n="label.fixedSeed">Fixed Random Seed</label>
           <input type="number" id="seed-value" value="42" style="width:60px" disabled>
         </div>
 
-        <!-- 事件注入 (仅自定义模式) -->
+        <!-- Event Injection -->
         <div id="event-inject-section">
           <details id="event-inject-details">
-            <summary>事件注入</summary>
+            <summary data-i18n="label.eventInject">Event Injection</summary>
             <div class="ev-grid">
-              <label class="ev-chip ev-up"   for="ev-chk-0"><input type="checkbox" id="ev-chk-0">财报利好</label>
-              <label class="ev-chip ev-down" for="ev-chk-1"><input type="checkbox" id="ev-chk-1">财报利空</label>
-              <label class="ev-chip ev-down ev-danger" for="ev-chk-2"><input type="checkbox" id="ev-chk-2">黑天鹅</label>
-              <label class="ev-chip ev-up"   for="ev-chk-3"><input type="checkbox" id="ev-chk-3">利好新闻</label>
-              <label class="ev-chip ev-down" for="ev-chk-4"><input type="checkbox" id="ev-chk-4">利空新闻</label>
-              <label class="ev-chip ev-up"   for="ev-chk-5"><input type="checkbox" id="ev-chk-5">向上突破</label>
-              <label class="ev-chip ev-down" for="ev-chk-6"><input type="checkbox" id="ev-chk-6">向下突破</label>
-              <label class="ev-chip ev-neutral" for="ev-chk-7"><input type="checkbox" id="ev-chk-7">均值回归</label>
-              <label class="ev-chip ev-neutral" for="ev-chk-8"><input type="checkbox" id="ev-chk-8">趋势加速</label>
+              <label class="ev-chip ev-up"   for="ev-chk-0"><input type="checkbox" id="ev-chk-0"><span data-i18n="event.earningsUp">Earnings Beat</span></label>
+              <label class="ev-chip ev-down" for="ev-chk-1"><input type="checkbox" id="ev-chk-1"><span data-i18n="event.earningsDown">Earnings Miss</span></label>
+              <label class="ev-chip ev-down ev-danger" for="ev-chk-2"><input type="checkbox" id="ev-chk-2"><span data-i18n="event.blackSwan">Black Swan</span></label>
+              <label class="ev-chip ev-up"   for="ev-chk-3"><input type="checkbox" id="ev-chk-3"><span data-i18n="event.newsUp">Positive News</span></label>
+              <label class="ev-chip ev-down" for="ev-chk-4"><input type="checkbox" id="ev-chk-4"><span data-i18n="event.newsDown">Negative News</span></label>
+              <label class="ev-chip ev-up"   for="ev-chk-5"><input type="checkbox" id="ev-chk-5"><span data-i18n="event.breakoutUp">Breakout Up</span></label>
+              <label class="ev-chip ev-down" for="ev-chk-6"><input type="checkbox" id="ev-chk-6"><span data-i18n="event.breakoutDown">Breakout Down</span></label>
+              <label class="ev-chip ev-neutral" for="ev-chk-7"><input type="checkbox" id="ev-chk-7"><span data-i18n="event.meanReversion">Mean Reversion</span></label>
+              <label class="ev-chip ev-neutral" for="ev-chk-8"><input type="checkbox" id="ev-chk-8"><span data-i18n="event.trendAccel">Trend Acceleration</span></label>
             </div>
             <div id="ev-bar-inputs"></div>
             <input type="hidden" id="ev-bar-0" value="250">
@@ -799,23 +816,23 @@ input[type=number]::-webkit-outer-spin-button {
           </details>
         </div>
 
-        <button class="btn-primary" id="btn-generate" style="width:100%;margin-top:10px">生成数据</button>
+        <button class="btn-primary" id="btn-generate" style="width:100%;margin-top:10px" data-i18n="btn.generate">Generate Data</button>
         <div id="data-status" class="status-msg"></div>
       </div>
 
-      <!-- 回测控制 -->
+      <!-- Backtest Control -->
       <div class="panel-section">
-        <h3>回测控制</h3>
+        <h3 data-i18n="panel.backtest">Backtest Control</h3>
         <div class="inline-field">
-          <label>初始资金</label>
+          <label data-i18n="label.initCash">Initial Cash</label>
           <input type="number" id="initial-cash" value="100000" min="1000" step="10000">
         </div>
-        <button class="btn-run" id="btn-run" style="margin-top:10px">运行回测</button>
+        <button class="btn-run" id="btn-run" style="margin-top:10px" data-i18n="btn.run">Run Backtest</button>
       </div>
 
-      <!-- 绩效统计 -->
+      <!-- Performance -->
       <div class="panel-section" style="flex:1;overflow-y:auto">
-        <h3>绩效统计</h3>
+        <h3 data-i18n="panel.performance">Performance</h3>
         <div id="stats-grid" class="stats-grid"></div>
 
         <div class="perf-chart-container">
@@ -827,33 +844,33 @@ input[type=number]::-webkit-outer-spin-button {
       </div>
     </div>
 
-    <!-- ===== 中心区域: K线图 + 策略编辑器 + 底部面板 ===== -->
+    <!-- ===== Center Panel ===== -->
     <div class="center-panel">
 
-      <!-- 上部: 图表 + 编辑器 标签页 -->
+      <!-- Tabs: Chart + Editor -->
       <div class="tab-group" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
         <div class="tab-bar">
-          <button class="tab-btn active" data-tab="tab-chart">K 线图</button>
-          <button class="tab-btn" data-tab="tab-editor">策略编辑器</button>
+          <button class="tab-btn active" data-tab="tab-chart" data-i18n="tab.chart">Chart</button>
+          <button class="tab-btn" data-tab="tab-editor" data-i18n="tab.editor">Strategy Editor</button>
         </div>
 
-        <!-- K 线图 -->
+        <!-- Chart -->
         <div id="tab-chart" class="tab-content active">
           <div class="chart-container">
             <canvas id="candlestick-canvas"></canvas>
           </div>
-          <div class="hint" style="padding:2px 10px">鼠标滚轮: 平移 | Ctrl+滚轮: 缩放 | 拖拽: 平移 | 悬停: 查看详情</div>
+          <div class="hint" style="padding:2px 10px" data-i18n="hint.chart">Scroll: pan | Ctrl+Scroll: zoom | Drag: pan | Hover: details</div>
         </div>
 
-        <!-- 策略编辑器 -->
+        <!-- Strategy Editor -->
         <div id="tab-editor" class="tab-content">
           <div class="editor-toolbar">
             <select id="template-select" style="width:auto;min-width:180px"></select>
-            <button class="btn-sm" id="btn-check">检查语法</button>
-            <button class="btn-sm" id="btn-save" type="button">保存策略</button>
-            <button class="btn-sm" id="btn-load" type="button">加载策略</button>
+            <button class="btn-sm" id="btn-check" data-i18n="btn.checkSyntax">Check Syntax</button>
+            <button class="btn-sm" id="btn-save" type="button" data-i18n="btn.save">Save Strategy</button>
+            <button class="btn-sm" id="btn-load" type="button" data-i18n="btn.load">Load Strategy</button>
             <input type="file" id="file-load-input" accept=".js,.txt,.mjs" style="display:none">
-            <button class="btn-sm" id="btn-api-ref">API 参考</button>
+            <button class="btn-sm" id="btn-api-ref" data-i18n="btn.apiRef">API Reference</button>
             <span id="editor-status" class="status-msg" style="margin-left:8px"></span>
           </div>
           <div class="editor-area">
@@ -863,291 +880,291 @@ input[type=number]::-webkit-outer-spin-button {
               <div id="autocomplete-popup" class="autocomplete-popup"></div>
             </div>
 
-            <!-- API 参考侧栏 -->
+            <!-- API Reference -->
             <div id="api-ref-panel" class="api-ref">
-              <h4>生命周期回调</h4>
+              <h4 data-i18n="api.lifecycle">Lifecycle Callbacks</h4>
               <div class="api-entry">
                 <span class="api-name">onStrategyStart()</span>
-                <div class="api-desc">策略启动时调用</div>
+                <div class="api-desc" data-i18n="api.onStrategyStart">Called when strategy starts</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onBar(bar)</span>
-                <div class="api-desc">每根 K 线收盘时触发</div>
+                <div class="api-desc" data-i18n="api.onBar">Triggered on each bar close</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onBarOpen(bar)</span>
-                <div class="api-desc">每根 K 线开盘时触发</div>
+                <div class="api-desc" data-i18n="api.onBarOpen">Triggered on each bar open</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onStrategyStop()</span>
-                <div class="api-desc">策略停止时调用</div>
+                <div class="api-desc" data-i18n="api.onStrategyStop">Called when strategy stops</div>
               </div>
 
-              <h4>订单/持仓/止损回调</h4>
+              <h4 data-i18n="api.orderCallbacks">Order/Position/Stop Callbacks</h4>
               <div class="api-entry">
                 <span class="api-name">onOrderFilled(order)</span>
-                <div class="api-desc">订单成交时触发</div>
+                <div class="api-desc" data-i18n="api.onOrderFilled">Triggered when order is filled</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onOrderCancelled(order)</span>
-                <div class="api-desc">订单取消时触发</div>
+                <div class="api-desc" data-i18n="api.onOrderCancelled">Triggered when order is cancelled</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onOrderRejected(order)</span>
-                <div class="api-desc">订单拒绝时触发</div>
+                <div class="api-desc" data-i18n="api.onOrderRejected">Triggered when order is rejected</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onPositionOpened(pos)</span>
-                <div class="api-desc">新持仓建立时触发</div>
+                <div class="api-desc" data-i18n="api.onPositionOpened">Triggered when position is opened</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onPositionClosed(pos)</span>
-                <div class="api-desc">持仓平仓时触发</div>
+                <div class="api-desc" data-i18n="api.onPositionClosed">Triggered when position is closed</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onPositionChanged(pos)</span>
-                <div class="api-desc">持仓变化时触发 (加仓/减仓)</div>
+                <div class="api-desc" data-i18n="api.onPositionChanged">Triggered when position changes (add/reduce)</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onStopExecuted(stop)</span>
-                <div class="api-desc">止损触发时调用</div>
+                <div class="api-desc" data-i18n="api.onStopExecuted">Called when stop is triggered</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">onStopCancelled(stop)</span>
-                <div class="api-desc">止损取消时调用</div>
+                <div class="api-desc" data-i18n="api.onStopCancelled">Called when stop is cancelled</div>
               </div>
 
-              <h4>快捷下单 (市价)</h4>
+              <h4 data-i18n="api.marketOrders">Market Orders</h4>
               <div class="api-entry">
                 <span class="api-name">this.buy</span>
                 <span class="api-sig">(qty, text?)</span>
-                <div class="api-desc">市价买入 (下一根K线open成交)</div>
+                <div class="api-desc" data-i18n="api.buy">Market buy (fills at next bar open)</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.sell</span>
                 <span class="api-sig">(qty, text?)</span>
-                <div class="api-desc">市价卖出 (下一根K线open成交)</div>
+                <div class="api-desc" data-i18n="api.sell">Market sell (fills at next bar open)</div>
               </div>
 
-              <h4>快捷下单 (限价/止损)</h4>
+              <h4 data-i18n="api.limitOrders">Limit/Stop Orders</h4>
               <div class="api-entry">
                 <span class="api-name">this.buyLimit</span>
                 <span class="api-sig">(qty, price, text?)</span>
-                <div class="api-desc">限价买入</div>
+                <div class="api-desc" data-i18n="api.buyLimit">Limit buy</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.sellLimit</span>
                 <span class="api-sig">(qty, price, text?)</span>
-                <div class="api-desc">限价卖出</div>
+                <div class="api-desc" data-i18n="api.sellLimit">Limit sell</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.buyStop</span>
                 <span class="api-sig">(qty, stopPrice, text?)</span>
-                <div class="api-desc">止损买入</div>
+                <div class="api-desc" data-i18n="api.buyStop">Stop buy</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.sellStop</span>
                 <span class="api-sig">(qty, stopPrice, text?)</span>
-                <div class="api-desc">止损卖出</div>
+                <div class="api-desc" data-i18n="api.sellStop">Stop sell</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.buyStopLimit</span>
                 <span class="api-sig">(qty, price, stopPrice, text?)</span>
-                <div class="api-desc">止损限价买入</div>
+                <div class="api-desc" data-i18n="api.buyStopLimit">Stop-limit buy</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.sellStopLimit</span>
                 <span class="api-sig">(qty, price, stopPrice, text?)</span>
-                <div class="api-desc">止损限价卖出</div>
+                <div class="api-desc" data-i18n="api.sellStopLimit">Stop-limit sell</div>
               </div>
 
-              <h4>底层订单 API</h4>
+              <h4 data-i18n="api.lowLevel">Low-level Order API</h4>
               <div class="api-entry">
                 <span class="api-name">this.marketOrder</span>
                 <span class="api-sig">(side, qty, text?)</span>
-                <div class="api-desc">创建市价单对象 (不自动发送)</div>
+                <div class="api-desc" data-i18n="api.marketOrder">Create market order object (not auto-sent)</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.limitOrder</span>
                 <span class="api-sig">(side, qty, price, text?)</span>
-                <div class="api-desc">创建限价单对象</div>
+                <div class="api-desc" data-i18n="api.limitOrder">Create limit order object</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.stopOrder</span>
                 <span class="api-sig">(side, qty, stopPrice, text?)</span>
-                <div class="api-desc">创建止损单对象</div>
+                <div class="api-desc" data-i18n="api.stopOrder">Create stop order object</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.stopLimitOrder</span>
                 <span class="api-sig">(side, qty, price, stopPrice, text?)</span>
-                <div class="api-desc">创建止损限价单对象</div>
+                <div class="api-desc" data-i18n="api.stopLimitOrder">Create stop-limit order object</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.sendOrder</span>
                 <span class="api-sig">(order)</span>
-                <div class="api-desc">发送订单</div>
+                <div class="api-desc" data-i18n="api.sendOrder">Send order</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.cancelOrder</span>
                 <span class="api-sig">(order)</span>
-                <div class="api-desc">撤销订单</div>
+                <div class="api-desc" data-i18n="api.cancelOrder">Cancel order</div>
               </div>
 
-              <h4>止损</h4>
+              <h4 data-i18n="api.stops">Stops</h4>
               <div class="api-entry">
                 <span class="api-name">this.setStop</span>
                 <span class="api-sig">(level, stopType?, mode?)</span>
-                <div class="api-desc">设置止损 (StopType: FIXED/TRAILING, StopMode: ABSOLUTE/PERCENT)</div>
+                <div class="api-desc" data-i18n="api.setStop">Set stop (StopType: FIXED/TRAILING, StopMode: ABSOLUTE/PERCENT)</div>
               </div>
 
-              <h4>属性查询</h4>
+              <h4 data-i18n="api.properties">Properties</h4>
               <div class="api-entry">
                 <span class="api-name">this.bars</span>
-                <div class="api-desc">到当前为止的所有 K 线数组</div>
+                <div class="api-desc" data-i18n="api.bars">All bars up to current</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.bar</span>
-                <div class="api-desc">当前 K 线</div>
+                <div class="api-desc" data-i18n="api.bar">Current bar</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.position</span>
-                <div class="api-desc">当前持仓 {side, qty, entryPrice} 或 null</div>
+                <div class="api-desc" data-i18n="api.position">Current position {side, qty, entryPrice} or null</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.hasPosition</span>
-                <div class="api-desc">是否有持仓 (boolean)</div>
+                <div class="api-desc" data-i18n="api.hasPosition">Has position (boolean)</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.hasLongPosition</span>
-                <div class="api-desc">是否有多头仓位</div>
+                <div class="api-desc" data-i18n="api.hasLong">Has long position</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.hasShortPosition</span>
-                <div class="api-desc">是否有空头仓位</div>
+                <div class="api-desc" data-i18n="api.hasShort">Has short position</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">this.portfolio</span>
-                <div class="api-desc">{cash, equity, initialCash}</div>
+                <div class="api-desc" data-i18n="api.portfolio">{cash, equity, initialCash}</div>
               </div>
 
-              <h4>日志</h4>
+              <h4 data-i18n="api.logging">Logging</h4>
               <div class="api-entry">
                 <span class="api-name">this.log</span>
                 <span class="api-sig">(message)</span>
-                <div class="api-desc">输出日志消息</div>
+                <div class="api-desc" data-i18n="api.log">Output log message</div>
               </div>
 
-              <h4>枚举常量</h4>
+              <h4 data-i18n="api.enums">Enum Constants</h4>
               <div class="api-entry">
                 <span class="api-name">OrderSide</span>
-                <div class="api-desc">BUY / SELL</div>
+                <div class="api-desc" data-i18n="api.orderSide">BUY / SELL</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">StopType</span>
-                <div class="api-desc">FIXED / TRAILING</div>
+                <div class="api-desc" data-i18n="api.stopType">FIXED / TRAILING</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">StopMode</span>
-                <div class="api-desc">ABSOLUTE / PERCENT</div>
+                <div class="api-desc" data-i18n="api.stopMode">ABSOLUTE / PERCENT</div>
               </div>
 
-              <h4>Bar 对象属性</h4>
+              <h4 data-i18n="api.barProps">Bar Object Properties</h4>
               <div class="api-entry">
                 <span class="api-name">bar.datetime</span>
-                <div class="api-desc">时间戳 (秒), 使用 new Date(bar.datetime * 1000) 转换</div>
+                <div class="api-desc" data-i18n="api.barDatetime">Timestamp (seconds), use new Date(bar.datetime * 1000)</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">bar.open / high / low / close</span>
-                <div class="api-desc">开高低收价格</div>
+                <div class="api-desc" data-i18n="api.barOHLC">Open/High/Low/Close prices</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">bar.volume</span>
-                <div class="api-desc">成交量</div>
+                <div class="api-desc" data-i18n="api.barVolume">Volume</div>
               </div>
 
-              <h4>常用数组方法</h4>
+              <h4 data-i18n="api.arrayMethods">Common Array Methods</h4>
               <div class="api-entry">
                 <span class="api-name">this.bars.slice(-n)</span>
-                <div class="api-desc">取最后 n 根 K 线</div>
+                <div class="api-desc" data-i18n="api.sliceDesc">Get last n bars</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">arr.map(b => b.close)</span>
-                <div class="api-desc">提取收盘价数组</div>
+                <div class="api-desc" data-i18n="api.mapDesc">Extract close price array</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">arr.reduce((a,b) => a+b)</span>
-                <div class="api-desc">求和</div>
+                <div class="api-desc" data-i18n="api.reduceDesc">Sum</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">Math.max(...arr)</span>
-                <div class="api-desc">最大值</div>
+                <div class="api-desc" data-i18n="api.maxDesc">Maximum value</div>
               </div>
               <div class="api-entry">
                 <span class="api-name">Math.min(...arr)</span>
-                <div class="api-desc">最小值</div>
+                <div class="api-desc" data-i18n="api.minDesc">Minimum value</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 底部面板: 订单 / 持仓 / 日志 -->
+      <!-- Bottom Panel -->
       <div class="bottom-panel tab-group">
         <div class="tab-bar">
-          <button class="tab-btn active" data-tab="tab-orders">订单</button>
-          <button class="tab-btn" data-tab="tab-positions">持仓</button>
-          <button class="tab-btn" data-tab="tab-logs">日志</button>
+          <button class="tab-btn active" data-tab="tab-orders" data-i18n="tab.orders">Orders</button>
+          <button class="tab-btn" data-tab="tab-positions" data-i18n="tab.positions">Positions</button>
+          <button class="tab-btn" data-tab="tab-logs" data-i18n="tab.logs">Logs</button>
         </div>
 
-        <!-- 订单 -->
+        <!-- Orders -->
         <div id="tab-orders" class="tab-content active">
           <div class="table-container">
             <table id="orders-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>时间</th>
-                  <th>方向</th>
-                  <th>类型</th>
-                  <th>状态</th>
-                  <th>数量</th>
-                  <th>价格</th>
-                  <th>备注</th>
+                  <th data-i18n="th.id">ID</th>
+                  <th data-i18n="th.time">Time</th>
+                  <th data-i18n="th.side">Side</th>
+                  <th data-i18n="th.type">Type</th>
+                  <th data-i18n="th.status">Status</th>
+                  <th data-i18n="th.qty">Qty</th>
+                  <th data-i18n="th.price">Price</th>
+                  <th data-i18n="th.note">Note</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td colspan="8" style="text-align:center;color:#666">暂无订单</td></tr>
+                <tr><td colspan="8" style="text-align:center;color:#666" data-i18n="empty.orders">No orders</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- 持仓 -->
+        <!-- Positions -->
         <div id="tab-positions" class="tab-content">
           <div class="table-container">
             <table id="positions-table">
               <thead>
                 <tr>
-                  <th>方向</th>
-                  <th>入场价</th>
-                  <th>入场日期</th>
-                  <th>数量</th>
-                  <th>已平仓</th>
-                  <th>出场日期</th>
-                  <th>盈亏</th>
-                  <th>盈亏%</th>
+                  <th data-i18n="th.direction">Side</th>
+                  <th data-i18n="th.entryPrice">Entry Price</th>
+                  <th data-i18n="th.entryDate">Entry Date</th>
+                  <th data-i18n="th.quantity">Qty</th>
+                  <th data-i18n="th.closed">Closed</th>
+                  <th data-i18n="th.exitDate">Exit Date</th>
+                  <th data-i18n="th.pnl">PnL</th>
+                  <th data-i18n="th.pnlPct">PnL %</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td colspan="8" style="text-align:center;color:#666">暂无持仓</td></tr>
+                <tr><td colspan="8" style="text-align:center;color:#666" data-i18n="empty.positions">No positions</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- 日志 -->
+        <!-- Logs -->
         <div id="tab-logs" class="tab-content">
-          <div id="log-content">暂无日志</div>
+          <div id="log-content" data-i18n="empty.logs">No logs</div>
         </div>
       </div>
     </div>
@@ -1162,7 +1179,657 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
+
 <script>
+// === i18n.js ===
+/**
+ * Internationalization (i18n) module.
+ * Supports English (en) and Chinese (zh). Default: English.
+ */
+
+const I18n = (function() {
+
+const translations = {
+  en: {
+    // Header
+    'header.title': 'myquant',
+    'header.mode': 'Backtest Mode (Simulated Data)',
+
+    // Data generation panel
+    'panel.dataGen': 'Data Generation',
+    'label.preset': 'Scenario Preset',
+    'label.barSize': 'Bar Size',
+    'label.barCount': 'Bar Count',
+    'label.initPrice': 'Initial Price',
+    'label.annualDrift': 'Annual Drift',
+    'label.annualVol': 'Annual Volatility',
+    'label.fixedSeed': 'Fixed Random Seed',
+    'label.eventInject': 'Event Injection',
+    'btn.generate': 'Generate Data',
+
+    // Backtest control panel
+    'panel.backtest': 'Backtest Control',
+    'label.initCash': 'Initial Cash',
+    'btn.run': 'Run Backtest',
+
+    // Performance panel
+    'panel.performance': 'Performance',
+
+    // Tabs
+    'tab.chart': 'Chart',
+    'tab.editor': 'Strategy Editor',
+    'tab.orders': 'Orders',
+    'tab.positions': 'Positions',
+    'tab.logs': 'Logs',
+
+    // Chart hint
+    'hint.chart': 'Scroll: pan | Ctrl+Scroll: zoom | Drag: pan | Hover: details',
+
+    // Editor toolbar
+    'btn.checkSyntax': 'Check Syntax',
+    'btn.save': 'Save Strategy',
+    'btn.load': 'Load Strategy',
+    'btn.apiRef': 'API Reference',
+
+    // API reference panel
+    'api.lifecycle': 'Lifecycle Callbacks',
+    'api.onStrategyStart': 'Called when strategy starts',
+    'api.onBar': 'Triggered on each bar close',
+    'api.onBarOpen': 'Triggered on each bar open',
+    'api.onStrategyStop': 'Called when strategy stops',
+    'api.orderCallbacks': 'Order/Position/Stop Callbacks',
+    'api.onOrderFilled': 'Triggered when order is filled',
+    'api.onOrderCancelled': 'Triggered when order is cancelled',
+    'api.onOrderRejected': 'Triggered when order is rejected',
+    'api.onPositionOpened': 'Triggered when position is opened',
+    'api.onPositionClosed': 'Triggered when position is closed',
+    'api.onPositionChanged': 'Triggered when position changes (add/reduce)',
+    'api.onStopExecuted': 'Called when stop is triggered',
+    'api.onStopCancelled': 'Called when stop is cancelled',
+    'api.marketOrders': 'Market Orders',
+    'api.buy': 'Market buy (fills at next bar open)',
+    'api.sell': 'Market sell (fills at next bar open)',
+    'api.limitOrders': 'Limit/Stop Orders',
+    'api.buyLimit': 'Limit buy',
+    'api.sellLimit': 'Limit sell',
+    'api.buyStop': 'Stop buy',
+    'api.sellStop': 'Stop sell',
+    'api.buyStopLimit': 'Stop-limit buy',
+    'api.sellStopLimit': 'Stop-limit sell',
+    'api.lowLevel': 'Low-level Order API',
+    'api.marketOrder': 'Create market order object (not auto-sent)',
+    'api.limitOrder': 'Create limit order object',
+    'api.stopOrder': 'Create stop order object',
+    'api.stopLimitOrder': 'Create stop-limit order object',
+    'api.sendOrder': 'Send order',
+    'api.cancelOrder': 'Cancel order',
+    'api.stops': 'Stops',
+    'api.setStop': 'Set stop (StopType: FIXED/TRAILING, StopMode: ABSOLUTE/PERCENT)',
+    'api.properties': 'Properties',
+    'api.bars': 'All bars up to current',
+    'api.bar': 'Current bar',
+    'api.position': 'Current position {side, qty, entryPrice} or null',
+    'api.hasPosition': 'Has position (boolean)',
+    'api.hasLong': 'Has long position',
+    'api.hasShort': 'Has short position',
+    'api.portfolio': '{cash, equity, initialCash}',
+    'api.logging': 'Logging',
+    'api.log': 'Output log message',
+    'api.enums': 'Enum Constants',
+    'api.orderSide': 'BUY / SELL',
+    'api.stopType': 'FIXED / TRAILING',
+    'api.stopMode': 'ABSOLUTE / PERCENT',
+    'api.barProps': 'Bar Object Properties',
+    'api.barDatetime': 'Timestamp (seconds), use new Date(bar.datetime * 1000)',
+    'api.barOHLC': 'Open/High/Low/Close prices',
+    'api.barVolume': 'Volume',
+    'api.arrayMethods': 'Common Array Methods',
+    'api.sliceDesc': 'Get last n bars',
+    'api.mapDesc': 'Extract close price array',
+    'api.reduceDesc': 'Sum',
+    'api.maxDesc': 'Maximum value',
+    'api.minDesc': 'Minimum value',
+
+    // Table headers
+    'th.id': 'ID',
+    'th.time': 'Time',
+    'th.side': 'Side',
+    'th.type': 'Type',
+    'th.status': 'Status',
+    'th.qty': 'Qty',
+    'th.price': 'Price',
+    'th.note': 'Note',
+    'th.direction': 'Side',
+    'th.entryPrice': 'Entry Price',
+    'th.entryDate': 'Entry Date',
+    'th.quantity': 'Qty',
+    'th.closed': 'Closed',
+    'th.exitDate': 'Exit Date',
+    'th.pnl': 'PnL',
+    'th.pnlPct': 'PnL %',
+
+    // Preset names
+    'preset.custom': 'Custom',
+    'preset.steadyBull': 'Steady Bull',
+    'preset.choppyRange': 'Choppy Range',
+    'preset.bullToBear': 'Bull to Bear',
+    'preset.vRecovery': 'V-Shaped Recovery',
+    'preset.blackSwan': 'Black Swan',
+    'preset.earnings': 'Earnings Season',
+    'preset.breakout': 'Breakout',
+    'preset.highVol': 'High Volatility',
+
+    // Bar sizes
+    'bar.daily': 'Daily',
+    'bar.4h': '4 Hour',
+    'bar.1h': '1 Hour',
+    'bar.15m': '15 Min',
+    'bar.5m': '5 Min',
+    'bar.1m': '1 Min',
+
+    // Event names
+    'event.earningsUp': 'Earnings Beat',
+    'event.earningsDown': 'Earnings Miss',
+    'event.blackSwan': 'Black Swan',
+    'event.newsUp': 'Positive News',
+    'event.newsDown': 'Negative News',
+    'event.breakoutUp': 'Breakout Up',
+    'event.breakoutDown': 'Breakout Down',
+    'event.meanReversion': 'Mean Reversion',
+    'event.trendAccel': 'Trend Acceleration',
+    'event.barHint': 'Bar #',
+
+    // Status messages
+    'status.generated': '{count} bars generated ({from} ~ {to})',
+    'status.running': 'Running...',
+    'status.done': 'Backtest done ({time}s), {bars} bars, {trades} trades',
+    'status.failed': 'Backtest failed: {error}',
+    'status.syntaxOk': 'Syntax OK',
+    'status.syntaxError': 'Syntax error: {error}',
+    'status.saved': 'Strategy saved',
+    'status.saveFailed': 'Save failed: {error}',
+    'status.loaded': 'Loaded: {file}',
+    'status.loadFailed': 'File read failed',
+    'alert.generateFirst': 'Please generate data first',
+
+    // Statistics
+    'stat.initCash': 'Initial Cash',
+    'stat.finalCash': 'Final Equity',
+    'stat.totalPnl': 'Total PnL',
+    'stat.totalReturn': 'Total Return',
+    'stat.totalTrades': 'Total Trades',
+    'stat.winRate': 'Win Rate',
+    'stat.winTrades': 'Winning Trades',
+    'stat.lossTrades': 'Losing Trades',
+    'stat.longTrades': 'Long Trades',
+    'stat.shortTrades': 'Short Trades',
+    'stat.longPnl': 'Long PnL',
+    'stat.shortPnl': 'Short PnL',
+    'stat.pnlPerTrade': 'PnL per Trade',
+    'stat.maxDrawdown': 'Max Drawdown',
+
+    // Orders / Positions table
+    'side.buy': 'BUY',
+    'side.sell': 'SELL',
+    'empty.orders': 'No orders',
+    'empty.positions': 'No positions',
+    'empty.logs': 'No logs',
+    'closed.yes': 'Yes',
+    'closed.no': 'No',
+
+    // Chart
+    'chart.noData': 'No candlestick data \u2014 generate data first',
+    'chart.noChartData': 'No data',
+    'chart.equityCurve': 'Equity Curve',
+    'chart.drawdown': 'Drawdown %',
+    'chart.date': 'Date',
+    'chart.open': 'O',
+    'chart.high': 'H',
+    'chart.low': 'L',
+    'chart.close': 'C',
+    'chart.volume': 'Vol',
+
+    // Autocomplete details
+    'ac.strategyStart': 'Strategy start callback',
+    'ac.onBar': 'Each bar callback, onBar(bar)',
+    'ac.onBarOpen': 'Bar open callback, onBarOpen(bar)',
+    'ac.strategyStop': 'Strategy stop callback',
+    'ac.orderFilled': 'Order filled callback, onOrderFilled(order)',
+    'ac.orderCancelled': 'Order cancelled callback',
+    'ac.posOpened': 'Position opened callback',
+    'ac.posClosed': 'Position closed callback',
+    'ac.posChanged': 'Position changed callback',
+    'ac.stopExec': 'Stop executed callback',
+    'ac.buy': '(qty, text?) Market buy (fills at next bar open)',
+    'ac.sell': '(qty, text?) Market sell (fills at next bar open)',
+    'ac.buyLimit': '(qty, price, text?) Limit buy',
+    'ac.sellLimit': '(qty, price, text?) Limit sell',
+    'ac.buyStop': '(qty, stopPrice, text?) Stop buy',
+    'ac.sellStop': '(qty, stopPrice, text?) Stop sell',
+    'ac.buyStopLimit': '(qty, price, stopPrice, text?) Stop-limit buy',
+    'ac.sellStopLimit': '(qty, price, stopPrice, text?) Stop-limit sell',
+    'ac.marketOrder': '(side, qty, text?) Create market order',
+    'ac.limitOrder': '(side, qty, price, text?) Create limit order',
+    'ac.stopOrder': '(side, qty, stopPrice, text?) Create stop order',
+    'ac.sendOrder': '(order) Send order',
+    'ac.cancelOrder': '(order) Cancel order',
+    'ac.setStop': '(level, stopType?, mode?) Set stop',
+    'ac.log': '(message) Output log',
+    'ac.bars': 'All bars up to current',
+    'ac.bar': 'Current bar',
+    'ac.position': '{side, qty, entryPrice} | null',
+    'ac.hasPosition': 'Has position (boolean)',
+    'ac.hasLong': 'Has long position',
+    'ac.hasShort': 'Has short position',
+    'ac.portfolio': 'Portfolio object (.account.cash, .getValue(), etc.)',
+    'ac.datetime': 'Timestamp (seconds)',
+    'ac.open': 'Open price',
+    'ac.high': 'High price',
+    'ac.low': 'Low price',
+    'ac.close': 'Close price',
+    'ac.volume': 'Volume',
+    'ac.mathMax': '(...values) Maximum',
+    'ac.mathMin': '(...values) Minimum',
+    'ac.mathAbs': '(x) Absolute value',
+    'ac.mathSqrt': '(x) Square root',
+    'ac.mathFloor': '(x) Floor',
+    'ac.mathCeil': '(x) Ceiling',
+    'ac.mathRound': '(x) Round',
+    'ac.mathPow': '(base, exp) Power',
+    'ac.mathLog': '(x) Natural log',
+    'ac.mathPI': 'Pi constant',
+    'ac.consoleLog': '(...args) Console output',
+    'ac.parseInt': '(string, radix?) Parse integer',
+    'ac.parseFloat': '(string) Parse float',
+    'ac.isNaN': '(value) Is NaN?',
+    'ac.map': '(fn) Map array',
+    'ac.filter': '(fn) Filter array',
+    'ac.reduce': '(fn, init?) Reduce',
+    'ac.slice': '(start, end?) Slice',
+    'ac.forEach': '(fn) Iterate',
+    'ac.push': '(item) Add element',
+    'ac.length': 'Array/string length',
+    'ac.indexOf': '(item) Find index',
+    'ac.includes': '(item) Contains?',
+    'ac.toFixed': '(digits) Fixed decimals',
+    'ac.strategy': 'Strategy base class',
+
+    // Strategy template names
+    'tpl.0.name': 'Blank Strategy',
+    'tpl.0.desc': 'Minimal strategy scaffold',
+    'tpl.1.name': 'SMA Crossover',
+    'tpl.1.desc': 'Buy when fast MA crosses above slow MA, sell on cross below',
+    'tpl.2.name': 'RSI Strategy',
+    'tpl.2.desc': 'RSI overbought/oversold reversal trading',
+    'tpl.3.name': 'Bollinger Bands',
+    'tpl.3.desc': 'Trade when price touches upper/lower Bollinger Bands',
+    'tpl.4.name': '01 PA+MACD Strategy',
+    'tpl.4.desc': 'Darek Dargo: Supply/Demand zones + Candlestick patterns (Pin Bar/Engulfing/Inside) + MACD histogram reversal',
+    'tpl.5.name': '02 EP Breakout',
+    'tpl.5.desc': 'Qullamaggie: EMA fan + Staircase gain + Consolidation breakout + 3-phase take-profit',
+    'tpl.6.name': '03 PO3 Triple Force',
+    'tpl.6.desc': 'Wyckoff: Accumulation range + Manipulation sweep + Reversal confirmation + Mid-range target',
+    'tpl.7.name': '04 Confluence Pullback',
+    'tpl.7.desc': 'Martin Luk: EMA9/21/50 + AVWAP convergence + Liquidity sweep + V-reversal',
+    'tpl.8.name': '05 Penny Stock Short',
+    'tpl.8.desc': 'Steven Dux: Parabolic surge + Resistance + Volume divergence + Scaled exit',
+    'tpl.9.name': '06 First Red Day',
+    'tpl.9.desc': 'Alex Temiz: Consecutive big gains + Parabolic acceleration + First red day short + Two-phase entry',
+    'tpl.10.name': '07 Outside Bar',
+    'tpl.10.desc': 'Larry Williams: Contrarian outside bar + ATR stop + FPO next-day take-profit',
+    'tpl.11.name': '08 Liquidity Hunt',
+    'tpl.11.desc': 'Marco Acetony: Respected highs/lows + Liquidity sweep + 2B reversal + Reversal candle',
+    'tpl.12.name': '09 Small Account Momentum',
+    'tpl.12.desc': 'Ross Cameron: Gap screen + Bull flag + Flat top breakout + Two-phase exit',
+    'tpl.13.name': '10 Key Level Catalyst',
+    'tpl.13.desc': 'Brando: Swing high/low key levels + Volume catalyst + Reversal candle confirmation',
+    'tpl.14.name': '11 Volume Profile',
+    'tpl.14.desc': 'Flight: VPVR volume profile + Multi-period EMA + RSI divergence + Double bottom',
+    'tpl.15.name': '12 Thematic Momentum',
+    'tpl.15.desc': 'Hong Inki: New high breakout + Big candle volume + Day2 pullback entry + ATR trail',
+    'tpl.16.name': '13 Orderflow Scalping',
+    'tpl.16.desc': 'Fabio Valentini: CVD divergence + Absorption detection + Trend/Mean-reversion dual model',
+    'tpl.17.name': '14 Dual Model',
+    'tpl.17.desc': 'Fabio: ADX regime + Trend breakout pullback + Mean-reversion fake breakout + ABC sizing',
+  },
+
+  zh: {
+    'header.title': 'myquant',
+    'header.mode': '\u56de\u6d4b\u6a21\u5f0f (\u6a21\u62df\u6570\u636e)',
+
+    'panel.dataGen': '\u6570\u636e\u751f\u6210',
+    'label.preset': '\u573a\u666f\u9884\u8bbe',
+    'label.barSize': 'K \u7ebf\u5468\u671f',
+    'label.barCount': 'K \u7ebf\u6570\u91cf',
+    'label.initPrice': '\u521d\u59cb\u4ef7\u683c',
+    'label.annualDrift': '\u5e74\u5316\u6536\u76ca',
+    'label.annualVol': '\u5e74\u5316\u6ce2\u52a8',
+    'label.fixedSeed': '\u56fa\u5b9a\u968f\u673a\u79cd\u5b50',
+    'label.eventInject': '\u4e8b\u4ef6\u6ce8\u5165',
+    'btn.generate': '\u751f\u6210\u6570\u636e',
+
+    'panel.backtest': '\u56de\u6d4b\u63a7\u5236',
+    'label.initCash': '\u521d\u59cb\u8d44\u91d1',
+    'btn.run': '\u8fd0\u884c\u56de\u6d4b',
+
+    'panel.performance': '\u7ee9\u6548\u7edf\u8ba1',
+
+    'tab.chart': 'K \u7ebf\u56fe',
+    'tab.editor': '\u7b56\u7565\u7f16\u8f91\u5668',
+    'tab.orders': '\u8ba2\u5355',
+    'tab.positions': '\u6301\u4ed3',
+    'tab.logs': '\u65e5\u5fd7',
+
+    'hint.chart': '\u9f20\u6807\u6eda\u8f6e: \u5e73\u79fb | Ctrl+\u6eda\u8f6e: \u7f29\u653e | \u62d6\u62fd: \u5e73\u79fb | \u60ac\u505c: \u67e5\u770b\u8be6\u60c5',
+
+    'btn.checkSyntax': '\u68c0\u67e5\u8bed\u6cd5',
+    'btn.save': '\u4fdd\u5b58\u7b56\u7565',
+    'btn.load': '\u52a0\u8f7d\u7b56\u7565',
+    'btn.apiRef': 'API \u53c2\u8003',
+
+    'api.lifecycle': '\u751f\u547d\u5468\u671f\u56de\u8c03',
+    'api.onStrategyStart': '\u7b56\u7565\u542f\u52a8\u65f6\u8c03\u7528',
+    'api.onBar': '\u6bcf\u6839 K \u7ebf\u6536\u76d8\u65f6\u89e6\u53d1',
+    'api.onBarOpen': '\u6bcf\u6839 K \u7ebf\u5f00\u76d8\u65f6\u89e6\u53d1',
+    'api.onStrategyStop': '\u7b56\u7565\u505c\u6b62\u65f6\u8c03\u7528',
+    'api.orderCallbacks': '\u8ba2\u5355/\u6301\u4ed3/\u6b62\u635f\u56de\u8c03',
+    'api.onOrderFilled': '\u8ba2\u5355\u6210\u4ea4\u65f6\u89e6\u53d1',
+    'api.onOrderCancelled': '\u8ba2\u5355\u53d6\u6d88\u65f6\u89e6\u53d1',
+    'api.onOrderRejected': '\u8ba2\u5355\u62d2\u7edd\u65f6\u89e6\u53d1',
+    'api.onPositionOpened': '\u65b0\u6301\u4ed3\u5efa\u7acb\u65f6\u89e6\u53d1',
+    'api.onPositionClosed': '\u6301\u4ed3\u5e73\u4ed3\u65f6\u89e6\u53d1',
+    'api.onPositionChanged': '\u6301\u4ed3\u53d8\u5316\u65f6\u89e6\u53d1 (\u52a0\u4ed3/\u51cf\u4ed3)',
+    'api.onStopExecuted': '\u6b62\u635f\u89e6\u53d1\u65f6\u8c03\u7528',
+    'api.onStopCancelled': '\u6b62\u635f\u53d6\u6d88\u65f6\u8c03\u7528',
+    'api.marketOrders': '\u5feb\u6377\u4e0b\u5355 (\u5e02\u4ef7)',
+    'api.buy': '\u5e02\u4ef7\u4e70\u5165 (\u4e0b\u4e00\u6839K\u7ebfopen\u6210\u4ea4)',
+    'api.sell': '\u5e02\u4ef7\u5356\u51fa (\u4e0b\u4e00\u6839K\u7ebfopen\u6210\u4ea4)',
+    'api.limitOrders': '\u5feb\u6377\u4e0b\u5355 (\u9650\u4ef7/\u6b62\u635f)',
+    'api.buyLimit': '\u9650\u4ef7\u4e70\u5165',
+    'api.sellLimit': '\u9650\u4ef7\u5356\u51fa',
+    'api.buyStop': '\u6b62\u635f\u4e70\u5165',
+    'api.sellStop': '\u6b62\u635f\u5356\u51fa',
+    'api.buyStopLimit': '\u6b62\u635f\u9650\u4ef7\u4e70\u5165',
+    'api.sellStopLimit': '\u6b62\u635f\u9650\u4ef7\u5356\u51fa',
+    'api.lowLevel': '\u5e95\u5c42\u8ba2\u5355 API',
+    'api.marketOrder': '\u521b\u5efa\u5e02\u4ef7\u5355\u5bf9\u8c61 (\u4e0d\u81ea\u52a8\u53d1\u9001)',
+    'api.limitOrder': '\u521b\u5efa\u9650\u4ef7\u5355\u5bf9\u8c61',
+    'api.stopOrder': '\u521b\u5efa\u6b62\u635f\u5355\u5bf9\u8c61',
+    'api.stopLimitOrder': '\u521b\u5efa\u6b62\u635f\u9650\u4ef7\u5355\u5bf9\u8c61',
+    'api.sendOrder': '\u53d1\u9001\u8ba2\u5355',
+    'api.cancelOrder': '\u64a4\u9500\u8ba2\u5355',
+    'api.stops': '\u6b62\u635f',
+    'api.setStop': '\u8bbe\u7f6e\u6b62\u635f (StopType: FIXED/TRAILING, StopMode: ABSOLUTE/PERCENT)',
+    'api.properties': '\u5c5e\u6027\u67e5\u8be2',
+    'api.bars': '\u5230\u5f53\u524d\u4e3a\u6b62\u7684\u6240\u6709 K \u7ebf\u6570\u7ec4',
+    'api.bar': '\u5f53\u524d K \u7ebf',
+    'api.position': '\u5f53\u524d\u6301\u4ed3 {side, qty, entryPrice} \u6216 null',
+    'api.hasPosition': '\u662f\u5426\u6709\u6301\u4ed3 (boolean)',
+    'api.hasLong': '\u662f\u5426\u6709\u591a\u5934\u4ed3\u4f4d',
+    'api.hasShort': '\u662f\u5426\u6709\u7a7a\u5934\u4ed3\u4f4d',
+    'api.portfolio': '{cash, equity, initialCash}',
+    'api.logging': '\u65e5\u5fd7',
+    'api.log': '\u8f93\u51fa\u65e5\u5fd7\u6d88\u606f',
+    'api.enums': '\u679a\u4e3e\u5e38\u91cf',
+    'api.orderSide': 'BUY / SELL',
+    'api.stopType': 'FIXED / TRAILING',
+    'api.stopMode': 'ABSOLUTE / PERCENT',
+    'api.barProps': 'Bar \u5bf9\u8c61\u5c5e\u6027',
+    'api.barDatetime': '\u65f6\u95f4\u6233 (\u79d2), \u4f7f\u7528 new Date(bar.datetime * 1000) \u8f6c\u6362',
+    'api.barOHLC': '\u5f00\u9ad8\u4f4e\u6536\u4ef7\u683c',
+    'api.barVolume': '\u6210\u4ea4\u91cf',
+    'api.arrayMethods': '\u5e38\u7528\u6570\u7ec4\u65b9\u6cd5',
+    'api.sliceDesc': '\u53d6\u6700\u540e n \u6839 K \u7ebf',
+    'api.mapDesc': '\u63d0\u53d6\u6536\u76d8\u4ef7\u6570\u7ec4',
+    'api.reduceDesc': '\u6c42\u548c',
+    'api.maxDesc': '\u6700\u5927\u503c',
+    'api.minDesc': '\u6700\u5c0f\u503c',
+
+    'th.id': 'ID',
+    'th.time': '\u65f6\u95f4',
+    'th.side': '\u65b9\u5411',
+    'th.type': '\u7c7b\u578b',
+    'th.status': '\u72b6\u6001',
+    'th.qty': '\u6570\u91cf',
+    'th.price': '\u4ef7\u683c',
+    'th.note': '\u5907\u6ce8',
+    'th.direction': '\u65b9\u5411',
+    'th.entryPrice': '\u5165\u573a\u4ef7',
+    'th.entryDate': '\u5165\u573a\u65e5\u671f',
+    'th.quantity': '\u6570\u91cf',
+    'th.closed': '\u5df2\u5e73\u4ed3',
+    'th.exitDate': '\u51fa\u573a\u65e5\u671f',
+    'th.pnl': '\u76c8\u4e8f',
+    'th.pnlPct': '\u76c8\u4e8f%',
+
+    'preset.custom': '\u81ea\u5b9a\u4e49',
+    'preset.steadyBull': '\u7a33\u5b9a\u4e0a\u6da8 (Steady Bull)',
+    'preset.choppyRange': '\u9707\u8361\u5e02 (Choppy Range)',
+    'preset.bullToBear': '\u725b\u8f6c\u718a (Bull to Bear)',
+    'preset.vRecovery': 'V\u578b\u53cd\u8f6c (V-Recovery)',
+    'preset.blackSwan': '\u9ed1\u5929\u9e45 (Black Swan)',
+    'preset.earnings': '\u8d22\u62a5\u5b63 (Earnings)',
+    'preset.breakout': '\u7a81\u7834\u884c\u60c5 (Breakout)',
+    'preset.highVol': '\u9ad8\u6ce2\u52a8 (High Vol)',
+
+    'bar.daily': '\u65e5\u7ebf',
+    'bar.4h': '4\u5c0f\u65f6',
+    'bar.1h': '1\u5c0f\u65f6',
+    'bar.15m': '15\u5206\u949f',
+    'bar.5m': '5\u5206\u949f',
+    'bar.1m': '1\u5206\u949f',
+
+    'event.earningsUp': '\u8d22\u62a5\u5229\u597d',
+    'event.earningsDown': '\u8d22\u62a5\u5229\u7a7a',
+    'event.blackSwan': '\u9ed1\u5929\u9e45',
+    'event.newsUp': '\u5229\u597d\u65b0\u95fb',
+    'event.newsDown': '\u5229\u7a7a\u65b0\u95fb',
+    'event.breakoutUp': '\u5411\u4e0a\u7a81\u7834',
+    'event.breakoutDown': '\u5411\u4e0b\u7a81\u7834',
+    'event.meanReversion': '\u5747\u503c\u56de\u5f52',
+    'event.trendAccel': '\u8d8b\u52bf\u52a0\u901f',
+    'event.barHint': '\u7b2cN\u6839K\u7ebf',
+
+    'status.generated': '\u5df2\u751f\u6210 {count} \u6839 K \u7ebf ({from} ~ {to})',
+    'status.running': '\u6b63\u5728\u8fd0\u884c...',
+    'status.done': '\u56de\u6d4b\u5b8c\u6210 ({time}s), {bars} \u6839 K \u7ebf, {trades} \u7b14\u4ea4\u6613',
+    'status.failed': '\u56de\u6d4b\u5931\u8d25: {error}',
+    'status.syntaxOk': '\u8bed\u6cd5\u6b63\u786e',
+    'status.syntaxError': '\u8bed\u6cd5\u9519\u8bef: {error}',
+    'status.saved': '\u7b56\u7565\u5df2\u4fdd\u5b58',
+    'status.saveFailed': '\u4fdd\u5b58\u5931\u8d25: {error}',
+    'status.loaded': '\u5df2\u52a0\u8f7d: {file}',
+    'status.loadFailed': '\u6587\u4ef6\u8bfb\u53d6\u5931\u8d25',
+    'alert.generateFirst': '\u8bf7\u5148\u751f\u6210\u6570\u636e',
+
+    'stat.initCash': '\u521d\u59cb\u8d44\u91d1',
+    'stat.finalCash': '\u6700\u7ec8\u8d44\u91d1',
+    'stat.totalPnl': '\u603b\u76c8\u4e8f',
+    'stat.totalReturn': '\u603b\u6536\u76ca\u7387',
+    'stat.totalTrades': '\u603b\u4ea4\u6613\u6570',
+    'stat.winRate': '\u80dc\u7387',
+    'stat.winTrades': '\u76c8\u5229\u4ea4\u6613',
+    'stat.lossTrades': '\u4e8f\u635f\u4ea4\u6613',
+    'stat.longTrades': '\u591a\u5934\u4ea4\u6613',
+    'stat.shortTrades': '\u7a7a\u5934\u4ea4\u6613',
+    'stat.longPnl': '\u591a\u5934\u76c8\u4e8f',
+    'stat.shortPnl': '\u7a7a\u5934\u76c8\u4e8f',
+    'stat.pnlPerTrade': '\u6bcf\u7b14\u76c8\u4e8f',
+    'stat.maxDrawdown': '\u6700\u5927\u56de\u64a4',
+
+    'side.buy': '\u4e70\u5165',
+    'side.sell': '\u5356\u51fa',
+    'empty.orders': '\u6682\u65e0\u8ba2\u5355',
+    'empty.positions': '\u6682\u65e0\u6301\u4ed3',
+    'empty.logs': '\u6682\u65e0\u65e5\u5fd7',
+    'closed.yes': '\u662f',
+    'closed.no': '\u5426',
+
+    'chart.noData': '\u6682\u65e0 K \u7ebf\u6570\u636e \u2014 \u8bf7\u5148\u751f\u6210\u6570\u636e',
+    'chart.noChartData': '\u6682\u65e0\u6570\u636e',
+    'chart.equityCurve': '\u6743\u76ca\u66f2\u7ebf',
+    'chart.drawdown': '\u56de\u64a4 %',
+    'chart.date': '\u65e5\u671f',
+    'chart.open': '\u5f00',
+    'chart.high': '\u9ad8',
+    'chart.low': '\u4f4e',
+    'chart.close': '\u6536',
+    'chart.volume': '\u91cf',
+
+    // AC detail - same as English keys exist, use Chinese values
+    'ac.strategyStart': '\u7b56\u7565\u542f\u52a8\u56de\u8c03',
+    'ac.onBar': '\u6bcf\u6839K\u7ebf\u89e6\u53d1, onBar(bar)',
+    'ac.onBarOpen': 'K\u7ebf\u5f00\u76d8\u56de\u8c03, onBarOpen(bar)',
+    'ac.strategyStop': '\u7b56\u7565\u505c\u6b62\u56de\u8c03',
+    'ac.orderFilled': '\u8ba2\u5355\u6210\u4ea4\u56de\u8c03, onOrderFilled(order)',
+    'ac.orderCancelled': '\u8ba2\u5355\u53d6\u6d88\u56de\u8c03',
+    'ac.posOpened': '\u5f00\u4ed3\u56de\u8c03',
+    'ac.posClosed': '\u5e73\u4ed3\u56de\u8c03',
+    'ac.posChanged': '\u6301\u4ed3\u53d8\u66f4\u56de\u8c03',
+    'ac.stopExec': '\u6b62\u635f\u89e6\u53d1\u56de\u8c03',
+    'ac.buy': '(qty, text?) \u5e02\u4ef7\u4e70\u5165 (\u4e0b\u4e00bar open\u6210\u4ea4)',
+    'ac.sell': '(qty, text?) \u5e02\u4ef7\u5356\u51fa (\u4e0b\u4e00bar open\u6210\u4ea4)',
+    'ac.buyLimit': '(qty, price, text?) \u9650\u4ef7\u4e70\u5165',
+    'ac.sellLimit': '(qty, price, text?) \u9650\u4ef7\u5356\u51fa',
+    'ac.buyStop': '(qty, stopPrice, text?) \u6b62\u635f\u4e70\u5165',
+    'ac.sellStop': '(qty, stopPrice, text?) \u6b62\u635f\u5356\u51fa',
+    'ac.buyStopLimit': '(qty, price, stopPrice, text?) \u9650\u4ef7\u6b62\u635f\u4e70\u5165',
+    'ac.sellStopLimit': '(qty, price, stopPrice, text?) \u9650\u4ef7\u6b62\u635f\u5356\u51fa',
+    'ac.marketOrder': '(side, qty, text?) \u521b\u5efa\u5e02\u4ef7\u5355',
+    'ac.limitOrder': '(side, qty, price, text?) \u521b\u5efa\u9650\u4ef7\u5355',
+    'ac.stopOrder': '(side, qty, stopPrice, text?) \u521b\u5efa\u6b62\u635f\u5355',
+    'ac.sendOrder': '(order) \u53d1\u9001\u8ba2\u5355',
+    'ac.cancelOrder': '(order) \u64a4\u9500\u8ba2\u5355',
+    'ac.setStop': '(level, stopType?, mode?) \u8bbe\u7f6e\u6b62\u635f',
+    'ac.log': '(message) \u8f93\u51fa\u65e5\u5fd7',
+    'ac.bars': '\u5230\u5f53\u524d\u4e3a\u6b62\u7684\u6240\u6709K\u7ebf\u6570\u7ec4',
+    'ac.bar': '\u5f53\u524dK\u7ebf',
+    'ac.position': '{side, qty, entryPrice} | null',
+    'ac.hasPosition': '\u662f\u5426\u6709\u6301\u4ed3 (boolean)',
+    'ac.hasLong': '\u662f\u5426\u6709\u591a\u5934\u4ed3\u4f4d',
+    'ac.hasShort': '\u662f\u5426\u6709\u7a7a\u5934\u4ed3\u4f4d',
+    'ac.portfolio': 'Portfolio\u5bf9\u8c61 (.account.cash, .getValue(), etc.)',
+    'ac.datetime': '\u65f6\u95f4\u6233(\u79d2)',
+    'ac.open': '\u5f00\u76d8\u4ef7',
+    'ac.high': '\u6700\u9ad8\u4ef7',
+    'ac.low': '\u6700\u4f4e\u4ef7',
+    'ac.close': '\u6536\u76d8\u4ef7',
+    'ac.volume': '\u6210\u4ea4\u91cf',
+    'ac.mathMax': '(...values) \u6700\u5927\u503c',
+    'ac.mathMin': '(...values) \u6700\u5c0f\u503c',
+    'ac.mathAbs': '(x) \u7edd\u5bf9\u503c',
+    'ac.mathSqrt': '(x) \u5e73\u65b9\u6839',
+    'ac.mathFloor': '(x) \u5411\u4e0b\u53d6\u6574',
+    'ac.mathCeil': '(x) \u5411\u4e0a\u53d6\u6574',
+    'ac.mathRound': '(x) \u56db\u820d\u4e94\u5165',
+    'ac.mathPow': '(base, exp) \u5e42',
+    'ac.mathLog': '(x) \u81ea\u7136\u5bf9\u6570',
+    'ac.mathPI': '\u5706\u5468\u7387',
+    'ac.consoleLog': '(...args) \u63a7\u5236\u53f0\u8f93\u51fa',
+    'ac.parseInt': '(string, radix?) \u8f6c\u6574\u6570',
+    'ac.parseFloat': '(string) \u8f6c\u6d6e\u70b9\u6570',
+    'ac.isNaN': '(value) \u662f\u5426\u4e3aNaN',
+    'ac.map': '(fn) \u6620\u5c04\u6570\u7ec4',
+    'ac.filter': '(fn) \u8fc7\u6ee4\u6570\u7ec4',
+    'ac.reduce': '(fn, init?) \u5f52\u7ea6',
+    'ac.slice': '(start, end?) \u5207\u7247',
+    'ac.forEach': '(fn) \u904d\u5386',
+    'ac.push': '(item) \u6dfb\u52a0\u5143\u7d20',
+    'ac.length': '\u6570\u7ec4/\u5b57\u7b26\u4e32\u957f\u5ea6',
+    'ac.indexOf': '(item) \u67e5\u627e\u7d22\u5f15',
+    'ac.includes': '(item) \u662f\u5426\u5305\u542b',
+    'ac.toFixed': '(digits) \u4fdd\u7559\u5c0f\u6570\u4f4d',
+    'ac.strategy': '\u7b56\u7565\u57fa\u7c7b',
+
+    'tpl.0.name': '\u7a7a\u767d\u7b56\u7565',
+    'tpl.0.desc': '\u6700\u5c0f\u7b56\u7565\u6846\u67b6',
+    'tpl.1.name': '\u5747\u7ebf\u4ea4\u53c9\u7b56\u7565',
+    'tpl.1.desc': '\u77ed\u671f\u5747\u7ebf\u4e0a\u7a7f\u957f\u671f\u5747\u7ebf\u505a\u591a, \u4e0b\u7a7f\u505a\u7a7a',
+    'tpl.2.name': 'RSI \u7b56\u7565',
+    'tpl.2.desc': 'RSI \u8d85\u4e70\u8d85\u5356\u53cd\u8f6c\u4ea4\u6613',
+    'tpl.3.name': '\u5e03\u6797\u5e26\u7b56\u7565',
+    'tpl.3.desc': '\u4ef7\u683c\u89e6\u53ca\u5e03\u6797\u5e26\u4e0a\u4e0b\u8f68\u65f6\u4ea4\u6613',
+    'tpl.4.name': '01 PA+MACD \u7b56\u7565',
+    'tpl.4.desc': 'Darek Dargo: \u4f9b\u9700\u533a + K\u7ebf\u5f62\u6001(Pin Bar/\u541e\u6ca1/\u5b55\u7ebf) + MACD\u76f4\u65b9\u56fe\u7ffb\u8f6c',
+    'tpl.5.name': '02 EP\u7a81\u7834\u7b56\u7565',
+    'tpl.5.desc': 'Qullamaggie: EMA\u6247\u5f62\u5c55\u5f00 + \u9636\u68af\u4e0a\u6da8 + \u76d8\u6574\u7a81\u7834 + \u4e09\u9636\u6bb5\u6b62\u76c8',
+    'tpl.6.name': '03 PO3\u4e09\u529b\u7b56\u7565',
+    'tpl.6.desc': '\u5a01\u514b\u592b: \u84c4\u529b\u533a\u95f4 + \u64cd\u7eb5\u6e05\u626b + \u53cd\u8f6c\u786e\u8ba4 + \u4e2d\u8f74\u76ee\u6807',
+    'tpl.7.name': '04 \u5171\u632f\u56de\u8c03\u7b56\u7565',
+    'tpl.7.desc': 'Martin Luk: EMA9/21/50 + AVWAP\u6536\u655b + \u6d41\u52a8\u6027\u6e05\u626b + V\u53cd\u8f6c',
+    'tpl.8.name': '05 \u4f4e\u4ef7\u80a1\u505a\u7a7a\u7b56\u7565',
+    'tpl.8.desc': 'Steven Dux: \u629b\u7269\u7ebf\u66b4\u6da8 + \u963b\u529b\u4f4d + \u91cf\u4ef7\u80cc\u79bb + \u5206\u9636\u6bb5\u6b62\u76c8',
+    'tpl.9.name': '06 \u9996\u9634\u65e5\u7b56\u7565',
+    'tpl.9.desc': 'Alex Temiz: \u8fde\u7eed\u5927\u6da8 + \u629b\u7269\u7ebf\u52a0\u901f + \u9996\u9634\u65e5\u505a\u7a7a + \u4e24\u9636\u6bb5\u5efa\u4ed3',
+    'tpl.10.name': '07 \u5916\u5305\u7ebf\u7b56\u7565',
+    'tpl.10.desc': 'Larry Williams: \u5916\u5305\u7ebf\u53cd\u76f4\u89c9 + ATR\u6b62\u635f + FPO\u6b21\u65e5\u6b62\u76c8',
+    'tpl.11.name': '08 \u6d41\u52a8\u6027\u72e9\u730e\u7b56\u7565',
+    'tpl.11.desc': 'Marco Acetony: \u53d7\u5c0a\u91cd\u9ad8\u4f4e\u70b9 + \u6d41\u52a8\u6027\u6e05\u626b + 2B\u53cd\u8f6c + \u53cd\u8f6cK\u7ebf',
+    'tpl.12.name': '09 \u5c0f\u8d26\u6237\u52a8\u91cf\u7b56\u7565',
+    'tpl.12.desc': 'Ross Cameron: \u8df3\u7a7a\u7b5b\u9009 + \u725b\u65d7\u5f62\u6001 + \u5e73\u9876\u7a81\u7834 + \u4e24\u9636\u6bb5\u6b62\u76c8',
+    'tpl.13.name': '10 \u5173\u952e\u6c34\u5e73\u50ac\u5316\u5242\u7b56\u7565',
+    'tpl.13.desc': 'Brando: \u6ce2\u6bb5\u9ad8\u4f4e\u5173\u952e\u4f4d + \u6210\u4ea4\u91cf\u50ac\u5316 + \u53cd\u8f6cK\u7ebf\u786e\u8ba4',
+    'tpl.14.name': '11 \u6210\u4ea4\u91cf\u5206\u5e03\u7b56\u7565',
+    'tpl.14.desc': 'Flight: VPVR\u91cf\u4ef7\u5206\u5e03 + \u591a\u5468\u671fEMA + RSI\u80cc\u79bb + \u53cc\u5e95\u5f62\u6001',
+    'tpl.15.name': '12 \u4e3b\u9898\u52a8\u91cf\u65b0\u9ad8\u7a81\u7834\u7b56\u7565',
+    'tpl.15.desc': 'Hong Inki: \u65b0\u9ad8\u7a81\u7834 + \u5927\u9633\u7ebf\u653e\u91cf + Day2\u56de\u8c03\u5165\u573a + ATR\u8ffd\u8e2a',
+    'tpl.16.name': '13 \u8ba2\u5355\u6d41\u5265\u5934\u76ae\u7b56\u7565',
+    'tpl.16.desc': 'Fabio Valentini: CVD\u80cc\u79bb + \u5438\u6536\u68c0\u6d4b + \u8d8b\u52bf/\u5747\u503c\u56de\u5f52\u53cc\u6a21\u578b',
+    'tpl.17.name': '14 \u53cc\u6a21\u578b\u7b56\u7565',
+    'tpl.17.desc': 'Fabio: ADX\u5e02\u573a\u72b6\u6001 + \u8d8b\u52bf\u7a81\u7834\u56de\u8c03 + \u5747\u503c\u56de\u5f52\u5047\u7a81\u7834 + ABC\u5206\u7ea7',
+  },
+};
+
+let lang = 'en';
+
+function t(key, params) {
+  var text = (translations[lang] && translations[lang][key]) || (translations.en[key]) || key;
+  if (params) {
+    Object.keys(params).forEach(function(k) {
+      text = text.split('{' + k + '}').join(String(params[k]));
+    });
+  }
+  return text;
+}
+
+function setLang(newLang) {
+  lang = newLang;
+  applyDom();
+  localStorage.setItem('myquant-lang', lang);
+}
+
+function getLang() {
+  return lang;
+}
+
+function init() {
+  var saved = localStorage.getItem('myquant-lang');
+  if (saved === 'zh' || saved === 'en') {
+    lang = saved;
+  } else {
+    lang = 'en';
+  }
+}
+
+function applyDom() {
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+}
+
+init();
+
+return { t: t, setLang: setLang, getLang: getLang, applyDom: applyDom, translations: translations };
+
+})();
+
+window.I18n = I18n;
+window.t = I18n.t;
+
 // === models.js ===
 /**
  * myquant JS 模型层 — 与 Python myquant 核心模型 1:1 对应.
@@ -3194,7 +3861,7 @@ class CandlestickChart {
       ctx.fillStyle = '#8888aa';
       ctx.font = '14px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('暂无 K 线数据 — 请先生成数据', W / 2, H / 2);
+      ctx.fillText(t('chart.noData'), W / 2, H / 2);
       return;
     }
 
@@ -3316,10 +3983,10 @@ class CandlestickChart {
 
       // 信息框
       const info = [
-        `日期: ${dt.toLocaleDateString()}`,
-        `开: ${b.open.toFixed(2)}  高: ${b.high.toFixed(2)}`,
-        `低: ${b.low.toFixed(2)}  收: ${b.close.toFixed(2)}`,
-        `量: ${b.volume.toLocaleString()}`,
+        `${t('chart.date')}: ${dt.toLocaleDateString()}`,
+        `${t('chart.open')}: ${b.open.toFixed(2)}  ${t('chart.high')}: ${b.high.toFixed(2)}`,
+        `${t('chart.low')}: ${b.low.toFixed(2)}  ${t('chart.close')}: ${b.close.toFixed(2)}`,
+        `${t('chart.volume')}: ${b.volume.toLocaleString()}`,
       ];
       const boxW = 200, boxH = 70;
       let bx = xc + 10;
@@ -3387,7 +4054,7 @@ class LineChart {
     this.data = [];
     this.color = options.color || '#26a69a';
     this.fillColor = options.fillColor || 'rgba(38,166,154,0.15)';
-    this.label = options.label || '';
+    this.label = options.labelKey ? t(options.labelKey) : (options.label || '');
     this.formatValue = options.formatValue || (v => v.toFixed(2));
 
     window.addEventListener('resize', () => {
@@ -3424,7 +4091,7 @@ class LineChart {
       ctx.fillStyle = '#666680';
       ctx.font = '12px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('暂无数据', W / 2, H / 2);
+      ctx.fillText(t('chart.noChartData'), W / 2, H / 2);
       return;
     }
 
@@ -3673,86 +4340,82 @@ function initHighlightEditor(textareaId, highlightId) {
 /**
  * 自动补全数据: 策略 API + JS 关键字.
  */
-const AC_ITEMS = [
-  // Strategy 生命周期
-  { label: 'onStrategyStart', kind: 'method', detail: '策略启动回调' },
-  { label: 'onBar', kind: 'method', detail: '每根K线触发, onBar(bar)' },
-  { label: 'onBarOpen', kind: 'method', detail: 'K线开盘回调, onBarOpen(bar)' },
-  { label: 'onStrategyStop', kind: 'method', detail: '策略停止回调' },
-  { label: 'onOrderFilled', kind: 'method', detail: '订单成交回调, onOrderFilled(order)' },
-  { label: 'onOrderCancelled', kind: 'method', detail: '订单取消回调' },
-  { label: 'onPositionOpened', kind: 'method', detail: '开仓回调' },
-  { label: 'onPositionClosed', kind: 'method', detail: '平仓回调' },
-  { label: 'onPositionChanged', kind: 'method', detail: '持仓变更回调' },
-  { label: 'onStopExecuted', kind: 'method', detail: '止损触发回调' },
-  // 交易方法 (市价)
-  { label: 'this.buy', kind: 'method', detail: '(qty, text?) 市价买入 (下一bar open成交)' },
-  { label: 'this.sell', kind: 'method', detail: '(qty, text?) 市价卖出 (下一bar open成交)' },
-  // 交易方法 (限价/止损)
-  { label: 'this.buyLimit', kind: 'method', detail: '(qty, price, text?) 限价买入' },
-  { label: 'this.sellLimit', kind: 'method', detail: '(qty, price, text?) 限价卖出' },
-  { label: 'this.buyStop', kind: 'method', detail: '(qty, stopPrice, text?) 止损买入' },
-  { label: 'this.sellStop', kind: 'method', detail: '(qty, stopPrice, text?) 止损卖出' },
-  { label: 'this.buyStopLimit', kind: 'method', detail: '(qty, price, stopPrice, text?) 限价止损买入' },
-  { label: 'this.sellStopLimit', kind: 'method', detail: '(qty, price, stopPrice, text?) 限价止损卖出' },
-  // 订单管理
-  { label: 'this.marketOrder', kind: 'method', detail: '(side, qty, text?) 创建市价单' },
-  { label: 'this.limitOrder', kind: 'method', detail: '(side, qty, price, text?) 创建限价单' },
-  { label: 'this.stopOrder', kind: 'method', detail: '(side, qty, stopPrice, text?) 创建止损单' },
-  { label: 'this.sendOrder', kind: 'method', detail: '(order) 发送订单' },
-  { label: 'this.cancelOrder', kind: 'method', detail: '(order) 撤销订单' },
-  // 止损
-  { label: 'this.setStop', kind: 'method', detail: '(level, stopType?, mode?) 设置止损' },
-  { label: 'this.log', kind: 'method', detail: '(message) 输出日志' },
-  // 属性
-  { label: 'this.bars', kind: 'prop', detail: '到当前为止的所有K线数组' },
-  { label: 'this.bar', kind: 'prop', detail: '当前K线' },
-  { label: 'this.position', kind: 'prop', detail: '{side, qty, entryPrice} | null' },
-  { label: 'this.hasPosition', kind: 'prop', detail: '是否有持仓 (boolean)' },
-  { label: 'this.hasLongPosition', kind: 'prop', detail: '是否有多头仓位' },
-  { label: 'this.hasShortPosition', kind: 'prop', detail: '是否有空头仓位' },
-  { label: 'this.portfolio', kind: 'prop', detail: 'Portfolio对象 (.account.cash, .getValue(), etc.)' },
-  // Bar 属性
-  { label: 'bar.datetime', kind: 'prop', detail: '时间戳(秒)' },
-  { label: 'bar.open', kind: 'prop', detail: '开盘价' },
-  { label: 'bar.high', kind: 'prop', detail: '最高价' },
-  { label: 'bar.low', kind: 'prop', detail: '最低价' },
-  { label: 'bar.close', kind: 'prop', detail: '收盘价' },
-  { label: 'bar.volume', kind: 'prop', detail: '成交量' },
-  // 常用 JS
-  { label: 'Math.max', kind: 'func', detail: '(...values) 最大值' },
-  { label: 'Math.min', kind: 'func', detail: '(...values) 最小值' },
-  { label: 'Math.abs', kind: 'func', detail: '(x) 绝对值' },
-  { label: 'Math.sqrt', kind: 'func', detail: '(x) 平方根' },
-  { label: 'Math.floor', kind: 'func', detail: '(x) 向下取整' },
-  { label: 'Math.ceil', kind: 'func', detail: '(x) 向上取整' },
-  { label: 'Math.round', kind: 'func', detail: '(x) 四舍五入' },
-  { label: 'Math.pow', kind: 'func', detail: '(base, exp) 幂' },
-  { label: 'Math.log', kind: 'func', detail: '(x) 自然对数' },
-  { label: 'Math.PI', kind: 'const', detail: '圆周率' },
-  { label: 'console.log', kind: 'func', detail: '(...args) 控制台输出' },
-  { label: 'parseInt', kind: 'func', detail: '(string, radix?) 转整数' },
-  { label: 'parseFloat', kind: 'func', detail: '(string) 转浮点数' },
-  { label: 'isNaN', kind: 'func', detail: '(value) 是否为NaN' },
-  // JS 关键字
+const AC_ITEMS_DATA = [
+  { label: 'onStrategyStart', kind: 'method', detailKey: 'ac.strategyStart' },
+  { label: 'onBar', kind: 'method', detailKey: 'ac.onBar' },
+  { label: 'onBarOpen', kind: 'method', detailKey: 'ac.onBarOpen' },
+  { label: 'onStrategyStop', kind: 'method', detailKey: 'ac.strategyStop' },
+  { label: 'onOrderFilled', kind: 'method', detailKey: 'ac.orderFilled' },
+  { label: 'onOrderCancelled', kind: 'method', detailKey: 'ac.orderCancelled' },
+  { label: 'onPositionOpened', kind: 'method', detailKey: 'ac.posOpened' },
+  { label: 'onPositionClosed', kind: 'method', detailKey: 'ac.posClosed' },
+  { label: 'onPositionChanged', kind: 'method', detailKey: 'ac.posChanged' },
+  { label: 'onStopExecuted', kind: 'method', detailKey: 'ac.stopExec' },
+  { label: 'this.buy', kind: 'method', detailKey: 'ac.buy' },
+  { label: 'this.sell', kind: 'method', detailKey: 'ac.sell' },
+  { label: 'this.buyLimit', kind: 'method', detailKey: 'ac.buyLimit' },
+  { label: 'this.sellLimit', kind: 'method', detailKey: 'ac.sellLimit' },
+  { label: 'this.buyStop', kind: 'method', detailKey: 'ac.buyStop' },
+  { label: 'this.sellStop', kind: 'method', detailKey: 'ac.sellStop' },
+  { label: 'this.buyStopLimit', kind: 'method', detailKey: 'ac.buyStopLimit' },
+  { label: 'this.sellStopLimit', kind: 'method', detailKey: 'ac.sellStopLimit' },
+  { label: 'this.marketOrder', kind: 'method', detailKey: 'ac.marketOrder' },
+  { label: 'this.limitOrder', kind: 'method', detailKey: 'ac.limitOrder' },
+  { label: 'this.stopOrder', kind: 'method', detailKey: 'ac.stopOrder' },
+  { label: 'this.sendOrder', kind: 'method', detailKey: 'ac.sendOrder' },
+  { label: 'this.cancelOrder', kind: 'method', detailKey: 'ac.cancelOrder' },
+  { label: 'this.setStop', kind: 'method', detailKey: 'ac.setStop' },
+  { label: 'this.log', kind: 'method', detailKey: 'ac.log' },
+  { label: 'this.bars', kind: 'prop', detailKey: 'ac.bars' },
+  { label: 'this.bar', kind: 'prop', detailKey: 'ac.bar' },
+  { label: 'this.position', kind: 'prop', detailKey: 'ac.position' },
+  { label: 'this.hasPosition', kind: 'prop', detailKey: 'ac.hasPosition' },
+  { label: 'this.hasLongPosition', kind: 'prop', detailKey: 'ac.hasLong' },
+  { label: 'this.hasShortPosition', kind: 'prop', detailKey: 'ac.hasShort' },
+  { label: 'this.portfolio', kind: 'prop', detailKey: 'ac.portfolio' },
+  { label: 'bar.datetime', kind: 'prop', detailKey: 'ac.datetime' },
+  { label: 'bar.open', kind: 'prop', detailKey: 'ac.open' },
+  { label: 'bar.high', kind: 'prop', detailKey: 'ac.high' },
+  { label: 'bar.low', kind: 'prop', detailKey: 'ac.low' },
+  { label: 'bar.close', kind: 'prop', detailKey: 'ac.close' },
+  { label: 'bar.volume', kind: 'prop', detailKey: 'ac.volume' },
+  { label: 'Math.max', kind: 'func', detailKey: 'ac.mathMax' },
+  { label: 'Math.min', kind: 'func', detailKey: 'ac.mathMin' },
+  { label: 'Math.abs', kind: 'func', detailKey: 'ac.mathAbs' },
+  { label: 'Math.sqrt', kind: 'func', detailKey: 'ac.mathSqrt' },
+  { label: 'Math.floor', kind: 'func', detailKey: 'ac.mathFloor' },
+  { label: 'Math.ceil', kind: 'func', detailKey: 'ac.mathCeil' },
+  { label: 'Math.round', kind: 'func', detailKey: 'ac.mathRound' },
+  { label: 'Math.pow', kind: 'func', detailKey: 'ac.mathPow' },
+  { label: 'Math.log', kind: 'func', detailKey: 'ac.mathLog' },
+  { label: 'Math.PI', kind: 'const', detailKey: 'ac.mathPI' },
+  { label: 'console.log', kind: 'func', detailKey: 'ac.consoleLog' },
+  { label: 'parseInt', kind: 'func', detailKey: 'ac.parseInt' },
+  { label: 'parseFloat', kind: 'func', detailKey: 'ac.parseFloat' },
+  { label: 'isNaN', kind: 'func', detailKey: 'ac.isNaN' },
   ...['const', 'let', 'var', 'function', 'class', 'extends', 'return', 'if', 'else',
     'for', 'while', 'break', 'continue', 'switch', 'case', 'default', 'new',
     'this', 'super', 'true', 'false', 'null', 'undefined', 'typeof', 'instanceof',
     'async', 'await', 'try', 'catch', 'finally', 'throw', 'import', 'export',
-  ].map(k => ({ label: k, kind: 'keyword', detail: '' })),
-  // 数组方法
-  { label: '.map', kind: 'method', detail: '(fn) 映射数组' },
-  { label: '.filter', kind: 'method', detail: '(fn) 过滤数组' },
-  { label: '.reduce', kind: 'method', detail: '(fn, init?) 归约' },
-  { label: '.slice', kind: 'method', detail: '(start, end?) 切片' },
-  { label: '.forEach', kind: 'method', detail: '(fn) 遍历' },
-  { label: '.push', kind: 'method', detail: '(item) 添加元素' },
-  { label: '.length', kind: 'prop', detail: '数组/字符串长度' },
-  { label: '.indexOf', kind: 'method', detail: '(item) 查找索引' },
-  { label: '.includes', kind: 'method', detail: '(item) 是否包含' },
-  { label: '.toFixed', kind: 'method', detail: '(digits) 保留小数位' },
-  { label: 'Strategy', kind: 'class', detail: '策略基类' },
+  ].map(k => ({ label: k, kind: 'keyword', detailKey: '' })),
+  { label: '.map', kind: 'method', detailKey: 'ac.map' },
+  { label: '.filter', kind: 'method', detailKey: 'ac.filter' },
+  { label: '.reduce', kind: 'method', detailKey: 'ac.reduce' },
+  { label: '.slice', kind: 'method', detailKey: 'ac.slice' },
+  { label: '.forEach', kind: 'method', detailKey: 'ac.forEach' },
+  { label: '.push', kind: 'method', detailKey: 'ac.push' },
+  { label: '.length', kind: 'prop', detailKey: 'ac.length' },
+  { label: '.indexOf', kind: 'method', detailKey: 'ac.indexOf' },
+  { label: '.includes', kind: 'method', detailKey: 'ac.includes' },
+  { label: '.toFixed', kind: 'method', detailKey: 'ac.toFixed' },
+  { label: 'Strategy', kind: 'class', detailKey: 'ac.strategy' },
 ];
+
+function getACItems() {
+  return AC_ITEMS_DATA.map(function(item) {
+    return { label: item.label, kind: item.kind, detail: item.detailKey ? t(item.detailKey) : '' };
+  });
+}
 
 /**
  * 初始化自动补全.
@@ -3873,7 +4536,8 @@ function initAutocomplete(textareaId, popupId, updateHighlight) {
     if (word.length < 2) { hide(); return; }
 
     const lower = word.toLowerCase();
-    const filtered = AC_ITEMS.filter(item => {
+    const acItems = getACItems();
+    const filtered = acItems.filter(item => {
       const l = item.label.toLowerCase();
       return l.includes(lower) && l !== lower;
     }).slice(0, 12);
@@ -10374,111 +11038,142 @@ window.STRATEGY_TEMPLATES = STRATEGY_TEMPLATES;
 
 // === app.js ===
 /**
- * myquant Web 主应用控制器.
+ * myquant Web main app controller.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- 状态 ---
+  // --- State ---
   let bars = [];
   let backtestResult = null;
   const engine = new BacktestEngine();
 
-  // --- 图表组件 ---
+  // --- Chart components ---
   const candleChart = new CandlestickChart('candlestick-canvas');
   const equityChart = new LineChart('equity-canvas', {
     color: '#26a69a', fillColor: 'rgba(38,166,154,0.15)',
-    label: '权益曲线', formatValue: v => '$' + v.toFixed(0),
+    labelKey: 'chart.equityCurve', formatValue: v => '$' + v.toFixed(0),
   });
   const drawdownChart = new LineChart('drawdown-canvas', {
     color: '#ef5350', fillColor: 'rgba(239,83,80,0.15)',
-    label: '回撤 %', formatValue: v => v.toFixed(2) + '%',
+    labelKey: 'chart.drawdown', formatValue: v => v.toFixed(2) + '%',
   });
 
-  // --- 编辑器 ---
+  // --- Editor ---
   const editorEl = document.getElementById('strategy-editor');
-  editorEl.value = STRATEGY_TEMPLATES[1].code; // 默认均线交叉
+  editorEl.value = STRATEGY_TEMPLATES[1].code;
 
-  // 初始化语法高亮 + 自动补全
   const hlEditor = initHighlightEditor('strategy-editor', 'strategy-highlight');
   const acEditor = initAutocomplete('strategy-editor', 'autocomplete-popup', hlEditor.update);
 
-  // --- 辅助: 从代码中提取策略类名 ---
   function extractClassName(code) {
     var m = code.match(/class\s+(\w+)\s+extends\s+Strategy/);
     return m ? m[1] : null;
   }
 
-  // --- 模板选择 ---
+  // --- Template selector ---
   const templateSelect = document.getElementById('template-select');
-  STRATEGY_TEMPLATES.forEach((t, i) => {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = `${t.name} — ${t.description}`;
-    templateSelect.appendChild(opt);
-  });
-  templateSelect.value = '1';
+
+  function populateTemplates() {
+    var currentVal = templateSelect.value;
+    // Keep custom option if exists
+    var customOpt = templateSelect.querySelector('option[value="custom"]');
+    var customText = customOpt ? customOpt.textContent : null;
+    templateSelect.innerHTML = '';
+    STRATEGY_TEMPLATES.forEach((tpl, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      var nameKey = 'tpl.' + i + '.name';
+      var descKey = 'tpl.' + i + '.desc';
+      opt.textContent = t(nameKey) + ' \u2014 ' + t(descKey);
+      templateSelect.appendChild(opt);
+    });
+    if (customText) {
+      var opt = document.createElement('option');
+      opt.value = 'custom';
+      opt.textContent = customText;
+      templateSelect.appendChild(opt);
+    }
+    templateSelect.value = currentVal || '1';
+  }
+  populateTemplates();
+
   templateSelect.addEventListener('change', () => {
     const idx = parseInt(templateSelect.value);
-    editorEl.value = STRATEGY_TEMPLATES[idx].code;
-    hlEditor.update();
-    acEditor.hide();
-    // 移除 Custom 选项 (如果存在)
+    if (!isNaN(idx) && STRATEGY_TEMPLATES[idx]) {
+      editorEl.value = STRATEGY_TEMPLATES[idx].code;
+      hlEditor.update();
+      acEditor.hide();
+    }
     var customOpt = templateSelect.querySelector('option[value="custom"]');
-    if (customOpt) templateSelect.removeChild(customOpt);
-    // 清除已加载状态
+    if (customOpt && templateSelect.value !== 'custom') templateSelect.removeChild(customOpt);
     var statusEl = document.getElementById('editor-status');
     statusEl.textContent = '';
     statusEl.className = 'status-msg';
   });
 
-  // --- 预设选择 ---
+  // --- Preset selector ---
   const presetSelect = document.getElementById('preset-select');
-  const presetNames = [
-    { value: '', label: '自定义' },
-    { value: PresetName.STEADY_BULL, label: '稳定上涨 (Steady Bull)' },
-    { value: PresetName.CHOPPY_RANGE, label: '震荡市 (Choppy Range)' },
-    { value: PresetName.BULL_TO_BEAR, label: '牛转熊 (Bull to Bear)' },
-    { value: PresetName.V_SHAPED_RECOVERY, label: 'V型反转 (V-Recovery)' },
-    { value: PresetName.BLACK_SWAN, label: '黑天鹅 (Black Swan)' },
-    { value: PresetName.EARNINGS_SEASON, label: '财报季 (Earnings)' },
-    { value: PresetName.BREAKOUT, label: '突破行情 (Breakout)' },
-    { value: PresetName.HIGH_VOLATILITY, label: '高波动 (High Vol)' },
+  const presetItems = [
+    { value: '', labelKey: 'preset.custom' },
+    { value: PresetName.STEADY_BULL, labelKey: 'preset.steadyBull' },
+    { value: PresetName.CHOPPY_RANGE, labelKey: 'preset.choppyRange' },
+    { value: PresetName.BULL_TO_BEAR, labelKey: 'preset.bullToBear' },
+    { value: PresetName.V_SHAPED_RECOVERY, labelKey: 'preset.vRecovery' },
+    { value: PresetName.BLACK_SWAN, labelKey: 'preset.blackSwan' },
+    { value: PresetName.EARNINGS_SEASON, labelKey: 'preset.earnings' },
+    { value: PresetName.BREAKOUT, labelKey: 'preset.breakout' },
+    { value: PresetName.HIGH_VOLATILITY, labelKey: 'preset.highVol' },
   ];
-  presetNames.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.value;
-    opt.textContent = p.label;
-    presetSelect.appendChild(opt);
-  });
 
-  // --- K线周期 ---
+  function populatePresets() {
+    var curVal = presetSelect.value;
+    presetSelect.innerHTML = '';
+    presetItems.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.value;
+      opt.textContent = t(p.labelKey);
+      presetSelect.appendChild(opt);
+    });
+    presetSelect.value = curVal;
+  }
+  populatePresets();
+
+  // --- Bar size selector ---
   const barSizeSelect = document.getElementById('barsize-select');
   const barSizes = [
-    { value: 86400, bpy: 252, label: '日线' },
-    { value: 14400, bpy: 1638, label: '4小时' },
-    { value: 3600, bpy: 1638, label: '1小时' },
-    { value: 900, bpy: 6552, label: '15分钟' },
-    { value: 300, bpy: 19656, label: '5分钟' },
-    { value: 60, bpy: 98280, label: '1分钟' },
+    { value: 86400, bpy: 252, labelKey: 'bar.daily' },
+    { value: 14400, bpy: 1638, labelKey: 'bar.4h' },
+    { value: 3600, bpy: 1638, labelKey: 'bar.1h' },
+    { value: 900, bpy: 6552, labelKey: 'bar.15m' },
+    { value: 300, bpy: 19656, labelKey: 'bar.5m' },
+    { value: 60, bpy: 98280, labelKey: 'bar.1m' },
   ];
-  barSizes.forEach(b => {
-    const opt = document.createElement('option');
-    opt.value = b.value;
-    opt.textContent = b.label;
-    barSizeSelect.appendChild(opt);
-  });
 
-  // 自定义参数显示/隐藏
+  function populateBarSizes() {
+    var curVal = barSizeSelect.value;
+    barSizeSelect.innerHTML = '';
+    barSizes.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.value;
+      opt.textContent = t(b.labelKey);
+      barSizeSelect.appendChild(opt);
+    });
+    if (curVal) barSizeSelect.value = curVal;
+  }
+  populateBarSizes();
+
+  // Custom params show/hide
   presetSelect.addEventListener('change', () => {
     const isCustom = presetSelect.value === '';
     document.getElementById('custom-params').style.display = isCustom ? '' : 'none';
     document.getElementById('event-inject-section').style.display = isCustom ? '' : 'none';
   });
 
-  // --- 事件注入 UI ---
-  const EVENT_NAMES = [
-    '财报利好', '财报利空', '黑天鹅', '利好新闻', '利空新闻',
-    '向上突破', '向下突破', '均值回归', '趋势加速',
+  // --- Event injection UI ---
+  const EVENT_KEYS = [
+    'event.earningsUp', 'event.earningsDown', 'event.blackSwan',
+    'event.newsUp', 'event.newsDown', 'event.breakoutUp', 'event.breakoutDown',
+    'event.meanReversion', 'event.trendAccel',
   ];
   const EVENT_TYPE_MAP = [
     'earnings_surprise_up', 'earnings_surprise_down',
@@ -10498,7 +11193,7 @@ document.addEventListener('DOMContentLoaded', () => {
       row.className = 'ev-bar-row';
       const lbl = document.createElement('span');
       lbl.className = 'ev-bar-label';
-      lbl.textContent = EVENT_NAMES[i];
+      lbl.textContent = t(EVENT_KEYS[i]);
       const inp = document.createElement('input');
       inp.type = 'number';
       inp.value = hidden.value;
@@ -10506,7 +11201,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inp.addEventListener('input', () => { hidden.value = inp.value; });
       const hint = document.createElement('span');
       hint.className = 'ev-bar-hint';
-      hint.textContent = '第N根K线';
+      hint.textContent = t('event.barHint');
       row.appendChild(lbl);
       row.appendChild(inp);
       row.appendChild(hint);
@@ -10519,7 +11214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chk) chk.addEventListener('change', rebuildBarInputs);
   }
 
-  // --- 生成数据 ---
+  // --- Generate data ---
   document.getElementById('btn-generate').addEventListener('click', () => {
     const numBars = parseInt(document.getElementById('num-bars').value) || 500;
     const initialPrice = parseFloat(document.getElementById('initial-price').value) || 100;
@@ -10531,7 +11226,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const annualDrift = parseFloat(document.getElementById('annual-drift').value) || 0.08;
     const annualVolatility = parseFloat(document.getElementById('annual-vol').value) || 0.20;
 
-    // 收集事件注入配置
     const events = [];
     if (!preset) {
       for (let i = 0; i < 9; i++) {
@@ -10558,19 +11252,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     candleChart.setData(bars);
 
-    // 更新状态
     const statusEl = document.getElementById('data-status');
     const first = new Date(bars[0].datetime * 1000).toLocaleDateString();
     const last = new Date(bars[bars.length - 1].datetime * 1000).toLocaleDateString();
-    statusEl.textContent = `已生成 ${bars.length} 根 K 线 (${first} ~ ${last})`;
+    statusEl.textContent = t('status.generated', { count: bars.length, from: first, to: last });
     statusEl.className = 'status-msg success';
 
-    // 清空之前回测结果
     backtestResult = null;
     clearResults();
   });
 
-  // --- 检查语法 ---
+  // --- Syntax check ---
   document.getElementById('btn-check').addEventListener('click', () => {
     const code = editorEl.value;
     const statusEl = document.getElementById('editor-status');
@@ -10591,18 +11283,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ${code}
       `);
-      statusEl.textContent = '语法正确';
+      statusEl.textContent = t('status.syntaxOk');
       statusEl.className = 'status-msg success';
     } catch (e) {
-      statusEl.textContent = `语法错误: ${e.message}`;
+      statusEl.textContent = t('status.syntaxError', { error: e.message });
       statusEl.className = 'status-msg error';
     }
   });
 
-  // --- 运行回测 ---
+  // --- Run backtest ---
   document.getElementById('btn-run').addEventListener('click', () => {
     if (bars.length === 0) {
-      alert('请先生成数据');
+      alert(t('alert.generateFirst'));
       return;
     }
 
@@ -10610,28 +11302,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialCash = parseFloat(document.getElementById('initial-cash').value) || 100000;
 
     const statusEl = document.getElementById('backtest-status');
-    statusEl.textContent = '正在运行...';
+    statusEl.textContent = t('status.running');
     statusEl.className = 'status-msg';
 
-    // 异步执行以免阻塞 UI
     setTimeout(() => {
       try {
         const t0 = performance.now();
         backtestResult = engine.run(code, bars, initialCash);
         const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
 
-        statusEl.textContent = `回测完成 (${elapsed}s), ${bars.length} 根 K 线, ${backtestResult.statistics.totalTrades} 笔交易`;
+        statusEl.textContent = t('status.done', {
+          time: elapsed,
+          bars: bars.length,
+          trades: backtestResult.statistics.totalTrades,
+        });
         statusEl.className = 'status-msg success';
 
         renderResults(backtestResult);
       } catch (e) {
-        statusEl.textContent = `回测失败: ${e.message}`;
+        statusEl.textContent = t('status.failed', { error: e.message });
         statusEl.className = 'status-msg error';
       }
     }, 50);
   });
 
-  // --- 标签页切换 ---
+  // --- Tab switching ---
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const tabGroup = btn.closest('.tab-group');
@@ -10641,7 +11336,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.getElementById(btn.dataset.tab);
       if (target) target.classList.add('active');
 
-      // 图表需要 resize
       setTimeout(() => {
         equityChart._resizeCanvas();
         equityChart.render();
@@ -10653,14 +11347,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- 种子复选框 ---
+  // --- Seed checkbox ---
   document.getElementById('use-seed').addEventListener('change', (e) => {
     document.getElementById('seed-value').disabled = !e.target.checked;
   });
 
-  // --- 结果渲染 ---
+  // --- Results rendering ---
   function renderResults(result) {
-    // 买卖信号更新到 K 线图
     const trades = result.orders.map(o => ({
       datetime: o.datetime,
       side: o.side,
@@ -10669,22 +11362,11 @@ document.addEventListener('DOMContentLoaded', () => {
     candleChart.trades = trades;
     candleChart.render();
 
-    // 统计指标
     renderStatistics(result.statistics);
-
-    // 权益曲线
     equityChart.setData(result.equityCurve);
-
-    // 回撤
     drawdownChart.setData(result.drawdownCurve);
-
-    // 订单表
     renderOrders(result.orders);
-
-    // 持仓表
     renderPositions(result.closedPositions, result.currentPosition);
-
-    // 日志
     renderLogs(result.logs);
   }
 
@@ -10705,59 +11387,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     grid.innerHTML = `
       <div class="stat-item">
-        <span class="stat-label">初始资金</span>
+        <span class="stat-label">${t('stat.initCash')}</span>
         <span class="stat-value">$${stats.initialWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">最终资金</span>
+        <span class="stat-label">${t('stat.finalCash')}</span>
         <span class="stat-value">$${stats.finalWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">总盈亏</span>
+        <span class="stat-label">${t('stat.totalPnl')}</span>
         <span class="stat-value ${pnlClass}">${stats.totalPnl >= 0 ? '+' : ''}$${stats.totalPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">总收益率</span>
+        <span class="stat-label">${t('stat.totalReturn')}</span>
         <span class="stat-value ${pnlClass}">${stats.totalReturn >= 0 ? '+' : ''}${stats.totalReturn.toFixed(2)}%</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">总交易数</span>
+        <span class="stat-label">${t('stat.totalTrades')}</span>
         <span class="stat-value">${stats.totalTrades}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">胜率</span>
+        <span class="stat-label">${t('stat.winRate')}</span>
         <span class="stat-value">${stats.winRate.toFixed(1)}%</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">盈利交易</span>
+        <span class="stat-label">${t('stat.winTrades')}</span>
         <span class="stat-value profit">${stats.winningTrades}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">亏损交易</span>
+        <span class="stat-label">${t('stat.lossTrades')}</span>
         <span class="stat-value loss">${stats.losingTrades}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">多头交易</span>
+        <span class="stat-label">${t('stat.longTrades')}</span>
         <span class="stat-value">${stats.longTrades}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">空头交易</span>
+        <span class="stat-label">${t('stat.shortTrades')}</span>
         <span class="stat-value">${stats.shortTrades}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">多头盈亏</span>
+        <span class="stat-label">${t('stat.longPnl')}</span>
         <span class="stat-value ${stats.longTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.longTradesPnl >= 0 ? '+' : ''}$${(stats.longTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">空头盈亏</span>
+        <span class="stat-label">${t('stat.shortPnl')}</span>
         <span class="stat-value ${stats.shortTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.shortTradesPnl >= 0 ? '+' : ''}$${(stats.shortTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">每笔盈亏</span>
+        <span class="stat-label">${t('stat.pnlPerTrade')}</span>
         <span class="stat-value ${stats.pnlPerTrade >= 0 ? 'profit' : 'loss'}">${stats.pnlPerTrade >= 0 ? '+' : ''}$${stats.pnlPerTrade.toFixed(2)}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">最大回撤</span>
+        <span class="stat-label">${t('stat.maxDrawdown')}</span>
         <span class="stat-value loss">${stats.maxDrawdown.toFixed(2)}%</span>
       </div>
     `;
@@ -10766,7 +11448,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderOrders(orders) {
     const tbody = document.querySelector('#orders-table tbody');
     if (orders.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666">暂无订单</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666">' + t('empty.orders') + '</td></tr>';
       return;
     }
     tbody.innerHTML = orders.map(o => {
@@ -10778,7 +11460,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `<tr>
         <td>${o.id}</td>
         <td>${dt}</td>
-        <td class="${sideClass}">${o.side === OrderSide.BUY ? '买入' : '卖出'}</td>
+        <td class="${sideClass}">${o.side === OrderSide.BUY ? t('side.buy') : t('side.sell')}</td>
         <td>${o.type}</td>
         <td>${o.status}</td>
         <td>${o.qty}</td>
@@ -10794,20 +11476,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (current) all.push(current);
 
     if (all.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666">暂无持仓</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666">' + t('empty.positions') + '</td></tr>';
       return;
     }
 
     const lastPrice = bars.length > 0 ? bars[bars.length - 1].close : 0;
 
     tbody.innerHTML = all.map(p => {
-      // 新 Position 模型: 使用 getPnl() / getPnlPercent()
       if (!p.isClosed) p.setPrice(lastPrice);
       const pnl = p.getPnl();
       const pnlPct = p.getPnlPercent();
       const pnlClass = pnl >= 0 ? 'profit' : 'loss';
       const entryDt = p.entryDate instanceof Date ? p.entryDate.toLocaleDateString() : '-';
-      // 已平仓的最后一笔交易时间作为出场日期
       const lastTxn = p.transactions.length > 0 ? p.transactions[p.transactions.length - 1] : null;
       const exitDt = p.isClosed && lastTxn && lastTxn.datetime instanceof Date
         ? lastTxn.datetime.toLocaleDateString() : '-';
@@ -10816,7 +11496,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${p.entryPrice.toFixed(2)}</td>
         <td>${entryDt}</td>
         <td>${p.isClosed ? p.entryQty : p.qty}</td>
-        <td>${p.isClosed ? '是' : '否'}</td>
+        <td>${p.isClosed ? t('closed.yes') : t('closed.no')}</td>
         <td>${exitDt}</td>
         <td class="${pnlClass}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}</td>
         <td class="${pnlClass}">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</td>
@@ -10827,14 +11507,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderLogs(logs) {
     const el = document.getElementById('log-content');
     if (logs.length === 0) {
-      el.textContent = '暂无日志';
+      el.textContent = t('empty.logs');
       return;
     }
     el.textContent = logs.map(l => `[${l.datetime}] ${l.message}`).join('\n');
     el.scrollTop = el.scrollHeight;
   }
 
-  // --- 保存策略 ---
+  // --- Save strategy ---
   document.getElementById('btn-save').addEventListener('click', function() {
     try {
       var code = editorEl.value;
@@ -10852,16 +11532,16 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
       }, 100);
       var statusEl = document.getElementById('editor-status');
-      statusEl.textContent = '策略已保存';
+      statusEl.textContent = t('status.saved');
       statusEl.className = 'status-msg success';
     } catch (e) {
       var statusEl2 = document.getElementById('editor-status');
-      statusEl2.textContent = '保存失败: ' + e.message;
+      statusEl2.textContent = t('status.saveFailed', { error: e.message });
       statusEl2.className = 'status-msg error';
     }
   });
 
-  // --- 加载策略 ---
+  // --- Load strategy ---
   var fileInput = document.getElementById('file-load-input');
   document.getElementById('btn-load').addEventListener('click', function() {
     fileInput.value = '';
@@ -10875,9 +11555,8 @@ document.addEventListener('DOMContentLoaded', () => {
       editorEl.value = reader.result;
       hlEditor.update();
       acEditor.hide();
-      // 更新模板选择器为 Custom + 类名
       var className = extractClassName(reader.result);
-      var label = 'Custom' + (className ? ' — ' + className : '');
+      var label = 'Custom' + (className ? ' \u2014 ' + className : '');
       var customOpt = templateSelect.querySelector('option[value="custom"]');
       if (!customOpt) {
         customOpt = document.createElement('option');
@@ -10887,25 +11566,60 @@ document.addEventListener('DOMContentLoaded', () => {
       customOpt.textContent = label;
       templateSelect.value = 'custom';
       var statusEl = document.getElementById('editor-status');
-      statusEl.textContent = '已加载: ' + file.name;
+      statusEl.textContent = t('status.loaded', { file: file.name });
       statusEl.className = 'status-msg success';
     };
     reader.onerror = function() {
       var statusEl = document.getElementById('editor-status');
-      statusEl.textContent = '文件读取失败';
+      statusEl.textContent = t('status.loadFailed');
       statusEl.className = 'status-msg error';
     };
     reader.readAsText(file);
   });
 
-  // --- API 参考面板 ---
+  // --- API reference panel ---
   const apiRefBtn = document.getElementById('btn-api-ref');
   const apiRefPanel = document.getElementById('api-ref-panel');
   apiRefBtn.addEventListener('click', () => {
     apiRefPanel.classList.toggle('visible');
   });
 
-  // 初始触发一次 resize
+  // --- Language toggle ---
+  const langBtn = document.getElementById('btn-lang');
+  function updateLangBtn() {
+    langBtn.textContent = I18n.getLang() === 'en' ? 'EN / \u4e2d' : '\u4e2d / EN';
+  }
+  updateLangBtn();
+
+  langBtn.addEventListener('click', () => {
+    var newLang = I18n.getLang() === 'en' ? 'zh' : 'en';
+    I18n.setLang(newLang);
+    updateLangBtn();
+    // Repopulate dynamic selectors
+    populateTemplates();
+    populatePresets();
+    populateBarSizes();
+    rebuildBarInputs();
+    // Re-render charts (labels)
+    equityChart.label = t('chart.equityCurve');
+    equityChart.render();
+    drawdownChart.label = t('chart.drawdown');
+    drawdownChart.render();
+    candleChart.render();
+    // Re-render results if present
+    if (backtestResult) {
+      renderStatistics(backtestResult.statistics);
+      renderOrders(backtestResult.orders);
+      renderPositions(backtestResult.closedPositions, backtestResult.currentPosition);
+    }
+  });
+
+  // Apply i18n on load
+  I18n.applyDom();
+  equityChart.label = t('chart.equityCurve');
+  drawdownChart.label = t('chart.drawdown');
+
+  // Initial resize
   setTimeout(() => {
     candleChart._resizeCanvas();
     candleChart.render();
