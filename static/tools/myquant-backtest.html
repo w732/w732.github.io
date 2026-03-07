@@ -1172,16 +1172,7 @@ input[type=number]::-webkit-outer-spin-button {
   </div><!-- /main-content -->
 </div><!-- /app-container -->
 
-
-
-
-
-
-
-
-
 <script>
-// === i18n.js ===
 /**
  * Internationalization (i18n) module.
  * Supports English (en) and Chinese (zh). Default: English.
@@ -1830,7 +1821,8 @@ return { t: t, setLang: setLang, getLang: getLang, applyDom: applyDom, translati
 window.I18n = I18n;
 window.t = I18n.t;
 
-// === models.js ===
+</script>
+<script>
 /**
  * myquant JS 模型层 — 与 Python myquant 核心模型 1:1 对应.
  *
@@ -2492,7 +2484,8 @@ window.Performance = Performance;
 window.Statistics = Statistics;
 window.Stop = Stop;
 
-// === datagen.js ===
+</script>
+<script>
 /**
  * 模拟数据生成器 — 与 Python myquant.datagen 保持一致.
  *
@@ -3264,7 +3257,8 @@ function generateBars(config) {
 
 window.DataGen = { generateBars, PresetName, EventType };
 
-// === engine.js ===
+</script>
+<script>
 /**
  * BacktestEngine — 回测引擎, 与 Python BacktestScenario 1:1 对应.
  *
@@ -3746,7 +3740,8 @@ class BacktestEngine {
 
 window.BacktestEngine = BacktestEngine;
 
-// === chart.js ===
+</script>
+<script>
 /**
  * Canvas K线蜡烛图组件.
  */
@@ -4164,7 +4159,8 @@ class LineChart {
 window.CandlestickChart = CandlestickChart;
 window.LineChart = LineChart;
 
-// === highlight.js ===
+</script>
+<script>
 /**
  * 轻量级 JavaScript 语法高亮.
  * 使用 dual-layer 方式: textarea (编辑) + pre (着色) 叠加显示.
@@ -4595,40 +4591,41 @@ window.highlightJS = highlightJS;
 window.initHighlightEditor = initHighlightEditor;
 window.initAutocomplete = initAutocomplete;
 
-// === templates.js ===
+</script>
+<script>
 /**
- * 内置 JS 策略模板 — 包含基础策略 + 14 个文档策略的 JS 实现.
+ * Built-in JS strategy templates - base strategies + 14 documented strategies.
  */
 
 const STRATEGY_TEMPLATES = [
-  // ============ 基础策略 ============
+  // ============ Base Strategies ============
   {
-    name: '空白策略',
-    description: '最小策略框架',
-    code: `// 自定义策略
+    name: 'Blank Strategy',
+    description: 'Minimal strategy scaffold',
+    code: `// Custom Strategy
 class MyStrategy extends Strategy {
   onStrategyStart() {
-    this.log('策略启动');
+    this.log('Strategy started');
   }
 
   onBar(bar) {
-    // 在此编写 K 线逻辑
+    // Write bar logic here
   }
 
   onStrategyStop() {
-    this.log('策略停止');
+    this.log('Strategy stopped');
   }
 }`,
   },
   {
-    name: '均线交叉策略',
-    description: '短期均线上穿长期均线做多, 下穿做空',
-    code: `// 均线交叉策略
+    name: 'SMA Crossover',
+    description: 'Buy when fast MA crosses above slow MA, sell on cross below',
+    code: `// SMA Crossover Strategy
 class SMACrossStrategy extends Strategy {
   onStrategyStart() {
     this.fastPeriod = 5;
     this.slowPeriod = 20;
-    this.log('均线交叉: fast=' + this.fastPeriod + ' slow=' + this.slowPeriod);
+    this.log('SMA Cross: fast=' + this.fastPeriod + ' slow=' + this.slowPeriod);
   }
 
   onBar(bar) {
@@ -4648,9 +4645,9 @@ class SMACrossStrategy extends Strategy {
 }`,
   },
   {
-    name: 'RSI 策略',
-    description: 'RSI 超买超卖反转交易',
-    code: `// RSI 超买超卖策略
+    name: 'RSI Strategy',
+    description: 'RSI overbought/oversold reversal',
+    code: `// RSI Overbought/Oversold Strategy
 class RSIStrategy extends Strategy {
   onStrategyStart() {
     this.period = 14;
@@ -4681,9 +4678,9 @@ class RSIStrategy extends Strategy {
 }`,
   },
   {
-    name: '布林带策略',
-    description: '价格触及布林带上下轨时交易',
-    code: `// 布林带策略
+    name: 'Bollinger Bands',
+    description: 'Trade on upper/lower Bollinger Band touches',
+    code: `// Bollinger Bands Strategy
 class BollingerStrategy extends Strategy {
   onStrategyStart() {
     this.period = 20;
@@ -4713,39 +4710,39 @@ class BollingerStrategy extends Strategy {
 }`,
   },
 
-  // ============ 14 个文档策略 ============
+  // ============ 14 Documented Strategies ============
 
   {
-    name: '01 PA+MACD 策略',
-    description: 'Darek Dargo: 供需区 + K线形态(Pin Bar/吞没/孕线) + MACD直方图翻转',
-    code: `// 01 PA+MACD 策略 — 与 Python 01_pa_macd_strategy.py 完全一致
-// 三重过滤: 供需区 + K线形态 + MACD直方图颜色翻转
+    name: '01 PA+MACD Strategy',
+    description: 'Darek Dargo: Supply/Demand zones + Candlestick patterns + MACD histogram reversal',
+    code: `// 01 PA+MACD Strategy - matches Python 01_pa_macd_strategy.py
+// Triple filter: Supply/Demand zones + Candlestick patterns + MACD histogram color flip
 class PAMACDStrategy extends Strategy {
   onStrategyStart() {
-    // --- MACD 参数 (文档 3.3: 默认 12/26/9) ---
+    // --- MACD params (doc 3.3: default 12/26/9) ---
     this.macdFast = 12;
     this.macdSlow = 26;
     this.macdSignal = 9;
-    this.macdMinAmplitude = 0.001;  // MACD质量过滤: 波峰波谷需远离零线
+    this.macdMinAmplitude = 0.001;  // MACD quality filter: peaks/troughs must be away from zero
 
-    // --- 供需区参数 ---
-    this.zoneLookback = 80;         // 供需区回溯K线数
-    this.zoneBaseMax = 6;           // 横盘平台最大K线数
-    this.zoneBaseRange = 0.06;      // 横盘平台最大振幅 (6%)
-    this.zoneMoveMin = 0.01;        // 离开平台的最小涨跌幅 (1%)
-    this.zoneMoveBars = 3;          // 检查离开方向的K线数
-    this.zoneProximity = 0.035;     // 价格进入供需区的容忍度 (3.5%)
+    // --- Supply/Demand zone params ---
+    this.zoneLookback = 80;         // zone lookback bars
+    this.zoneBaseMax = 6;           // max bars in base
+    this.zoneBaseRange = 0.06;      // max range of base (6%)
+    this.zoneMoveMin = 0.01;        // min move away from base (1%)
+    this.zoneMoveBars = 3;          // bars to check move direction
+    this.zoneProximity = 0.035;     // proximity tolerance for zone (3.5%)
 
-    // --- K线形态参数 ---
-    this.pinBarRatio = 1.5;         // Pin Bar 影线/实体比
+    // --- Candlestick pattern params ---
+    this.pinBarRatio = 1.5;         // Pin Bar wick/body ratio
 
-    // --- 止损止盈 ---
-    this.stopBufferPct = 0.002;     // 止损在供需区边界外的缓冲比例
-    this.maxStopPct = 0.05;         // 最大止损幅度 (超过则用入场K线止损)
+    // --- Stop/Target ---
+    this.stopBufferPct = 0.002;     // stop buffer outside zone boundary
+    this.maxStopPct = 0.05;         // max stop distance (fallback to entry bar stop)
 
     this.qty = 100;
 
-    // MACD 增量计算状态
+    // MACD incremental calculation state
     this._emaFast = 0;
     this._emaSlow = 0;
     this._macdLine = 0;
@@ -4754,16 +4751,16 @@ class PAMACDStrategy extends Strategy {
     this._histCur = 0;
     this._barCount = 0;
 
-    // 供需区
+    // Supply/Demand zones
     this._supplyZones = [];
     this._demandZones = [];
 
-    // 持仓管理
+    // Position management
     this._entryPrice = 0;
     this._entryStop = 0;
     this._entryTp = 0;
 
-    this.log('PA+MACD 策略启动');
+    this.log('PA+MACD strategy started');
   }
 
   onBar(bar) {
@@ -4771,26 +4768,26 @@ class PAMACDStrategy extends Strategy {
     const idx = n - 1;
     this._barCount++;
 
-    // --- 1. 每根K线更新MACD ---
+    // --- 1. Update MACD each bar ---
     this._updateMacd(bar.close);
 
-    // 热身期: 等待MACD稳定
+    // Warmup: wait for MACD to stabilize
     if (this._barCount < this.macdSlow + this.macdSignal) return;
 
-    // --- 2. 更新供需区 ---
+    // --- 2. Update supply/demand zones ---
     if (n >= this.zoneLookback) this._updateZones();
 
-    // --- 3. 入场判断 ---
+    // --- 3. Entry check ---
     if (!this.hasPosition) {
       this._checkEntry(bar, idx);
     }
-    // --- 4. 持仓管理 ---
+    // --- 4. Position management ---
     else {
       this._checkExit(bar);
     }
   }
 
-  // ============ MACD 计算 (增量EMA) ============
+  // ============ MACD Calculation (incremental EMA) ============
 
   _updateMacd(close) {
     const af = 2 / (this.macdFast + 1);
@@ -4814,10 +4811,10 @@ class PAMACDStrategy extends Strategy {
     }
   }
 
-  // ============ MACD 翻转检测 (含质量过滤) ============
+  // ============ MACD Flip Detection (with quality filter) ============
 
   _macdFlippedBullish() {
-    // 红转绿: 直方图从负转正, 且翻转前的负值足够大
+    // Red to green: histogram neg->pos, prior negative deep enough
     if (this._histPrev <= 0 && this._histCur > 0) {
       if (Math.abs(this._histPrev) >= this.macdMinAmplitude || this._histPrev === 0)
         return true;
@@ -4826,7 +4823,7 @@ class PAMACDStrategy extends Strategy {
   }
 
   _macdFlippedBearish() {
-    // 绿转红: 直方图从正转负, 且翻转前的正值足够大
+    // Green to red: histogram pos->neg, prior positive high enough
     if (this._histPrev >= 0 && this._histCur < 0) {
       if (Math.abs(this._histPrev) >= this.macdMinAmplitude || this._histPrev === 0)
         return true;
@@ -4834,22 +4831,22 @@ class PAMACDStrategy extends Strategy {
     return false;
   }
 
-  // ============ 入场逻辑 (严格按文档 3.4 入场检查清单) ============
+  // ============ Entry Logic (per doc 3.4 checklist) ============
 
   _checkEntry(bar, idx) {
     if (this.bars.length < 3) return;
     const cur = this.bars[idx];
     const prev = this.bars[idx - 1];
 
-    // === 做多入场 ===
-    // 条件1: 价格到达需求区
+    // === Long entry ===
+    // Cond1: price at demand zone
     const demandZone = this._priceInDemandZone(bar.close);
     if (demandZone) {
-      // 条件2: 检测看涨形态 (Pin Bar / 看涨吞没)
+      // Cond2: detect bullish pattern (Pin Bar / Bullish Engulfing)
       if (this._detectLongPattern()) {
-        // 条件3: 当前K线收盘突破前一根K线高点
+        // Cond3: close breaks above prior bar high
         if (cur.close > prev.high) {
-          // 条件4: MACD红转绿
+          // Cond4: MACD red-to-green
           if (this._macdFlippedBullish()) {
             this._enterLong(bar, demandZone);
             return;
@@ -4858,13 +4855,13 @@ class PAMACDStrategy extends Strategy {
       }
     }
 
-    // === 做空入场 ===
-    // 条件1: 价格到达供给区
+    // === Short entry ===
+    // Cond1: price at supply zone
     const supplyZone = this._priceInSupplyZone(bar.close);
     if (supplyZone) {
-      // 条件2+3: 检测看跌形态 + 突破确认
+      // Cond2+3: detect bearish pattern + break confirmation
       if (this._detectShortPatternWithBreakout()) {
-        // 条件4: MACD绿转红
+        // Cond4: MACD green-to-red
         if (this._macdFlippedBearish()) {
           this._enterShort(bar, supplyZone);
         }
@@ -4874,9 +4871,9 @@ class PAMACDStrategy extends Strategy {
 
   _enterLong(bar, zone) {
     const [zh, zl] = zone;
-    // 止损方案一(首选): 需求区下方 + 缓冲
+    // Stop plan A (preferred): below demand zone + buffer
     let stopPrice = zl * (1 - this.stopBufferPct);
-    // 如果止损幅度过大, 用方案二: 入场K线最低点下方
+    // If stop too wide, plan B: below entry bar low
     if (bar.close > 0) {
       const stopPct = (bar.close - stopPrice) / bar.close;
       if (stopPct > this.maxStopPct)
@@ -4884,7 +4881,7 @@ class PAMACDStrategy extends Strategy {
     }
     if (stopPrice >= bar.close) return;
 
-    // 止盈: 上方最近的供给区下沿
+    // TP: nearest supply zone lower edge above
     const tpPrice = this._findNearestSupplyAbove(bar.close);
     if (tpPrice === null || tpPrice <= bar.close) return;
 
@@ -4892,16 +4889,16 @@ class PAMACDStrategy extends Strategy {
     this._entryPrice = bar.close;
     this._entryStop = stopPrice;
     this._entryTp = tpPrice;
-    this.log('做多: 需求区[' + zl.toFixed(2) + '-' + zh.toFixed(2)
-      + '], 止损=' + stopPrice.toFixed(2) + ', 止盈=' + tpPrice.toFixed(2)
-      + ', MACD红转绿');
+    this.log('Long: demand zone[' + zl.toFixed(2) + '-' + zh.toFixed(2)
+      + '], SL=' + stopPrice.toFixed(2) + ', TP=' + tpPrice.toFixed(2)
+      + ', MACD red-to-green');
   }
 
   _enterShort(bar, zone) {
     const [zh, zl] = zone;
-    // 止损方案一(首选): 供给区上方 + 缓冲
+    // Stop plan A (preferred): above supply zone + buffer
     let stopPrice = zh * (1 + this.stopBufferPct);
-    // 如果止损幅度过大, 用方案二: 入场K线最高点上方
+    // If stop too wide, plan B: above entry bar high
     if (bar.close > 0) {
       const stopPct = (stopPrice - bar.close) / bar.close;
       if (stopPct > this.maxStopPct)
@@ -4909,7 +4906,7 @@ class PAMACDStrategy extends Strategy {
     }
     if (stopPrice <= bar.close) return;
 
-    // 止盈: 下方最近的需求区上沿
+    // TP: nearest demand zone upper edge below
     const tpPrice = this._findNearestDemandBelow(bar.close);
     if (tpPrice === null || tpPrice >= bar.close) return;
 
@@ -4917,12 +4914,12 @@ class PAMACDStrategy extends Strategy {
     this._entryPrice = bar.close;
     this._entryStop = stopPrice;
     this._entryTp = tpPrice;
-    this.log('做空: 供给区[' + zl.toFixed(2) + '-' + zh.toFixed(2)
-      + '], 止损=' + stopPrice.toFixed(2) + ', 止盈=' + tpPrice.toFixed(2)
-      + ', MACD绿转红');
+    this.log('Short: supply zone[' + zl.toFixed(2) + '-' + zh.toFixed(2)
+      + '], SL=' + stopPrice.toFixed(2) + ', TP=' + tpPrice.toFixed(2)
+      + ', MACD green-to-red');
   }
 
-  // ============ 止盈目标: 寻找对侧供需区 ============
+  // ============ TP Target: find opposing zone ============
 
   _findNearestSupplyAbove(price) {
     let best = null;
@@ -4944,7 +4941,7 @@ class PAMACDStrategy extends Strategy {
     return best;
   }
 
-  // ============ 供需区识别 (文档 3.1: DBR/RBR/RBD/DBD) ============
+  // ============ Zone Detection (doc 3.1: DBR/RBR/RBD/DBD) ============
 
   _updateZones() {
     this._supplyZones = [];
@@ -4958,7 +4955,7 @@ class PAMACDStrategy extends Strategy {
         const endBase = i + length;
         if (endBase + this.zoneMoveBars > n) break;
 
-        // 计算横盘区域
+        // Calculate base range
         let zoneHigh = -Infinity, zoneLow = Infinity;
         for (let j = i; j < endBase; j++) {
           if (this.bars[j].high > zoneHigh) zoneHigh = this.bars[j].high;
@@ -4968,7 +4965,7 @@ class PAMACDStrategy extends Strategy {
         const mid = (zoneHigh + zoneLow) / 2;
         if ((zoneHigh - zoneLow) / mid > this.zoneBaseRange) continue;
 
-        // 检查随后数根K线的最大移动
+        // Check max move in following bars
         let maxUp = 0, maxDown = 0;
         for (let k = endBase; k < Math.min(endBase + this.zoneMoveBars, n); k++) {
           const moveUp = (this.bars[k].close - zoneHigh) / zoneHigh;
@@ -4977,12 +4974,12 @@ class PAMACDStrategy extends Strategy {
           if (moveDown > maxDown) maxDown = moveDown;
         }
 
-        // 需求区: 价格向上离开 (DBR / RBR)
+        // Demand zone: price moves up (DBR / RBR)
         if (maxUp > this.zoneMoveMin) {
           this._demandZones.push([zoneHigh, zoneLow]);
           break;
         }
-        // 供给区: 价格向下离开 (RBD / DBD)
+        // Supply zone: price moves down (RBD / DBD)
         if (maxDown > this.zoneMoveMin) {
           this._supplyZones.push([zoneHigh, zoneLow]);
           break;
@@ -5009,29 +5006,29 @@ class PAMACDStrategy extends Strategy {
     return null;
   }
 
-  // ============ K线形态检测 (严格按文档 3.2 + 3.4) ============
+  // ============ Candlestick Pattern Detection (doc 3.2 + 3.4) ============
 
   _detectLongPattern() {
-    // 做多形态: Pin Bar / 看涨吞没 (文档检查清单)
+    // Long pattern: Pin Bar / Bullish Engulfing (doc checklist)
     const n = this.bars.length;
     if (n < 2) return false;
     const cur = this.bars[n - 1];
     const prev = this.bars[n - 2];
 
-    // 看涨吞没: 前阴后阳, 阳线实体覆盖阴线实体
+    // Bullish Engulfing: prior bearish, current bullish body covers prior
     if (prev.close < prev.open && cur.close > cur.open) {
       if (cur.close >= prev.open && cur.open <= prev.close) return true;
     }
 
-    // 锤子线 (Pin Bar): 长下影线, 表明需求区对下行力量的强力拒绝
-    // 检查前一根K线是否为 Pin Bar
+    // Hammer (Pin Bar): long lower wick, strong rejection at demand zone
+    // Check if prior bar is Pin Bar
     const prevBody = Math.abs(prev.close - prev.open);
     if (prevBody > 0) {
       const lowerShadow = Math.min(prev.open, prev.close) - prev.low;
       if (lowerShadow / prevBody >= this.pinBarRatio) return true;
     }
 
-    // 检查当前K线是否为 Pin Bar (同时作为确认)
+    // Check if current bar is Pin Bar (also serves as confirmation)
     const curBody = Math.abs(cur.close - cur.open);
     if (curBody > 0) {
       const lowerShadow = Math.min(cur.open, cur.close) - cur.low;
@@ -5042,25 +5039,25 @@ class PAMACDStrategy extends Strategy {
   }
 
   _detectShortPatternWithBreakout() {
-    // 做空形态 + 突破确认: 孕线/看跌吞没 + 突破低点
+    // Short pattern + break confirm: Inside bar/Bearish Engulfing + break low
     const n = this.bars.length;
     if (n < 2) return false;
     const cur = this.bars[n - 1];
     const prev = this.bars[n - 2];
 
-    // 看跌吞没 + 突破确认: 后阴覆盖前阳, 收盘跌破前阳开盘价
+    // Bearish Engulfing + confirm: bearish covers bullish, close below prior open
     if (prev.close > prev.open && cur.close < cur.open) {
       if (cur.open >= prev.close && cur.close <= prev.open) {
         if (cur.close < prev.open) return true;
       }
     }
 
-    // 孕线 + 突破确认: 需要3根K线
+    // Inside bar + confirm: needs 3 bars
     if (n >= 3) {
       const pp = this.bars[n - 3];
-      // prev 是孕线 (完全包含在 pp 中)
+      // prev is inside bar (fully contained in pp)
       if (prev.high <= pp.high && prev.low >= pp.low) {
-        // cur 收盘跌破孕线低点, 且为阴线
+        // cur closes below inside bar low, bearish
         if (cur.close < prev.low && cur.close < cur.open) return true;
       }
     }
@@ -5068,40 +5065,40 @@ class PAMACDStrategy extends Strategy {
     return false;
   }
 
-  // ============ 持仓管理 (文档 3.5: 止盈在对侧供需区) ============
+  // ============ Position Management (doc 3.5: TP at opposing zone) ============
 
   _checkExit(bar) {
     if (this.hasLongPosition) {
       if (bar.low <= this._entryStop) {
         this.sell(this.position.qty);
-        this.log('多头止损: ' + bar.close.toFixed(2));
+        this.log('Long stop loss: ' + bar.close.toFixed(2));
       } else if (bar.high >= this._entryTp) {
         this.sell(this.position.qty);
-        this.log('多头止盈(供给区): ' + bar.close.toFixed(2));
+        this.log('Long TP (supply zone): ' + bar.close.toFixed(2));
       }
     } else if (this.hasShortPosition) {
       if (bar.high >= this._entryStop) {
         this.buy(this.position.qty);
-        this.log('空头止损: ' + bar.close.toFixed(2));
+        this.log('Short stop loss: ' + bar.close.toFixed(2));
       } else if (bar.low <= this._entryTp) {
         this.buy(this.position.qty);
-        this.log('空头止盈(需求区): ' + bar.close.toFixed(2));
+        this.log('Short TP (demand zone): ' + bar.close.toFixed(2));
       }
     }
   }
 
   onStrategyStop() {
-    this.log('PA+MACD 策略停止 | 供需区: '
-      + this._supplyZones.length + '供给 '
-      + this._demandZones.length + '需求');
+    this.log('PA+MACD strategy stopped | zones: '
+      + this._supplyZones.length + ' supply '
+      + this._demandZones.length + ' demand');
   }
 }`,
   },
 
   {
-    name: '02 EP突破策略',
-    description: 'Qullamaggie: EMA扇形展开 + 阶梯上涨 + 盘整突破 + 三阶段止盈',
-    code: `// 02 EP突破策略 — Qullamaggie: EMA扇形展开 + 阶梯上涨 + 盘整突破 + 三阶段止盈
+    name: '02 EP Breakout',
+    description: 'Qullamaggie: EMA fan + Staircase gain + Consolidation breakout + 3-phase TP',
+    code: `// 02 EP Breakout - Qullamaggie: EMA fan + Staircase gain + Consolidation breakout + 3-phase TP
 class EPBreakoutStrategy extends Strategy {
 
     onStrategyStart() {
@@ -5132,7 +5129,7 @@ class EPBreakoutStrategy extends Strategy {
         this._barsInTrade = 0;
         this._stage = 0;
         this._initialQty = 0.0;
-        this.log("EP 突破策略启动");
+        this.log("EP Breakout strategy started");
     }
 
     onBar(bar) {
@@ -5197,9 +5194,9 @@ class EPBreakoutStrategy extends Strategy {
         this._stage = 1;
         this._initialQty = this.qty;
         this.log(
-            "做多突破: 阻力=" + resistance.toFixed(2) +
-            ", 整理[" + consolLow.toFixed(2) + "-" + resistance.toFixed(2) + "]" +
-            ", 止损=" + stop.toFixed(2) + ", ADR=" + adr.toFixed(2)
+            "Long breakout: resistance=" + resistance.toFixed(2) +
+            ", consol[" + consolLow.toFixed(2) + "-" + resistance.toFixed(2) + "]" +
+            ", SL=" + stop.toFixed(2) + ", ADR=" + adr.toFixed(2)
         );
     }
 
@@ -5279,7 +5276,7 @@ class EPBreakoutStrategy extends Strategy {
     _managePosition(bar) {
         if (bar.low <= this._stopPrice) {
             this.sell(this.position.qty);
-            this.log("止损平仓: " + bar.close.toFixed(2));
+            this.log("Stop loss exit: " + bar.close.toFixed(2));
             this._stage = 0;
             return;
         }
@@ -5291,10 +5288,10 @@ class EPBreakoutStrategy extends Strategy {
                     this.sell(sellQty);
                     this._stopPrice = this._entryPrice;
                     this._stage = 2;
-                    this.log("第一阶段止盈 1/3 (" + sellQty + "): " + bar.close.toFixed(2) + ", 止损移至" + this._entryPrice.toFixed(2));
+                    this.log("Phase1 TP 1/3 (" + sellQty + "): " + bar.close.toFixed(2) + ", SL moved to " + this._entryPrice.toFixed(2));
                 } else {
                     this.sell(this.position.qty);
-                    this.log("仓位过小, 全部止盈: " + bar.close.toFixed(2));
+                    this.log("Position too small, full TP: " + bar.close.toFixed(2));
                     this._stage = 0;
                 }
             }
@@ -5306,32 +5303,32 @@ class EPBreakoutStrategy extends Strategy {
                 if (remaining > sellQty) {
                     this.sell(sellQty);
                     this._stage = 3;
-                    this.log("第二阶段止盈(跌破EMA10): " + bar.close.toFixed(2));
+                    this.log("Phase2 TP (below EMA10): " + bar.close.toFixed(2));
                 } else {
                     this.sell(remaining);
-                    this.log("跌破EMA10清仓: " + bar.close.toFixed(2));
+                    this.log("Below EMA10, close all: " + bar.close.toFixed(2));
                     this._stage = 0;
                 }
             }
         } else if (this._stage === 3) {
             if (bar.close < this._ema20) {
                 this.sell(this.position.qty);
-                this.log("第三阶段止盈(跌破EMA20): " + bar.close.toFixed(2));
+                this.log("Phase3 TP (below EMA20): " + bar.close.toFixed(2));
                 this._stage = 0;
             }
         }
     }
 
     onStrategyStop() {
-        this.log("EP 突破策略停止");
+        this.log("EP Breakout strategy stopped");
     }
 }`,
   },
 
   {
-    name: '03 PO3三力策略',
-    description: '威克夫: 蓄力区间 + 操纵清扫 + 反转确认 + 中轴目标',
-    code: `// 03 PO3三力策略 — 威克夫: 蓄力区间 + 操纵清扫 + 反转确认 + 中轴目标
+    name: '03 PO3 Triple Force',
+    description: 'Wyckoff: Accumulation range + Manipulation sweep + Reversal confirmation',
+    code: `// 03 PO3 Triple Force - Wyckoff: Accumulation range + Manipulation sweep + Reversal confirmation
 class PO3Strategy extends Strategy {
 
     onStrategyStart() {
@@ -5354,7 +5351,7 @@ class PO3Strategy extends Strategy {
         this._breakevenSet = false;
         this._lastExitBar = -999;
         this._pendingEntry = 0;
-        this.log("PO3 三力策略启动");
+        this.log("PO3 Triple Force strategy started");
     }
 
     onBar(bar) {
@@ -5409,9 +5406,9 @@ class PO3Strategy extends Strategy {
             this._breakevenSet = false;
             this._pendingEntry = 1;
             this.log(
-                "做多(PO3): 区间[" + rangeLow.toFixed(2) + "-" + rangeHigh.toFixed(2) + "], " +
-                "扫低=" + sweepExtreme.toFixed(2) + ", 目标=" + target.toFixed(2) + ", " +
-                "止损=" + stop.toFixed(2) + ", R:R=" + (reward / risk).toFixed(2)
+                "Long(PO3): range[" + rangeLow.toFixed(2) + "-" + rangeHigh.toFixed(2) + "], " +
+                "sweepLow=" + sweepExtreme.toFixed(2) + ", target=" + target.toFixed(2) + ", " +
+                "SL=" + stop.toFixed(2) + ", R:R=" + (reward / risk).toFixed(2)
             );
         } else if (direction === -1) {
             var stop = sweepExtreme + rangeWidth * 0.2;
@@ -5429,9 +5426,9 @@ class PO3Strategy extends Strategy {
             this._breakevenSet = false;
             this._pendingEntry = -1;
             this.log(
-                "做空(PO3): 区间[" + rangeLow.toFixed(2) + "-" + rangeHigh.toFixed(2) + "], " +
-                "扫高=" + sweepExtreme.toFixed(2) + ", 目标=" + target.toFixed(2) + ", " +
-                "止损=" + stop.toFixed(2) + ", R:R=" + (reward / risk).toFixed(2)
+                "Short(PO3): range[" + rangeLow.toFixed(2) + "-" + rangeHigh.toFixed(2) + "], " +
+                "sweepHigh=" + sweepExtreme.toFixed(2) + ", target=" + target.toFixed(2) + ", " +
+                "SL=" + stop.toFixed(2) + ", R:R=" + (reward / risk).toFixed(2)
             );
         }
     }
@@ -5511,14 +5508,14 @@ class PO3Strategy extends Strategy {
         if (this._direction === 1) {
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止损: " + bar.close.toFixed(2));
+                this.log("Long SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
             }
             if (bar.high >= this._targetPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止盈(50%中轴): " + bar.close.toFixed(2));
+                this.log("Long TP (50% midline): " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -5530,21 +5527,21 @@ class PO3Strategy extends Strategy {
                     if (progress >= this.breakevenPct) {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
-                        this.log("止损移至保本: " + this._entryPrice.toFixed(2));
+                        this.log("SL moved to breakeven: " + this._entryPrice.toFixed(2));
                     }
                 }
             }
         } else if (this._direction === -1) {
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止损: " + bar.close.toFixed(2));
+                this.log("Short SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
             }
             if (bar.low <= this._targetPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止盈(50%中轴): " + bar.close.toFixed(2));
+                this.log("Short TP (50% midline): " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -5556,7 +5553,7 @@ class PO3Strategy extends Strategy {
                     if (progress >= this.breakevenPct) {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
-                        this.log("止损移至保本: " + this._entryPrice.toFixed(2));
+                        this.log("SL moved to breakeven: " + this._entryPrice.toFixed(2));
                     }
                 }
             }
@@ -5564,15 +5561,15 @@ class PO3Strategy extends Strategy {
     }
 
     onStrategyStop() {
-        this.log("PO3 三力策略停止");
+        this.log("PO3 Triple Force strategy stopped");
     }
 }`,
   },
 
   {
-    name: '04 共振回调策略',
-    description: 'Martin Luk: EMA9/21/50 + AVWAP收敛 + 流动性清扫 + V反转',
-    code: `// 04 共振回调策略 — Martin Luk: EMA9/21/50 + AVWAP收敛 + 流动性清扫 + V反转
+    name: '04 Confluence Pullback',
+    description: 'Martin Luk: EMA9/21/50 + AVWAP convergence + Liquidity sweep + V-reversal',
+    code: `// 04 Confluence Pullback - Martin Luk: EMA9/21/50 + AVWAP convergence + Liquidity sweep + V-reversal
 class ConfluencePullbackStrategy extends Strategy {
 
     onStrategyStart() {
@@ -5599,7 +5596,7 @@ class ConfluencePullbackStrategy extends Strategy {
         this._direction = 0;
         this._stage = 0;
         this._initialQty = 0;
-        this.log("共振回调策略启动");
+        this.log("Confluence Pullback strategy started");
     }
 
     onBar(bar) {
@@ -5617,7 +5614,7 @@ class ConfluencePullbackStrategy extends Strategy {
                 this._entryOrderPending = false;
                 this._direction = 0;
                 this._stage = 0;
-                this.log("入场挂单过期, 已取消");
+                this.log("Entry order expired, cancelled");
             }
         }
 
@@ -5639,7 +5636,7 @@ class ConfluencePullbackStrategy extends Strategy {
                 this._tp1Price = this._entryPrice - risk * this.tp1Rr;
             }
             this.log(
-                "入场成交: " + order.avgPrice.toFixed(2) +
+                "Entry filled: " + order.avgPrice.toFixed(2) +
                 ", TP1=" + this._tp1Price.toFixed(2) +
                 ", SL=" + this._stopPrice.toFixed(2)
             );
@@ -5751,9 +5748,9 @@ class ConfluencePullbackStrategy extends Strategy {
         var riskEst = bar.high - stop;
         this._tp1Price = bar.high + riskEst * this.tp1Rr;
         this.log(
-            "做多信号: AVWAP=" + avwap.toFixed(2) +
-            ", 收敛区[" + zoneBot.toFixed(2) + "-" + zoneTop.toFixed(2) + "]" +
-            ", 清扫低=" + bar.low.toFixed(2) + ", 挂单=" + bar.high.toFixed(2)
+            "Long signal: AVWAP=" + avwap.toFixed(2) +
+            ", convergence[" + zoneBot.toFixed(2) + "-" + zoneTop.toFixed(2) + "]" +
+            ", sweepLow=" + bar.low.toFixed(2) + ", order=" + bar.high.toFixed(2)
         );
         return true;
     }
@@ -5784,9 +5781,9 @@ class ConfluencePullbackStrategy extends Strategy {
         var riskEst = stop - bar.low;
         this._tp1Price = bar.low - riskEst * this.tp1Rr;
         this.log(
-            "做空信号: AVWAP=" + avwap.toFixed(2) +
-            ", 收敛区[" + zoneBot.toFixed(2) + "-" + zoneTop.toFixed(2) + "]" +
-            ", 清扫高=" + bar.high.toFixed(2) + ", 挂单=" + bar.low.toFixed(2)
+            "Short signal: AVWAP=" + avwap.toFixed(2) +
+            ", convergence[" + zoneBot.toFixed(2) + "-" + zoneTop.toFixed(2) + "]" +
+            ", sweepHigh=" + bar.high.toFixed(2) + ", order=" + bar.low.toFixed(2)
         );
         return true;
     }
@@ -5795,7 +5792,7 @@ class ConfluencePullbackStrategy extends Strategy {
         if (this._direction === 1) {
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止损: " + bar.close.toFixed(2));
+                this.log("Long SL: " + bar.close.toFixed(2));
                 this._reset();
                 return;
             }
@@ -5805,24 +5802,24 @@ class ConfluencePullbackStrategy extends Strategy {
                     this.sell(sellQty);
                     this._stopPrice = this._entryPrice;
                     this._stage = 2;
-                    this.log("止盈 1/3(3R): " + bar.close.toFixed(2) + ", 止损移至保本");
+                    this.log("TP 1/3(3R): " + bar.close.toFixed(2) + ", SL to breakeven");
                 } else {
                     this.sell(this.position.qty);
-                    this.log("仓位小, 全部止盈: " + bar.close.toFixed(2));
+                    this.log("Small pos, full TP: " + bar.close.toFixed(2));
                     this._reset();
                 }
                 return;
             }
             if (this._stage === 2 && bar.close < this._ema9) {
                 this.sell(this.position.qty);
-                this.log("跌破 EMA9 清仓: " + bar.close.toFixed(2));
+                this.log("Below EMA9, close all: " + bar.close.toFixed(2));
                 this._reset();
                 return;
             }
         } else if (this._direction === -1) {
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止损: " + bar.close.toFixed(2));
+                this.log("Short SL: " + bar.close.toFixed(2));
                 this._reset();
                 return;
             }
@@ -5832,17 +5829,17 @@ class ConfluencePullbackStrategy extends Strategy {
                     this.buy(buyQty);
                     this._stopPrice = this._entryPrice;
                     this._stage = 2;
-                    this.log("止盈 1/3(3R): " + bar.close.toFixed(2) + ", 止损移至保本");
+                    this.log("TP 1/3(3R): " + bar.close.toFixed(2) + ", SL to breakeven");
                 } else {
                     this.buy(this.position.qty);
-                    this.log("仓位小, 全部止盈: " + bar.close.toFixed(2));
+                    this.log("Small pos, full TP: " + bar.close.toFixed(2));
                     this._reset();
                 }
                 return;
             }
             if (this._stage === 2 && bar.close > this._ema9) {
                 this.buy(this.position.qty);
-                this.log("突破 EMA9 清仓: " + bar.close.toFixed(2));
+                this.log("Above EMA9, close all: " + bar.close.toFixed(2));
                 this._reset();
                 return;
             }
@@ -5856,15 +5853,15 @@ class ConfluencePullbackStrategy extends Strategy {
     }
 
     onStrategyStop() {
-        this.log("共振回调策略停止");
+        this.log("Confluence Pullback strategy stopped");
     }
 }`,
   },
 
   {
-    name: '05 低价股做空策略',
-    description: 'Steven Dux: 抛物线暴涨 + 阻力位 + 量价背离 + 分阶段止盈',
-    code: `// 05 低价股做空策略 — Steven Dux: 抛物线暴涨 + 阻力位 + 量价背离 + 分阶段止盈
+    name: '05 Penny Stock Short',
+    description: 'Steven Dux: Parabolic surge + Resistance + Volume divergence + Scaled exit',
+    code: `// 05 Penny Stock Short - Steven Dux: Parabolic surge + Resistance + Volume divergence + Scaled exit
 class PennyStockShortStrategy extends Strategy {
 
     onStrategyStart() {
@@ -5905,7 +5902,7 @@ class PennyStockShortStrategy extends Strategy {
         this._initialQty = 0;
         this._breakevenSet = false;
         this._lastExitBar = -999;
-        this.log("低价股做空策略启动");
+        this.log("Penny Stock Short strategy started");
     }
 
     onBar(bar) {
@@ -6198,11 +6195,11 @@ class PennyStockShortStrategy extends Strategy {
         this._initialQty = this.qty;
         this._breakevenSet = false;
         this.log(
-            "做空入场: 价格=" + bar.close.toFixed(2) +
-            ", 暴涨[" + startPrice.toFixed(2) + "->" + peakPrice.toFixed(2) + "]" +
+            "Short entry: price=" + bar.close.toFixed(2) +
+            ", surge[" + startPrice.toFixed(2) + "->" + peakPrice.toFixed(2) + "]" +
             "(+" + (surgeRange / startPrice * 100).toFixed(1) + "%), " +
-            "阻力区=" + resistanceCenter.toFixed(2) +
-            ", 止损=" + stopPrice.toFixed(2) +
+            "resistance=" + resistanceCenter.toFixed(2) +
+            ", SL=" + stopPrice.toFixed(2) +
             ", TP1=" + tp1.toFixed(2) + ", TP2=" + tp2.toFixed(2)
         );
     }
@@ -6210,7 +6207,7 @@ class PennyStockShortStrategy extends Strategy {
     _managePosition(bar) {
         if (bar.high >= this._stopPrice) {
             this.buy(this.position.qty);
-            this.log("空头止损: " + bar.close.toFixed(2) + ", 止损价=" + this._stopPrice.toFixed(2));
+            this.log("Short SL: " + bar.close.toFixed(2) + ", stopPrice=" + this._stopPrice.toFixed(2));
             this._posReset();
             return;
         }
@@ -6223,7 +6220,7 @@ class PennyStockShortStrategy extends Strategy {
                     if (progress >= this.breakevenPct) {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
-                        this.log("止损移至保本: " + this._entryPrice.toFixed(2));
+                        this.log("SL moved to breakeven: " + this._entryPrice.toFixed(2));
                     }
                 }
             }
@@ -6235,10 +6232,10 @@ class PennyStockShortStrategy extends Strategy {
                     this._stopPrice = this._entryPrice;
                     this._breakevenSet = true;
                     this._stage = 2;
-                    this.log("止盈 1/3(TP1=" + this._tp1Price.toFixed(2) + "): " + bar.close.toFixed(2) + ", 止损移至保本");
+                    this.log("TP 1/3(TP1=" + this._tp1Price.toFixed(2) + "): " + bar.close.toFixed(2) + ", SL to breakeven");
                 } else {
                     this.buy(this.position.qty);
-                    this.log("仓位小, 全部止盈(TP1): " + bar.close.toFixed(2));
+                    this.log("Small pos, full TP(TP1): " + bar.close.toFixed(2));
                     this._posReset();
                 }
                 return;
@@ -6246,14 +6243,14 @@ class PennyStockShortStrategy extends Strategy {
         } else if (this._stage === 2) {
             if (bar.low <= this._tp2Price) {
                 this.buy(this.position.qty);
-                this.log("全部止盈(TP2=" + this._tp2Price.toFixed(2) + "): " + bar.close.toFixed(2));
+                this.log("Full TP(TP2=" + this._tp2Price.toFixed(2) + "): " + bar.close.toFixed(2));
                 this._posReset();
                 return;
             }
 
             if (bar.close > this._entryPrice && this._breakevenSet) {
                 this.buy(this.position.qty);
-                this.log("保本止损触发, 清仓: " + bar.close.toFixed(2));
+                this.log("Breakeven stop triggered, close all: " + bar.close.toFixed(2));
                 this._posReset();
                 return;
             }
@@ -6271,17 +6268,17 @@ class PennyStockShortStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "低价股做空策略停止 | " +
-            "最后暴涨: [" + this._surgeStartPrice.toFixed(2) + "->" + this._surgePeakPrice.toFixed(2) + "]"
+            "Penny Stock Short stopped | " +
+            "Last surge: [" + this._surgeStartPrice.toFixed(2) + "->" + this._surgePeakPrice.toFixed(2) + "]"
         );
     }
 }`,
   },
 
   {
-    name: '06 首阴日策略',
-    description: 'Alex Temiz: 连续大涨 + 抛物线加速 + 首阴日做空 + 两阶段建仓',
-    code: `// 06 首阴日策略 — Alex Temiz: 连续大涨 + 抛物线加速 + 首阴日做空 + 两阶段建仓
+    name: '06 First Red Day',
+    description: 'Alex Temiz: Consecutive gains + Parabolic acceleration + First red day short',
+    code: `// 06 First Red Day - Alex Temiz: Consecutive gains + Parabolic acceleration + First red day short
 class FirstRedDayStrategy extends Strategy {
 
     onStrategyStart() {
@@ -6310,7 +6307,7 @@ class FirstRedDayStrategy extends Strategy {
         this._stage = 0;
         this._initialQty = 0;
         this._lastExitBar = -999;
-        this.log("首阴日策略启动");
+        this.log("First Red Day strategy started");
     }
 
     onBar(bar) {
@@ -6406,8 +6403,8 @@ class FirstRedDayStrategy extends Strategy {
             this._signalActive = true;
             this._rallyPrevClose = prev.close;
             this.log(
-                "首阴日信号! 连续上涨" + this._consecutiveUp + "天, " +
-                "前日收盘=" + prev.close.toFixed(2) + ", 今收=" + bar.close.toFixed(2)
+                "First-down signal! ConsecUp=" + this._consecutiveUp + ", " +
+                "prevClose=" + prev.close.toFixed(2) + ", curClose=" + bar.close.toFixed(2)
             );
             this._checkEntry(bar, prev, this.bars.length - 1);
         }
@@ -6430,7 +6427,7 @@ class FirstRedDayStrategy extends Strategy {
                 this._stopPrice = prevClose * (1 + this.stopBufferPct);
                 this._initialQty = probeQty;
                 this._stage = 1;
-                this.log("试探做空: " + probeQty + "股 @ " + bar.close.toFixed(2) + ", 止损=" + this._stopPrice.toFixed(2));
+                this.log("Probe short: " + probeQty + " shares @ " + bar.close.toFixed(2) + ", SL=" + this._stopPrice.toFixed(2));
 
                 if (brokePrevClose && !this._mainFilled) {
                     var mainQty = this.qty - probeQty;
@@ -6440,7 +6437,7 @@ class FirstRedDayStrategy extends Strategy {
                         var totalQty = probeQty + mainQty;
                         this._entryPrice = bar.close;
                         this._initialQty = totalQty;
-                        this.log("主仓做空: " + mainQty + "股 @ " + bar.close.toFixed(2) + ", 总仓位=" + totalQty + "股");
+                        this.log("Main short: " + mainQty + " shares @ " + bar.close.toFixed(2) + ", totalPos=" + totalQty + " shares");
                     }
                     this._signalActive = false;
                 }
@@ -6460,7 +6457,7 @@ class FirstRedDayStrategy extends Strategy {
                     var totalQty = oldQty + mainQty;
                     this._entryPrice = (oldCost + newCost) / totalQty;
                     this._initialQty = totalQty;
-                    this.log("主仓做空: " + mainQty + "股 @ " + bar.close.toFixed(2) + ", 均价=" + this._entryPrice.toFixed(2) + ", 总仓位=" + totalQty + "股");
+                    this.log("Main short: " + mainQty + " shares @ " + bar.close.toFixed(2) + ", avgPrice=" + this._entryPrice.toFixed(2) + ", totalPos=" + totalQty + " shares");
                 }
                 this._signalActive = false;
             }
@@ -6473,7 +6470,7 @@ class FirstRedDayStrategy extends Strategy {
 
         if (bar.high >= this._stopPrice) {
             this.buy(curQty);
-            this.log("空头止损: " + bar.close.toFixed(2) + ", 止损线=" + this._stopPrice.toFixed(2));
+            this.log("Short SL: " + bar.close.toFixed(2) + ", stopLine=" + this._stopPrice.toFixed(2));
             this._fullReset();
             this._lastExitBar = this.bars.length - 1;
             return;
@@ -6491,10 +6488,10 @@ class FirstRedDayStrategy extends Strategy {
                     this.buy(tpQty);
                     this._stopPrice = this._entryPrice * (1 + this.stopBufferPct);
                     this._stage = 2;
-                    this.log("第一次止盈 " + tpQty + "股 @ " + bar.close.toFixed(2) + ", 跌幅=" + (dropPct * 100).toFixed(1) + "%, 止损移至保本");
+                    this.log("1st TP " + tpQty + " shares @ " + bar.close.toFixed(2) + ", drop=" + (dropPct * 100).toFixed(1) + "%, SL moved to breakeven");
                 } else {
                     this.buy(curQty);
-                    this.log("仓位过小, 全部止盈: " + bar.close.toFixed(2));
+                    this.log("Position too small, full TP: " + bar.close.toFixed(2));
                     this._fullReset();
                     this._lastExitBar = this.bars.length - 1;
                 }
@@ -6506,10 +6503,10 @@ class FirstRedDayStrategy extends Strategy {
                 if (curQty > tpQty) {
                     this.buy(tpQty);
                     this._stage = 3;
-                    this.log("第二次止盈 " + tpQty + "股 @ " + bar.close.toFixed(2) + ", 跌幅=" + (dropPct * 100).toFixed(1) + "%, 保留尾仓");
+                    this.log("2nd TP " + tpQty + " shares @ " + bar.close.toFixed(2) + ", drop=" + (dropPct * 100).toFixed(1) + "%, holding runner");
                 } else {
                     this.buy(curQty);
-                    this.log("全部止盈: " + bar.close.toFixed(2));
+                    this.log("Full TP: " + bar.close.toFixed(2));
                     this._fullReset();
                     this._lastExitBar = this.bars.length - 1;
                 }
@@ -6517,7 +6514,7 @@ class FirstRedDayStrategy extends Strategy {
         } else if (this._stage === 3) {
             if (bar.close >= this._entryPrice) {
                 this.buy(curQty);
-                this.log("尾仓止盈(回到入场价): " + bar.close.toFixed(2));
+                this.log("Tail TP (back to entry): " + bar.close.toFixed(2));
                 this._fullReset();
                 this._lastExitBar = this.bars.length - 1;
             }
@@ -6539,15 +6536,15 @@ class FirstRedDayStrategy extends Strategy {
     }
 
     onStrategyStop() {
-        this.log("首阴日策略停止 | 最后连续上涨天数: " + this._consecutiveUp);
+        this.log("First Red Day stopped | Last consecutive up days: " + this._consecutiveUp);
     }
 }`,
   },
 
   {
-    name: '07 外包线策略',
-    description: 'Larry Williams: 外包线反直觉 + ATR止损 + FPO次日止盈',
-    code: `// 07 外包线策略 — Larry Williams: 外包线反直觉 + ATR止损 + FPO次日止盈
+    name: '07 Outside Bar',
+    description: 'Larry Williams: Contrarian outside bar + ATR stop + FPO next-day TP',
+    code: `// 07 Outside Bar - Larry Williams: Contrarian outside bar + ATR stop + FPO next-day TP
 class OutsideBarStrategy extends Strategy {
 
     onStrategyStart() {
@@ -6565,7 +6562,7 @@ class OutsideBarStrategy extends Strategy {
         this._entryPrice = 0.0;
         this._stopPrice = 0.0;
         this._direction = 0;
-        this.log("外包线策略启动");
+        this.log("Outside Bar strategy started");
     }
 
     onBar(bar) {
@@ -6633,13 +6630,13 @@ class OutsideBarStrategy extends Strategy {
             this._signalPrevLow = prev.low;
             this._signalPrevHigh = prev.high;
             this._signalAtr = this._atr;
-            this.log("外包线做多信号: close=" + cur.close.toFixed(2) + " < prevLow=" + prev.low.toFixed(2) + ", ATR=" + this._atr.toFixed(4));
+            this.log("Outside bar long signal: close=" + cur.close.toFixed(2) + " < prevLow=" + prev.low.toFixed(2) + ", ATR=" + this._atr.toFixed(4));
         } else if (cur.close > prev.high) {
             this._signal = -1;
             this._signalPrevLow = prev.low;
             this._signalPrevHigh = prev.high;
             this._signalAtr = this._atr;
-            this.log("外包线做空信号: close=" + cur.close.toFixed(2) + " > prevHigh=" + prev.high.toFixed(2) + ", ATR=" + this._atr.toFixed(4));
+            this.log("Outside bar short signal: close=" + cur.close.toFixed(2) + " > prevHigh=" + prev.high.toFixed(2) + ", ATR=" + this._atr.toFixed(4));
         }
     }
 
@@ -6650,14 +6647,14 @@ class OutsideBarStrategy extends Strategy {
             this._entryPrice = bar.open;
             this._stopPrice = stop;
             this._direction = 1;
-            this.log("做多入场: open=" + bar.open.toFixed(2) + ", 止损=" + stop.toFixed(2));
+            this.log("Long entry: open=" + bar.open.toFixed(2) + ", SL=" + stop.toFixed(2));
         } else if (this._signal === -1) {
             var stop = this._signalPrevHigh + this._signalAtr * this.bufferMulti;
             this.sell(this.qty);
             this._entryPrice = bar.open;
             this._stopPrice = stop;
             this._direction = -1;
-            this.log("做空入场: open=" + bar.open.toFixed(2) + ", 止损=" + stop.toFixed(2));
+            this.log("Short entry: open=" + bar.open.toFixed(2) + ", SL=" + stop.toFixed(2));
         }
         this._signal = 0;
     }
@@ -6666,26 +6663,26 @@ class OutsideBarStrategy extends Strategy {
         if (this._direction === 1) {
             if (bar.open > this._entryPrice) {
                 this.sell(this.position.qty);
-                this.log("多头FPO止盈: open=" + bar.open.toFixed(2) + " > entry=" + this._entryPrice.toFixed(2));
+                this.log("Long FPO TP: open=" + bar.open.toFixed(2) + " > entry=" + this._entryPrice.toFixed(2));
                 this._direction = 0;
                 return;
             }
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头PHL止损: low=" + bar.low.toFixed(2) + " <= stop=" + this._stopPrice.toFixed(2));
+                this.log("Long PHL SL: low=" + bar.low.toFixed(2) + " <= stop=" + this._stopPrice.toFixed(2));
                 this._direction = 0;
                 return;
             }
         } else if (this._direction === -1) {
             if (bar.open < this._entryPrice) {
                 this.buy(this.position.qty);
-                this.log("空头FPO止盈: open=" + bar.open.toFixed(2) + " < entry=" + this._entryPrice.toFixed(2));
+                this.log("Short FPO TP: open=" + bar.open.toFixed(2) + " < entry=" + this._entryPrice.toFixed(2));
                 this._direction = 0;
                 return;
             }
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头PHL止损: high=" + bar.high.toFixed(2) + " >= stop=" + this._stopPrice.toFixed(2));
+                this.log("Short PHL SL: high=" + bar.high.toFixed(2) + " >= stop=" + this._stopPrice.toFixed(2));
                 this._direction = 0;
                 return;
             }
@@ -6693,14 +6690,14 @@ class OutsideBarStrategy extends Strategy {
     }
 
     onStrategyStop() {
-        this.log("外包线策略停止 | ATR=" + this._atr.toFixed(4) + ", 最终方向=" + this._direction);
+        this.log("Outside Bar stopped | ATR=" + this._atr.toFixed(4) + ", finalDir=" + this._direction);
     }
 }`,
   },
 
   {
-    name: '08 流动性狩猎策略',
-    description: 'Marco Acetony: 受尊重高低点 + 流动性清扫 + 2B反转 + 反转K线',
+    name: '08 Liquidity Hunt',
+    description: 'Marco Acetony: Respected highs/lows + Liquidity sweep + 2B reversal',
     code: `class LiquiditySweepStrategy extends Strategy {
 
     onStrategyStart() {
@@ -6730,7 +6727,7 @@ class OutsideBarStrategy extends Strategy {
         this._direction = 0;          // +1 long, -1 short
         this._breakevenSet = false;
         this._lastExitBar = -999;
-        this.log("流动性狩猎策略启动");
+        this.log("Liquidity Hunt strategy started");
     }
 
     onBar(bar) {
@@ -6862,9 +6859,9 @@ class OutsideBarStrategy extends Strategy {
                 this._direction = 1;
                 this._breakevenSet = false;
                 this.log(
-                    "做多(流动性清扫): 被扫低点=" + sweptLevel.toFixed(2) + ", " +
-                    "清扫极值=" + sweepExtreme.toFixed(2) + ", " +
-                    "目标=" + target.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
+                    "Long(liquidity sweep): swept low=" + sweptLevel.toFixed(2) + ", " +
+                    "sweep extreme=" + sweepExtreme.toFixed(2) + ", " +
+                    "target=" + target.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
                     "R:R=" + (reward / risk).toFixed(2)
                 );
                 return;
@@ -6888,9 +6885,9 @@ class OutsideBarStrategy extends Strategy {
                 this._direction = -1;
                 this._breakevenSet = false;
                 this.log(
-                    "做空(流动性清扫): 被扫高点=" + sweptLevel.toFixed(2) + ", " +
-                    "清扫极值=" + sweepExtreme.toFixed(2) + ", " +
-                    "目标=" + target.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
+                    "Short(liquidity sweep): swept high=" + sweptLevel.toFixed(2) + ", " +
+                    "sweep extreme=" + sweepExtreme.toFixed(2) + ", " +
+                    "target=" + target.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
                     "R:R=" + (reward / risk).toFixed(2)
                 );
             }
@@ -7135,7 +7132,7 @@ class OutsideBarStrategy extends Strategy {
             // Stop loss
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止损: " + bar.close.toFixed(2));
+                this.log("Long SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -7144,8 +7141,8 @@ class OutsideBarStrategy extends Strategy {
             if (bar.high >= this._targetPrice) {
                 this.sell(this.position.qty);
                 this.log(
-                    "多头止盈(对侧流动性): " + bar.close.toFixed(2) + ", " +
-                    "目标=" + this._targetPrice.toFixed(2)
+                    "Long TP(opposite liquidity): " + bar.close.toFixed(2) + ", " +
+                    "target=" + this._targetPrice.toFixed(2)
                 );
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
@@ -7159,7 +7156,7 @@ class OutsideBarStrategy extends Strategy {
                     if (progress >= this.breakevenPct) {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
-                        this.log("止损移至保本: " + this._entryPrice.toFixed(2));
+                        this.log("SL moved to breakeven: " + this._entryPrice.toFixed(2));
                     }
                 }
             }
@@ -7168,7 +7165,7 @@ class OutsideBarStrategy extends Strategy {
             // Stop loss
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止损: " + bar.close.toFixed(2));
+                this.log("Short SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -7177,8 +7174,8 @@ class OutsideBarStrategy extends Strategy {
             if (bar.low <= this._targetPrice) {
                 this.buy(this.position.qty);
                 this.log(
-                    "空头止盈(对侧流动性): " + bar.close.toFixed(2) + ", " +
-                    "目标=" + this._targetPrice.toFixed(2)
+                    "Short TP(opposite liquidity): " + bar.close.toFixed(2) + ", " +
+                    "target=" + this._targetPrice.toFixed(2)
                 );
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
@@ -7192,7 +7189,7 @@ class OutsideBarStrategy extends Strategy {
                     if (progress >= this.breakevenPct) {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
-                        this.log("止损移至保本: " + this._entryPrice.toFixed(2));
+                        this.log("SL moved to breakeven: " + this._entryPrice.toFixed(2));
                     }
                 }
             }
@@ -7207,17 +7204,17 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "流动性狩猎策略停止 | " +
-            "被尊重高点: " + this._respectedHighs.length + ", " +
-            "被尊重低点: " + this._respectedLows.length
+            "Liquidity Hunt strategy stopped | " +
+            "respected highs: " + this._respectedHighs.length + ", " +
+            "respected lows: " + this._respectedLows.length
         );
     }
 }`,
   },
 
   {
-    name: '09 小账户动量策略',
-    description: 'Ross Cameron: 跳空筛选 + 牛旗形态 + 平顶突破 + 两阶段止盈',
+    name: '09 Small Account Momentum',
+    description: 'Ross Cameron: Gap screen + Bull flag + Flat top breakout + 2-phase TP',
     code: `class SmallAccountMomentumStrategy extends Strategy {
 
     onStrategyStart() {
@@ -7268,7 +7265,7 @@ class OutsideBarStrategy extends Strategy {
         // Pattern tracking
         this._gapBarIdx = -1;
         this._gapPrevClose = 0.0;
-        this.log("小账户动量策略启动");
+        this.log("Small Account Momentum strategy started");
     }
 
     onBar(bar) {
@@ -7500,9 +7497,9 @@ class OutsideBarStrategy extends Strategy {
             this._highestSinceEntry = bar.high;
             this._trailStop = stop;
             this.log(
-                "旗形突破做多: 旗杆[" + poleLow.toFixed(2) + "-" + poleHigh.toFixed(2) + "], " +
-                "旗面[" + flagLow.toFixed(2) + "-" + flagHigh.toFixed(2) + "], " +
-                "入场=" + bar.close.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
+                "Flag breakout long: pole[" + poleLow.toFixed(2) + "-" + poleHigh.toFixed(2) + "], " +
+                "flag[" + flagLow.toFixed(2) + "-" + flagHigh.toFixed(2) + "], " +
+                "entry=" + bar.close.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
                 "TP1=" + tp1.toFixed(2)
             );
             return true;
@@ -7629,9 +7626,9 @@ class OutsideBarStrategy extends Strategy {
             this._highestSinceEntry = bar.high;
             this._trailStop = stop;
             this.log(
-                "平顶突破做多: 阻力=" + resistance.toFixed(2) + ", " +
-                "测试次数=" + testBars.length + ", " +
-                "入场=" + bar.close.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
+                "Flat-top breakout long: resistance=" + resistance.toFixed(2) + ", " +
+                "tests=" + testBars.length + ", " +
+                "entry=" + bar.close.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
                 "TP1=" + tp1.toFixed(2)
             );
             return true;
@@ -7678,8 +7675,8 @@ class OutsideBarStrategy extends Strategy {
         if (bar.low <= currentStop) {
             this.sell(this.position.qty);
             this.log(
-                "止损平仓: " + bar.close.toFixed(2) + ", " +
-                "止损位=" + currentStop.toFixed(2)
+                "Stop loss exit: " + bar.close.toFixed(2) + ", " +
+                "SL=" + currentStop.toFixed(2)
             );
             this._resetTrade();
             return;
@@ -7695,12 +7692,12 @@ class OutsideBarStrategy extends Strategy {
                     this._trailStop = this._entryPrice;
                     this._stage = 2;
                     this.log(
-                        "止盈 1/3(2R): " + bar.close.toFixed(2) + ", " +
-                        "止损移至保本=" + this._entryPrice.toFixed(2)
+                        "TP 1/3(2R): " + bar.close.toFixed(2) + ", " +
+                        "SL moved to breakeven=" + this._entryPrice.toFixed(2)
                     );
                 } else {
                     this.sell(this.position.qty);
-                    this.log("仓位小, 全部止盈: " + bar.close.toFixed(2));
+                    this.log("Small pos, full TP: " + bar.close.toFixed(2));
                     this._resetTrade();
                 }
             }
@@ -7740,14 +7737,14 @@ class OutsideBarStrategy extends Strategy {
     }
 
     onStrategyStop() {
-        this.log("小账户动量策略停止");
+        this.log("Small Account Momentum strategy stopped");
     }
 }`,
   },
 
   {
-    name: '10 关键水平催化剂策略',
-    description: 'Brando: 波段高低关键位 + 成交量催化 + 反转K线确认',
+    name: '10 Key Level Catalyst',
+    description: 'Brando: Swing high/low key levels + Volume catalyst + Reversal candle',
     code: `class KeyLevelCatalystStrategy extends Strategy {
 
     onStrategyStart() {
@@ -7777,7 +7774,7 @@ class OutsideBarStrategy extends Strategy {
         this._direction = 0;          // +1 long, -1 short
         this._breakevenSet = false;
         this._lastExitBar = -999;
-        this.log("关键水平+催化剂策略启动");
+        this.log("Key Level + Catalyst strategy started");
     }
 
     onBar(bar) {
@@ -8070,10 +8067,10 @@ class OutsideBarStrategy extends Strategy {
                         this._direction = 1;
                         this._breakevenSet = false;
                         this.log(
-                            "做多: 支撑=" + supportPrice.toFixed(2) +
-                            "(强度" + supportStrength + "), " +
-                            "止损=" + stopPrice.toFixed(2) + ", " +
-                            "目标=" + targetPrice.toFixed(2) + ", " +
+                            "Long: support=" + supportPrice.toFixed(2) +
+                            "(strength " + supportStrength + "), " +
+                            "SL=" + stopPrice.toFixed(2) + ", " +
+                            "target=" + targetPrice.toFixed(2) + ", " +
                             "R:R=" + (reward / risk).toFixed(2)
                         );
                         return;
@@ -8104,10 +8101,10 @@ class OutsideBarStrategy extends Strategy {
                         this._direction = -1;
                         this._breakevenSet = false;
                         this.log(
-                            "做空: 阻力=" + resistancePrice.toFixed(2) +
-                            "(强度" + resistanceStrength + "), " +
-                            "止损=" + stopPrice.toFixed(2) + ", " +
-                            "目标=" + targetPrice.toFixed(2) + ", " +
+                            "Short: resistance=" + resistancePrice.toFixed(2) +
+                            "(strength " + resistanceStrength + "), " +
+                            "SL=" + stopPrice.toFixed(2) + ", " +
+                            "target=" + targetPrice.toFixed(2) + ", " +
                             "R:R=" + (reward / risk).toFixed(2)
                         );
                         return;
@@ -8200,7 +8197,7 @@ class OutsideBarStrategy extends Strategy {
             // Stop loss
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止损: " + bar.close.toFixed(2));
+                this.log("Long SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -8209,8 +8206,8 @@ class OutsideBarStrategy extends Strategy {
             if (bar.high >= this._targetPrice) {
                 this.sell(this.position.qty);
                 this.log(
-                    "多头止盈(对侧阻力): " + bar.close.toFixed(2) + ", " +
-                    "目标=" + this._targetPrice.toFixed(2)
+                    "Long TP(opposite resistance): " + bar.close.toFixed(2) + ", " +
+                    "target=" + this._targetPrice.toFixed(2)
                 );
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
@@ -8225,7 +8222,7 @@ class OutsideBarStrategy extends Strategy {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
                         this.log(
-                            "止损移至保本: " + this._entryPrice.toFixed(2)
+                            "SL moved to breakeven: " + this._entryPrice.toFixed(2)
                         );
                     }
                 }
@@ -8235,7 +8232,7 @@ class OutsideBarStrategy extends Strategy {
             // Stop loss
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止损: " + bar.close.toFixed(2));
+                this.log("Short SL: " + bar.close.toFixed(2));
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
                 return;
@@ -8244,8 +8241,8 @@ class OutsideBarStrategy extends Strategy {
             if (bar.low <= this._targetPrice) {
                 this.buy(this.position.qty);
                 this.log(
-                    "空头止盈(对侧支撑): " + bar.close.toFixed(2) + ", " +
-                    "目标=" + this._targetPrice.toFixed(2)
+                    "Short TP(opposite support): " + bar.close.toFixed(2) + ", " +
+                    "target=" + this._targetPrice.toFixed(2)
                 );
                 this._direction = 0;
                 this._lastExitBar = this.bars.length - 1;
@@ -8260,7 +8257,7 @@ class OutsideBarStrategy extends Strategy {
                         this._stopPrice = this._entryPrice;
                         this._breakevenSet = true;
                         this.log(
-                            "止损移至保本: " + this._entryPrice.toFixed(2)
+                            "SL moved to breakeven: " + this._entryPrice.toFixed(2)
                         );
                     }
                 }
@@ -8276,17 +8273,17 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "关键水平+催化剂策略停止 | " +
-            "支撑位: " + this._supportLevels.length + ", " +
-            "阻力位: " + this._resistanceLevels.length
+            "Key Level + Catalyst strategy stopped | " +
+            "support levels: " + this._supportLevels.length + ", " +
+            "resistance levels: " + this._resistanceLevels.length
         );
     }
 }`,
   },
 
   {
-    name: '11 成交量分布策略',
-    description: 'Flight: VPVR量价分布 + 多周期EMA + RSI背离 + 双底形态',
+    name: '11 Volume Profile',
+    description: 'Flight: VPVR volume profile + Multi-period EMA + RSI divergence + Double bottom',
     code: `class VolumeProfileStrategy extends Strategy {
 
     onStrategyStart() {
@@ -8334,7 +8331,7 @@ class OutsideBarStrategy extends Strategy {
         this._targetPrice = 0.0;
         this._direction = 0;
         this._lastExitBar = -999;
-        this.log("成交量分布策略启动");
+        this.log("Volume Profile strategy started");
     }
 
     onBar(bar) {
@@ -8553,12 +8550,12 @@ class OutsideBarStrategy extends Strategy {
     }
 
     _marBullish() {
-        // 只要求最快EMA在最慢EMA之上
+        // Only require fastest EMA above slowest EMA
         return this._emas[0] > this._emas[this._emas.length - 1];
     }
 
     _marBearish() {
-        // 只要求最快EMA在最慢EMA之下
+        // Only require fastest EMA below slowest EMA
         return this._emas[0] < this._emas[this._emas.length - 1];
     }
 
@@ -8822,10 +8819,10 @@ class OutsideBarStrategy extends Strategy {
         this._targetPrice = target;
         this._direction = 1;
         this.log(
-            "做多: 双底[" + leftLow.toFixed(2) + "/" + rightLow.toFixed(2) + "], " +
-            "颈线=" + neckline.toFixed(2) + ", HVN=[" + hvn[0].toFixed(2) + "-" + hvn[1].toFixed(2) + "], " +
-            "POC=" + this._pocPrice.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
-            "目标=" + target.toFixed(2) + ", RSI=" + this._rsi.toFixed(1) + ", " +
+            "Long: double bottom[" + leftLow.toFixed(2) + "/" + rightLow.toFixed(2) + "], " +
+            "neckline=" + neckline.toFixed(2) + ", HVN=[" + hvn[0].toFixed(2) + "-" + hvn[1].toFixed(2) + "], " +
+            "POC=" + this._pocPrice.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
+            "target=" + target.toFixed(2) + ", RSI=" + this._rsi.toFixed(1) + ", " +
             "R:R=" + (reward / risk).toFixed(2)
         );
     }
@@ -8858,10 +8855,10 @@ class OutsideBarStrategy extends Strategy {
         this._targetPrice = target;
         this._direction = -1;
         this.log(
-            "做空: 双顶[" + leftHigh.toFixed(2) + "/" + rightHigh.toFixed(2) + "], " +
-            "颈线=" + neckline.toFixed(2) + ", HVN=[" + hvn[0].toFixed(2) + "-" + hvn[1].toFixed(2) + "], " +
-            "POC=" + this._pocPrice.toFixed(2) + ", 止损=" + stop.toFixed(2) + ", " +
-            "目标=" + target.toFixed(2) + ", RSI=" + this._rsi.toFixed(1) + ", " +
+            "Short: double top[" + leftHigh.toFixed(2) + "/" + rightHigh.toFixed(2) + "], " +
+            "neckline=" + neckline.toFixed(2) + ", HVN=[" + hvn[0].toFixed(2) + "-" + hvn[1].toFixed(2) + "], " +
+            "POC=" + this._pocPrice.toFixed(2) + ", SL=" + stop.toFixed(2) + ", " +
+            "target=" + target.toFixed(2) + ", RSI=" + this._rsi.toFixed(1) + ", " +
             "R:R=" + (reward / risk).toFixed(2)
         );
     }
@@ -8870,13 +8867,13 @@ class OutsideBarStrategy extends Strategy {
         if (this._direction === 1) {
             if (bar.low <= this._stopPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止损: " + bar.close.toFixed(2));
+                this.log("Long SL: " + bar.close.toFixed(2));
                 this._reset(idx);
                 return;
             }
             if (bar.high >= this._targetPrice) {
                 this.sell(this.position.qty);
-                this.log("多头止盈(HVN/POC): " + bar.close.toFixed(2));
+                this.log("Long TP(HVN/POC): " + bar.close.toFixed(2));
                 this._reset(idx);
                 return;
             }
@@ -8885,19 +8882,19 @@ class OutsideBarStrategy extends Strategy {
                 var unrealized = bar.close - this._entryPrice;
                 if (unrealized >= risk * 0.5 && this._stopPrice < this._entryPrice) {
                     this._stopPrice = this._entryPrice;
-                    this.log("多头止损移至保本: " + this._entryPrice.toFixed(2));
+                    this.log("Long SL moved to breakeven: " + this._entryPrice.toFixed(2));
                 }
             }
         } else if (this._direction === -1) {
             if (bar.high >= this._stopPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止损: " + bar.close.toFixed(2));
+                this.log("Short SL: " + bar.close.toFixed(2));
                 this._reset(idx);
                 return;
             }
             if (bar.low <= this._targetPrice) {
                 this.buy(this.position.qty);
-                this.log("空头止盈(HVN/POC): " + bar.close.toFixed(2));
+                this.log("Short TP(HVN/POC): " + bar.close.toFixed(2));
                 this._reset(idx);
                 return;
             }
@@ -8906,7 +8903,7 @@ class OutsideBarStrategy extends Strategy {
                 var unrealized = this._entryPrice - bar.close;
                 if (unrealized >= risk * 0.5 && this._stopPrice > this._entryPrice) {
                     this._stopPrice = this._entryPrice;
-                    this.log("空头止损移至保本: " + this._entryPrice.toFixed(2));
+                    this.log("Short SL moved to breakeven: " + this._entryPrice.toFixed(2));
                 }
             }
         }
@@ -8922,17 +8919,17 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "成交量分布策略停止 | " +
+            "Volume Profile strategy stopped | " +
             "POC=" + this._pocPrice.toFixed(2) + ", " +
-            "HVN数=" + this._hvnLevels.length + ", LVN数=" + this._lvnLevels.length
+            "HVN count=" + this._hvnLevels.length + ", LVN count=" + this._lvnLevels.length
         );
     }
 }`,
   },
 
   {
-    name: '12 主题动量新高突破策略',
-    description: 'Hong Inki: 新高突破 + 大阳线放量 + Day2回调入场 + ATR追踪',
+    name: '12 Thematic Momentum',
+    description: 'Hong Inki: New high breakout + Big candle volume + Day2 pullback + ATR trail',
     code: `class ThemeMomentumBreakoutStrategy extends Strategy {
 
     onStrategyStart() {
@@ -8974,7 +8971,7 @@ class OutsideBarStrategy extends Strategy {
         this._entryBarIdx = -999;
         this._lastExitBar = -999;
         this._dayOpen = 0.0;
-        this.log("主题动量新高突破策略启动");
+        this.log("Theme Momentum Breakout strategy started");
     }
 
     onBar(bar) {
@@ -9113,8 +9110,8 @@ class OutsideBarStrategy extends Strategy {
         this._breakoutHigh = bar.high;
         this._breakoutLow = bar.low;
         this.log(
-            "新高突破信号: 收盘=" + bar.close.toFixed(2) + ", " +
-            "前高=" + periodHigh.toFixed(2) + ", 涨幅=" + (dailyGain * 100).toFixed(1) + "%, " +
+            "New high breakout signal: close=" + bar.close.toFixed(2) + ", " +
+            "prevHigh=" + periodHigh.toFixed(2) + ", gain=" + (dailyGain * 100).toFixed(1) + "%, " +
             "EMA(" + this._ema10.toFixed(2) + ">" + this._ema20.toFixed(2) + ">" + this._ema50.toFixed(2) + ")"
         );
     }
@@ -9149,9 +9146,9 @@ class OutsideBarStrategy extends Strategy {
             this._resetBreakout();
             entered = true;
             this.log(
-                "Day2入场(突破前高): " + bar.close.toFixed(2) + ", " +
-                "突破日高=" + this._breakoutHigh.toFixed(2) + ", " +
-                "止损=" + stop.toFixed(2)
+                "Day2 entry(above prev high): " + bar.close.toFixed(2) + ", " +
+                "breakoutHigh=" + this._breakoutHigh.toFixed(2) + ", " +
+                "SL=" + stop.toFixed(2)
             );
         }
 
@@ -9173,9 +9170,9 @@ class OutsideBarStrategy extends Strategy {
                         this._entryBarIdx = idx;
                         this._resetBreakout();
                         this.log(
-                            "Day2入场(回调企稳): " + bar.close.toFixed(2) + ", " +
-                            "回调幅度=" + (pullback * 100).toFixed(1) + "%, " +
-                            "止损=" + stop.toFixed(2)
+                            "Day2 entry(pullback stabilized): " + bar.close.toFixed(2) + ", " +
+                            "pullback=" + (pullback * 100).toFixed(1) + "%, " +
+                            "SL=" + stop.toFixed(2)
                         );
                     }
                 }
@@ -9240,7 +9237,7 @@ class OutsideBarStrategy extends Strategy {
         if (bar.low <= this._stopPrice) {
             this.sell(this.position.qty);
             this.log(
-                "止损离场: low=" + bar.low.toFixed(2) + " <= " +
+                "SL exit: low=" + bar.low.toFixed(2) + " <= " +
                 "stop=" + this._stopPrice.toFixed(2)
             );
             this._exitReset();
@@ -9251,7 +9248,7 @@ class OutsideBarStrategy extends Strategy {
         if (this._barsInTrade >= this.maxHoldBars) {
             this.sell(this.position.qty);
             this.log(
-                "超时离场(持仓" + this._barsInTrade + "根K线): " +
+                "Timeout exit(held " + this._barsInTrade + " bars): " +
                 bar.close.toFixed(2)
             );
             this._exitReset();
@@ -9277,7 +9274,7 @@ class OutsideBarStrategy extends Strategy {
         if (gainFromOpen >= this.day3TpPct) {
             this.sell(this.position.qty);
             this.log(
-                "Day3+强制止盈: 涨幅=" + (gainFromOpen * 100).toFixed(1) + "%, " +
+                "Day3+ forced TP: gain=" + (gainFromOpen * 100).toFixed(1) + "%, " +
                 "close=" + bar.close.toFixed(2)
             );
             this._exitReset();
@@ -9288,7 +9285,7 @@ class OutsideBarStrategy extends Strategy {
         if (lossFromOpen >= this.day3SlHardPct) {
             this.sell(this.position.qty);
             this.log(
-                "Day3+强制止损: 跌幅=" + (lossFromOpen * 100).toFixed(1) + "%, " +
+                "Day3+ forced SL: loss=" + (lossFromOpen * 100).toFixed(1) + "%, " +
                 "close=" + bar.close.toFixed(2)
             );
             this._exitReset();
@@ -9300,7 +9297,7 @@ class OutsideBarStrategy extends Strategy {
             if (this._isWeakCandle(bar)) {
                 this.sell(this.position.qty);
                 this.log(
-                    "Day3+预警出场(弱势K线): 跌幅=" + (lossFromOpen * 100).toFixed(1) + "%, " +
+                    "Day3+ warning exit(weak bar): loss=" + (lossFromOpen * 100).toFixed(1) + "%, " +
                     "close=" + bar.close.toFixed(2)
                 );
                 this._exitReset();
@@ -9315,7 +9312,7 @@ class OutsideBarStrategy extends Strategy {
         if (bar.close < this._trailingStop) {
             this.sell(this.position.qty);
             this.log(
-                "追踪止损离场: close=" + bar.close.toFixed(2) + " < " +
+                "Trailing SL exit: close=" + bar.close.toFixed(2) + " < " +
                 "trailing=" + this._trailingStop.toFixed(2)
             );
             this._exitReset();
@@ -9371,7 +9368,7 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "主题动量新高突破策略停止 | " +
+            "Theme Momentum Breakout strategy stopped | " +
             "ATR=" + this._atr.toFixed(4) + ", " +
             "EMA(" + this._ema10.toFixed(2) + "/" + this._ema20.toFixed(2) + "/" + this._ema50.toFixed(2) + ")"
         );
@@ -9380,8 +9377,8 @@ class OutsideBarStrategy extends Strategy {
   },
 
   {
-    name: '13 订单流剥头皮策略',
-    description: 'Fabio Valentini: CVD背离 + 吸收检测 + 趋势/均值回归双模型',
+    name: '13 Orderflow Scalping',
+    description: 'Fabio Valentini: CVD divergence + Absorption + Trend/Mean-reversion dual model',
     code: `class OrderflowScalpingStrategy extends Strategy {
 
     onStrategyStart() {
@@ -9433,7 +9430,7 @@ class OutsideBarStrategy extends Strategy {
         this._movedToBreakeven = false;
         this._dailyLosses = 0;
         this._dailyStopped = false;
-        this.log("订单流剥头皮策略启动");
+        this.log("Order Flow Scalping strategy started");
     }
 
     onBar(bar) {
@@ -9875,9 +9872,9 @@ class OutsideBarStrategy extends Strategy {
                 this._signalType = 1;
                 this._movedToBreakeven = false;
                 this.log(
-                    "趋势做多: 回撤至支撑, " +
-                    "CVD趋势=" + cvdTrend + ", 失衡=" + imbalance + ", 吸收=" + absorption + ", " +
-                    "质量=" + signalQuality + ", 仓位=" + tradeQty + ", " +
+                    "Trend long: pullback to support, " +
+                    "cvdTrend=" + cvdTrend + ", imbalance=" + imbalance + ", absorption=" + absorption + ", " +
+                    "quality=" + signalQuality + ", size=" + tradeQty + ", " +
                     "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2)
                 );
                 return;
@@ -9918,9 +9915,9 @@ class OutsideBarStrategy extends Strategy {
                 this._signalType = -1;
                 this._movedToBreakeven = false;
                 this.log(
-                    "趋势做空: 回撤至阻力, " +
-                    "CVD趋势=" + cvdTrend + ", 失衡=" + imbalance + ", 吸收=" + absorption + ", " +
-                    "质量=" + signalQuality + ", 仓位=" + tradeQty + ", " +
+                    "Trend short: pullback to resistance, " +
+                    "cvdTrend=" + cvdTrend + ", imbalance=" + imbalance + ", absorption=" + absorption + ", " +
+                    "quality=" + signalQuality + ", size=" + tradeQty + ", " +
                     "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2)
                 );
             }
@@ -9980,9 +9977,9 @@ class OutsideBarStrategy extends Strategy {
                     this._signalType = 2;
                     this._movedToBreakeven = false;
                     this.log(
-                        "均值回归做多: 假跌破, POC=" + this._poc.toFixed(2) + ", " +
-                        "CVD背离=" + cvdDiv + ", 吸收=" + absorption + ", " +
-                        "质量=" + signalQuality + ", 仓位=" + tradeQty + ", " +
+                        "MeanRev long: false breakdown, POC=" + this._poc.toFixed(2) + ", " +
+                        "cvdDiv=" + cvdDiv + ", absorption=" + absorption + ", " +
+                        "quality=" + signalQuality + ", size=" + tradeQty + ", " +
                         "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2)
                     );
                     return;
@@ -10033,9 +10030,9 @@ class OutsideBarStrategy extends Strategy {
                     this._signalType = -2;
                     this._movedToBreakeven = false;
                     this.log(
-                        "均值回归做空: 假突破, POC=" + this._poc.toFixed(2) + ", " +
-                        "CVD背离=" + cvdDiv + ", 吸收=" + absorption + ", " +
-                        "质量=" + signalQuality + ", 仓位=" + tradeQty + ", " +
+                        "MeanRev short: false breakout, POC=" + this._poc.toFixed(2) + ", " +
+                        "cvdDiv=" + cvdDiv + ", absorption=" + absorption + ", " +
+                        "quality=" + signalQuality + ", size=" + tradeQty + ", " +
                         "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2)
                     );
                 }
@@ -10063,8 +10060,8 @@ class OutsideBarStrategy extends Strategy {
                     this._dailyLosses += 1;
                 }
                 this.log(
-                    "多头止损: " + bar.close.toFixed(2) + ", " +
-                    "SL=" + this._stopPrice.toFixed(2) + ", 今日亏损次数=" + this._dailyLosses
+                    "Long SL: " + bar.close.toFixed(2) + ", " +
+                    "SL=" + this._stopPrice.toFixed(2) + ", dailyLosses=" + this._dailyLosses
                 );
                 this._checkDailyLimit();
                 this._resetTrade();
@@ -10075,7 +10072,7 @@ class OutsideBarStrategy extends Strategy {
             if (bar.high >= this._tpPrice) {
                 this.sell(this.position.qty);
                 this.log(
-                    "多头止盈: " + bar.close.toFixed(2) + ", TP=" + this._tpPrice.toFixed(2)
+                    "Long TP: " + bar.close.toFixed(2) + ", TP=" + this._tpPrice.toFixed(2)
                 );
                 this._resetTrade();
                 return;
@@ -10088,7 +10085,7 @@ class OutsideBarStrategy extends Strategy {
                 if (tpDist > 0 && curProfit >= tpDist * this.breakevenPct) {
                     this._stopPrice = this._entryPrice;
                     this._movedToBreakeven = true;
-                    this.log("多头止损移至保本: " + this._entryPrice.toFixed(2));
+                    this.log("Long SL moved to breakeven: " + this._entryPrice.toFixed(2));
                 }
             }
 
@@ -10098,7 +10095,7 @@ class OutsideBarStrategy extends Strategy {
                 if (cvdDiv === -1) {
                     this._stopPrice = this._entryPrice;
                     this._movedToBreakeven = true;
-                    this.log("CVD顶背离预警, 多头止损移至保本");
+                    this.log("CVD bearish divergence warning, long SL moved to breakeven");
                 }
             }
 
@@ -10111,8 +10108,8 @@ class OutsideBarStrategy extends Strategy {
                     this._dailyLosses += 1;
                 }
                 this.log(
-                    "空头止损: " + bar.close.toFixed(2) + ", " +
-                    "SL=" + this._stopPrice.toFixed(2) + ", 今日亏损次数=" + this._dailyLosses
+                    "Short SL: " + bar.close.toFixed(2) + ", " +
+                    "SL=" + this._stopPrice.toFixed(2) + ", dailyLosses=" + this._dailyLosses
                 );
                 this._checkDailyLimit();
                 this._resetTrade();
@@ -10123,7 +10120,7 @@ class OutsideBarStrategy extends Strategy {
             if (bar.low <= this._tpPrice) {
                 this.buy(this.position.qty);
                 this.log(
-                    "空头止盈: " + bar.close.toFixed(2) + ", TP=" + this._tpPrice.toFixed(2)
+                    "Short TP: " + bar.close.toFixed(2) + ", TP=" + this._tpPrice.toFixed(2)
                 );
                 this._resetTrade();
                 return;
@@ -10136,7 +10133,7 @@ class OutsideBarStrategy extends Strategy {
                 if (tpDist > 0 && curProfit >= tpDist * this.breakevenPct) {
                     this._stopPrice = this._entryPrice;
                     this._movedToBreakeven = true;
-                    this.log("空头止损移至保本: " + this._entryPrice.toFixed(2));
+                    this.log("Short SL moved to breakeven: " + this._entryPrice.toFixed(2));
                 }
             }
 
@@ -10146,7 +10143,7 @@ class OutsideBarStrategy extends Strategy {
                 if (cvdDiv === 1) {
                     this._stopPrice = this._entryPrice;
                     this._movedToBreakeven = true;
-                    this.log("CVD底背离预警, 空头止损移至保本");
+                    this.log("CVD bullish divergence warning, short SL moved to breakeven");
                 }
             }
         }
@@ -10156,7 +10153,7 @@ class OutsideBarStrategy extends Strategy {
         if (this._dailyLosses >= this.maxDailyLosses) {
             this._dailyStopped = true;
             this.log(
-                "每日亏损达到" + this.maxDailyLosses + "次上限, 停止当日交易"
+                "Daily losses reached " + this.maxDailyLosses + " limit, trading halted for today"
             );
         }
     }
@@ -10173,25 +10170,25 @@ class OutsideBarStrategy extends Strategy {
     onStrategyStop() {
         var stateStr;
         if (this._marketState === 1) {
-            stateStr = "趋势";
+            stateStr = "trending";
         } else if (this._marketState === -1) {
-            stateStr = "盘整";
+            stateStr = "ranging";
         } else {
-            stateStr = "未知";
+            stateStr = "unknown";
         }
         this.log(
-            "订单流剥头皮策略停止 | " +
-            "市场状态=" + stateStr + ", " +
+            "Order Flow Scalping strategy stopped | " +
+            "marketState=" + stateStr + ", " +
             "CVD=" + this._cvd.toFixed(2) + ", POC=" + this._poc.toFixed(2) + ", " +
-            "今日亏损次数=" + this._dailyLosses
+            "dailyLosses=" + this._dailyLosses
         );
     }
 }`,
   },
 
   {
-    name: '14 双模型策略',
-    description: 'Fabio: ADX市场状态 + 趋势突破回调 + 均值回归假突破 + ABC分级',
+    name: '14 Dual Model',
+    description: 'Fabio: ADX regime + Trend breakout pullback + Mean-reversion fake breakout + ABC sizing',
     code: `class DualModelStrategy extends Strategy {
 
     onStrategyStart() {
@@ -10267,7 +10264,7 @@ class OutsideBarStrategy extends Strategy {
         this._dailyLosses = 0;
         this._riskGrade = "C";
         this._dailyWins = 0;
-        this.log("Fabio Valentino 双模型策略启动");
+        this.log("Fabio Valentino Dual-Model strategy started");
     }
 
     onBar(bar) {
@@ -10436,7 +10433,7 @@ class OutsideBarStrategy extends Strategy {
         if (this._regime !== prevRegime && prevRegime !== "unknown") {
             this._resetModelStates();
             this.log(
-                "市场状态切换: " + prevRegime + " -> " + this._regime + ", " +
+                "Regime switch: " + prevRegime + " -> " + this._regime + ", " +
                 "ADX=" + this._adx.toFixed(1)
             );
         }
@@ -10496,8 +10493,8 @@ class OutsideBarStrategy extends Strategy {
             this._trendBreakoutPrice = bar.close;
             this._trendPullbackReady = false;
             this.log(
-                "[趋势模型] 上破确认: close=" + bar.close.toFixed(2) + ", " +
-                "实体=" + body.toFixed(2) + ", ATR=" + this._atr.toFixed(2)
+                "[Trend] Upside confirmed: close=" + bar.close.toFixed(2) + ", " +
+                "body=" + body.toFixed(2) + ", ATR=" + this._atr.toFixed(2)
             );
             return;
         }
@@ -10511,8 +10508,8 @@ class OutsideBarStrategy extends Strategy {
             this._trendBreakoutPrice = bar.close;
             this._trendPullbackReady = false;
             this.log(
-                "[趋势模型] 下破确认: close=" + bar.close.toFixed(2) + ", " +
-                "实体=" + body.toFixed(2) + ", ATR=" + this._atr.toFixed(2)
+                "[Trend] Downside confirmed: close=" + bar.close.toFixed(2) + ", " +
+                "body=" + body.toFixed(2) + ", ATR=" + this._atr.toFixed(2)
             );
         }
     }
@@ -10529,9 +10526,9 @@ class OutsideBarStrategy extends Strategy {
                     && nearEma) {
                 this._trendPullbackReady = true;
                 this.log(
-                    "[趋势模型] 多头回撤就绪: low=" + bar.low.toFixed(2) + ", " +
+                    "[Trend] Long pullback ready: low=" + bar.low.toFixed(2) + ", " +
                     "EMA_fast=" + this._emaFastVal.toFixed(2) + ", " +
-                    "回撤=" + pullbackPct.toFixed(3)
+                    "pullback=" + pullbackPct.toFixed(3)
                 );
             }
         } else if (this._trendBreakoutDir === -1) {
@@ -10541,9 +10538,9 @@ class OutsideBarStrategy extends Strategy {
                     && nearEma) {
                 this._trendPullbackReady = true;
                 this.log(
-                    "[趋势模型] 空头回撤就绪: high=" + bar.high.toFixed(2) + ", " +
+                    "[Trend] Short pullback ready: high=" + bar.high.toFixed(2) + ", " +
                     "EMA_fast=" + this._emaFastVal.toFixed(2) + ", " +
-                    "回撤=" + pullbackPct.toFixed(3)
+                    "pullback=" + pullbackPct.toFixed(3)
                 );
             }
         }
@@ -10560,7 +10557,7 @@ class OutsideBarStrategy extends Strategy {
             }
 
             if (this._checkPriceVolumeDivergence(n, 1)) {
-                this.log("[趋势模型] 检测到多头价量背离, 放弃入场");
+                this.log("[Trend] Bullish price-volume divergence detected, entry skipped");
                 this._trendBreakoutConfirmed = false;
                 this._trendPullbackReady = false;
                 return;
@@ -10577,9 +10574,9 @@ class OutsideBarStrategy extends Strategy {
             this._trendBreakoutConfirmed = false;
             this._trendPullbackReady = false;
             this.log(
-                "[趋势模型] 做多入场: " + bar.close.toFixed(2) + ", " +
+                "[Trend] Long entry: " + bar.close.toFixed(2) + ", " +
                 "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2) + ", " +
-                "风险等级=" + this._riskGrade
+                "riskGrade=" + this._riskGrade
             );
 
         } else if (this._trendBreakoutDir === -1) {
@@ -10588,7 +10585,7 @@ class OutsideBarStrategy extends Strategy {
             }
 
             if (this._checkPriceVolumeDivergence(n, -1)) {
-                this.log("[趋势模型] 检测到空头价量背离, 放弃入场");
+                this.log("[Trend] Bearish price-volume divergence detected, entry skipped");
                 this._trendBreakoutConfirmed = false;
                 this._trendPullbackReady = false;
                 return;
@@ -10605,9 +10602,9 @@ class OutsideBarStrategy extends Strategy {
             this._trendBreakoutConfirmed = false;
             this._trendPullbackReady = false;
             this.log(
-                "[趋势模型] 做空入场: " + bar.close.toFixed(2) + ", " +
+                "[Trend] Short entry: " + bar.close.toFixed(2) + ", " +
                 "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2) + ", " +
-                "风险等级=" + this._riskGrade
+                "riskGrade=" + this._riskGrade
             );
         }
     }
@@ -10735,10 +10732,10 @@ class OutsideBarStrategy extends Strategy {
                         this._failBreakExtreme = prevBar.high;
                         this._failBreakBar = idx;
                         this.log(
-                            "[均值回归] 向上突破失败: " +
-                            "极值=" + prevBar.high.toFixed(2) + ", " +
-                            "回落至=" + bar.close.toFixed(2) + ", " +
-                            "区间=[" + this._rangeLow.toFixed(2) + "-" + this._rangeHigh.toFixed(2) + "]"
+                            "[MeanRev] Failed upside breakout: " +
+                            "extreme=" + prevBar.high.toFixed(2) + ", " +
+                            "fell back to=" + bar.close.toFixed(2) + ", " +
+                            "range=[" + this._rangeLow.toFixed(2) + "-" + this._rangeHigh.toFixed(2) + "]"
                         );
                         return;
                     }
@@ -10759,10 +10756,10 @@ class OutsideBarStrategy extends Strategy {
                         this._failBreakExtreme = prevBar.low;
                         this._failBreakBar = idx;
                         this.log(
-                            "[均值回归] 向下突破失败: " +
-                            "极值=" + prevBar.low.toFixed(2) + ", " +
-                            "回弹至=" + bar.close.toFixed(2) + ", " +
-                            "区间=[" + this._rangeLow.toFixed(2) + "-" + this._rangeHigh.toFixed(2) + "]"
+                            "[MeanRev] Failed downside breakout: " +
+                            "extreme=" + prevBar.low.toFixed(2) + ", " +
+                            "bounced to=" + bar.close.toFixed(2) + ", " +
+                            "range=[" + this._rangeLow.toFixed(2) + "-" + this._rangeHigh.toFixed(2) + "]"
                         );
                         return;
                     }
@@ -10796,9 +10793,9 @@ class OutsideBarStrategy extends Strategy {
                 this._activeModel = "mean_reversion";
                 this._failBreakDetected = false;
                 this.log(
-                    "[均值回归] 做空入场: " + bar.close.toFixed(2) + ", " +
+                    "[MeanRev] Short entry: " + bar.close.toFixed(2) + ", " +
                     "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2) + " (POC=" + this._rangePoc.toFixed(2) + "), " +
-                    "风险等级=" + this._riskGrade
+                    "riskGrade=" + this._riskGrade
                 );
             }
 
@@ -10826,9 +10823,9 @@ class OutsideBarStrategy extends Strategy {
                 this._activeModel = "mean_reversion";
                 this._failBreakDetected = false;
                 this.log(
-                    "[均值回归] 做多入场: " + bar.close.toFixed(2) + ", " +
+                    "[MeanRev] Long entry: " + bar.close.toFixed(2) + ", " +
                     "SL=" + stop.toFixed(2) + ", TP=" + tp.toFixed(2) + " (POC=" + this._rangePoc.toFixed(2) + "), " +
-                    "风险等级=" + this._riskGrade
+                    "riskGrade=" + this._riskGrade
                 );
             }
         }
@@ -10927,7 +10924,7 @@ class OutsideBarStrategy extends Strategy {
                 this.sell(this.position.qty);
                 this._recordLoss();
                 this.log(
-                    "[" + this._activeModel + "] 多头止损: " + bar.close.toFixed(2) + ", " +
+                    "[" + this._activeModel + "] Long SL: " + bar.close.toFixed(2) + ", " +
                     "SL=" + this._stopPrice.toFixed(2)
                 );
                 this._resetTrade();
@@ -10939,7 +10936,7 @@ class OutsideBarStrategy extends Strategy {
                 this.sell(this.position.qty);
                 this._recordWin();
                 this.log(
-                    "[" + this._activeModel + "] 多头止盈: " + bar.close.toFixed(2) + ", " +
+                    "[" + this._activeModel + "] Long TP: " + bar.close.toFixed(2) + ", " +
                     "TP=" + this._tpPrice.toFixed(2)
                 );
                 this._resetTrade();
@@ -10952,7 +10949,7 @@ class OutsideBarStrategy extends Strategy {
                     if (this._entryPrice > this._stopPrice) {
                         this._stopPrice = this._entryPrice;
                         this.log(
-                            "[趋势模型] 多头价量背离, 止损移至保本: " +
+                            "[Trend] Bullish price-vol divergence, SL to breakeven: " +
                             this._entryPrice.toFixed(2)
                         );
                     }
@@ -10965,7 +10962,7 @@ class OutsideBarStrategy extends Strategy {
                 this.buy(this.position.qty);
                 this._recordLoss();
                 this.log(
-                    "[" + this._activeModel + "] 空头止损: " + bar.close.toFixed(2) + ", " +
+                    "[" + this._activeModel + "] Short SL: " + bar.close.toFixed(2) + ", " +
                     "SL=" + this._stopPrice.toFixed(2)
                 );
                 this._resetTrade();
@@ -10977,7 +10974,7 @@ class OutsideBarStrategy extends Strategy {
                 this.buy(this.position.qty);
                 this._recordWin();
                 this.log(
-                    "[" + this._activeModel + "] 空头止盈: " + bar.close.toFixed(2) + ", " +
+                    "[" + this._activeModel + "] Short TP: " + bar.close.toFixed(2) + ", " +
                     "TP=" + this._tpPrice.toFixed(2)
                 );
                 this._resetTrade();
@@ -10990,7 +10987,7 @@ class OutsideBarStrategy extends Strategy {
                     if (this._entryPrice < this._stopPrice) {
                         this._stopPrice = this._entryPrice;
                         this.log(
-                            "[趋势模型] 空头价量背离, 止损移至保本: " +
+                            "[Trend] Bearish price-vol divergence, SL to breakeven: " +
                             this._entryPrice.toFixed(2)
                         );
                     }
@@ -11008,7 +11005,7 @@ class OutsideBarStrategy extends Strategy {
         this._dailyLosses += 1;
         if (this._dailyLosses >= this.maxDailyLosses) {
             this.log(
-                "当日亏损达到 " + this.maxDailyLosses + " 次上限, 停止交易"
+                "Daily losses reached " + this.maxDailyLosses + " limit, trading halted"
             );
         }
     }
@@ -11023,10 +11020,10 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStop() {
         this.log(
-            "Fabio Valentino 双模型策略停止 | " +
-            "最终状态=" + this._regime + ", ADX=" + this._adx.toFixed(1) + ", " +
-            "当日盈=" + this._dailyWins + " 亏=" + this._dailyLosses + ", " +
-            "风险等级=" + this._riskGrade
+            "Fabio Valentino Dual-Model strategy stopped | " +
+            "finalState=" + this._regime + ", ADX=" + this._adx.toFixed(1) + ", " +
+            "dailyWins=" + this._dailyWins + " losses=" + this._dailyLosses + ", " +
+            "riskGrade=" + this._riskGrade
         );
     }
 }`,
@@ -11036,7 +11033,8 @@ class OutsideBarStrategy extends Strategy {
 
 window.STRATEGY_TEMPLATES = STRATEGY_TEMPLATES;
 
-// === app.js ===
+</script>
+<script>
 /**
  * myquant Web main app controller.
  */
