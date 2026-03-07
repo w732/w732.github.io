@@ -278,6 +278,7 @@ button:hover { background: var(--btn-secondary-hover); }
   left: 0;
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 /* --- 策略编辑器 --- */
@@ -714,6 +715,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 </style>
+  <script>document.addEventListener('wheel', function(e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });</script>
 </head>
 <body>
 
@@ -1153,7 +1155,15 @@ input[type=number]::-webkit-outer-spin-button {
   </div><!-- /main-content -->
 </div><!-- /app-container -->
 
+
+
+
+
+
+
+
 <script>
+// === models.js ===
 /**
  * myquant JS 模型层 — 与 Python myquant 核心模型 1:1 对应.
  *
@@ -1815,8 +1825,7 @@ window.Performance = Performance;
 window.Statistics = Statistics;
 window.Stop = Stop;
 
-</script>
-<script>
+// === datagen.js ===
 /**
  * 模拟数据生成器 — 与 Python myquant.datagen 保持一致.
  *
@@ -2588,8 +2597,7 @@ function generateBars(config) {
 
 window.DataGen = { generateBars, PresetName, EventType };
 
-</script>
-<script>
+// === engine.js ===
 /**
  * BacktestEngine — 回测引擎, 与 Python BacktestScenario 1:1 对应.
  *
@@ -3071,8 +3079,7 @@ class BacktestEngine {
 
 window.BacktestEngine = BacktestEngine;
 
-</script>
-<script>
+// === chart.js ===
 /**
  * Canvas K线蜡烛图组件.
  */
@@ -3098,19 +3105,28 @@ class CandlestickChart {
   }
 
   _setupEvents() {
-    this.canvas.addEventListener('wheel', (e) => {
+    this._wheelHandler = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       if (e.ctrlKey) {
-        // 缩放
-        const delta = e.deltaY > 0 ? 10 : -10;
+        // 缩放: 按比例步进, 以当前视图中心为锚点
+        const oldVisible = Math.min(this.visibleBars, this.bars.length);
+        const center = this.offset + oldVisible / 2;
+        const step = Math.max(5, Math.round(this.visibleBars * 0.15));
+        const delta = e.deltaY > 0 ? step : -step;
         this.visibleBars = Math.max(20, Math.min(this.bars.length, this.visibleBars + delta));
+        // 保持中心不变, 重算 offset
+        this.offset = Math.round(center - this.visibleBars / 2);
+        this.offset = Math.max(0, Math.min(this.bars.length - this.visibleBars, this.offset));
       } else {
         // 平移
         const delta = e.deltaY > 0 ? 5 : -5;
         this.offset = Math.max(0, Math.min(this.bars.length - this.visibleBars, this.offset + delta));
       }
       this.render();
-    });
+    };
+    this.canvas.addEventListener('wheel', this._wheelHandler, { passive: false });
+
 
     this.canvas.addEventListener('mousedown', (e) => {
       this.isDragging = true;
@@ -3163,6 +3179,7 @@ class CandlestickChart {
   setData(bars, trades = []) {
     this.bars = bars || [];
     this.trades = trades || [];
+    this.visibleBars = Math.min(120, this.bars.length || 120);
     this.offset = Math.max(0, this.bars.length - this.visibleBars);
     this.render();
   }
@@ -3480,8 +3497,7 @@ class LineChart {
 window.CandlestickChart = CandlestickChart;
 window.LineChart = LineChart;
 
-</script>
-<script>
+// === highlight.js ===
 /**
  * 轻量级 JavaScript 语法高亮.
  * 使用 dual-layer 方式: textarea (编辑) + pre (着色) 叠加显示.
@@ -3915,8 +3931,7 @@ window.highlightJS = highlightJS;
 window.initHighlightEditor = initHighlightEditor;
 window.initAutocomplete = initAutocomplete;
 
-</script>
-<script>
+// === templates.js ===
 /**
  * 内置 JS 策略模板 — 包含基础策略 + 14 个文档策略的 JS 实现.
  */
@@ -4431,12 +4446,12 @@ class EPBreakoutStrategy extends Strategy {
         this.emaMid = 20;
         this.emaSlow = 50;
         this.staircaseLookback = 60;
-        this.staircaseMinGain = 0.30;
+        this.staircaseMinGain = 0.06;
         this.staircaseMaxGain = 1.00;
-        this.consolMinBars = 10;
+        this.consolMinBars = 5;
         this.consolMaxBars = 40;
         this.consolMaxRange = 0.20;
-        this.volumeMult = 1.5;
+        this.volumeMult = 1.0;
         this.volumeAvgPeriod = 20;
         this.adrPeriod = 14;
         this.adrStopMult = 1.0;
@@ -5190,16 +5205,16 @@ class PennyStockShortStrategy extends Strategy {
 
     onStrategyStart() {
         this.surgeLookback = 30;
-        this.surgeMinGain = 0.15;
+        this.surgeMinGain = 0.05;
         this.surgeMinBars = 3;
-        this.surgeBarMinGain = 0.02;
+        this.surgeBarMinGain = 0.005;
         this.resistanceLookback = 60;
         this.resistanceClusterPct = 0.03;
-        this.resistanceProximity = 0.02;
+        this.resistanceProximity = 0.03;
         this.volumeAvgPeriod = 20;
-        this.volumeSurgeMult = 1.5;
-        this.volumeExhaustRatio = 0.7;
-        this.stallMaxGain = 0.01;
+        this.volumeSurgeMult = 1.0;
+        this.volumeExhaustRatio = 1.5;
+        this.stallMaxGain = 0.04;
         this.stallLookback = 3;
         this.firstBarCooldown = 2;
         this.stopBufferPct = 0.005;
@@ -5606,9 +5621,9 @@ class PennyStockShortStrategy extends Strategy {
 class FirstRedDayStrategy extends Strategy {
 
     onStrategyStart() {
-        this.minUpDays = 3;
-        this.minDailyGain = 0.02;
-        this.minAcceleration = 1.2;
+        this.minUpDays = 2;
+        this.minDailyGain = 0.003;
+        this.minAcceleration = 1.0;
         this.probePct = 0.25;
         this.stopBufferPct = 0.005;
         this.tp1DropPct = 0.05;
@@ -5656,8 +5671,10 @@ class FirstRedDayStrategy extends Strategy {
         if (this._signalActive) {
             this._checkEntry(bar, prev, idx);
         } else {
-            this._updateConsecutive(bar, prev);
             this._checkSignal(bar, prev);
+            if (!this._signalActive) {
+                this._updateConsecutive(bar, prev);
+            }
         }
     }
 
@@ -6541,13 +6558,13 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStart() {
         // --- Stock selection parameters ---
-        this.minGainPct = 0.10;
-        this.maxPrice = 20.0;
-        this.relVolMult = 5.0;
+        this.minGainPct = 0.03;
+        this.maxPrice = 99999;
+        this.relVolMult = 1.0;
         this.volAvgPeriod = 20;
 
         // --- Gap parameters ---
-        this.gapMinPct = 0.04;
+        this.gapMinPct = 0.01;
 
         // --- Bull Flag parameters ---
         this.flagMinBars = 3;
@@ -6913,7 +6930,7 @@ class OutsideBarStrategy extends Strategy {
 
             // Volume confirmation
             var avgVol = this._calcAvgVolume(n);
-            if (avgVol > 0 && bar.volume < avgVol * 1.5) {
+            if (avgVol > 0 && bar.volume < avgVol * 0.8) {
                 continue;
             }
 
@@ -7072,13 +7089,13 @@ class OutsideBarStrategy extends Strategy {
     onStrategyStart() {
         // --- Parameters ---
         this.swingLookback = 120;
-        this.swingWindow = 10;
-        this.levelProximity = 0.015;
+        this.swingWindow = 5;
+        this.levelProximity = 0.03;
         this.levelMergePct = 0.01;
         this.volumeAvgPeriod = 20;
-        this.volumeSurgeMult = 2.0;
-        this.reversalBodyMult = 1.5;
-        this.pinBarShadowRatio = 2.0;
+        this.volumeSurgeMult = 1.0;
+        this.reversalBodyMult = 0.8;
+        this.pinBarShadowRatio = 1.5;
         this.atrPeriod = 14;
         this.atrStopMult = 1.5;
         this.breakevenPct = 0.5;
@@ -7625,9 +7642,9 @@ class OutsideBarStrategy extends Strategy {
         this.rsiOversold = 30;
         this.rsiOverbought = 70;
         this.rsiHistorySize = 50;
-        this.hvnProximity = 0.02;
+        this.hvnProximity = 0.04;
         this.stopBuffer = 0.005;
-        this.minRr = 1.5;
+        this.minRr = 1.0;
         this.cooldownBars = 5;
         this.qty = 100;
 
@@ -7872,17 +7889,13 @@ class OutsideBarStrategy extends Strategy {
     }
 
     _marBullish() {
-        for (var i = 0; i < this._emas.length - 1; i++) {
-            if (this._emas[i] <= this._emas[i + 1]) return false;
-        }
-        return true;
+        // 只要求最快EMA在最慢EMA之上
+        return this._emas[0] > this._emas[this._emas.length - 1];
     }
 
     _marBearish() {
-        for (var i = 0; i < this._emas.length - 1; i++) {
-            if (this._emas[i] >= this._emas[i + 1]) return false;
-        }
-        return true;
+        // 只要求最快EMA在最慢EMA之下
+        return this._emas[0] < this._emas[this._emas.length - 1];
     }
 
     _priceNearHvnSupport(price) {
@@ -8260,16 +8273,16 @@ class OutsideBarStrategy extends Strategy {
 
     onStrategyStart() {
         // Parameters
-        this.newHighPeriod = 120;
-        this.bigCandlePct = 0.10;
-        this.bodyRatio = 0.60;
-        this.gainThreshold = 0.05;
-        this.volumeMult = 1.5;
+        this.newHighPeriod = 40;
+        this.bigCandlePct = 0.015;
+        this.bodyRatio = 0.50;
+        this.gainThreshold = 0.01;
+        this.volumeMult = 1.0;
         this.volumeAvgPeriod = 20;
         this.emaFast = 10;
         this.emaMid = 20;
         this.emaSlow = 50;
-        this.pullbackMaxPct = 0.03;
+        this.pullbackMaxPct = 0.05;
         this.day3TpPct = 0.05;
         this.day3SlHardPct = 0.03;
         this.day3SlWarnPct = 0.01;
@@ -8712,13 +8725,13 @@ class OutsideBarStrategy extends Strategy {
         this.atrPeriod = 14;
         this.swingLookback = 20;
         this.consolidationBars = 15;
-        this.consolidationRange = 0.02;
-        this.breakoutAtrMulti = 1.5;
-        this.pullbackZonePct = 0.003;
+        this.consolidationRange = 0.04;
+        this.breakoutAtrMulti = 1.0;
+        this.pullbackZonePct = 0.01;
         this.cvdLookback = 20;
         this.cvdDivergenceBars = 8;
         this.volAvgPeriod = 20;
-        this.volSurgeMulti = 1.8;
+        this.volSurgeMulti = 1.0;
         this.absorptionRangePct = 0.3;
         this.imbalanceBodyPct = 0.65;
         this.pocLookback = 30;
@@ -9520,25 +9533,25 @@ class OutsideBarStrategy extends Strategy {
     onStrategyStart() {
         // Market regime parameters
         this.adxPeriod = 14;
-        this.adxTrendThreshold = 25.0;
-        this.adxRangeThreshold = 20.0;
+        this.adxTrendThreshold = 18.0;
+        this.adxRangeThreshold = 25.0;
         this.volatilityLookback = 20;
-        this.volatilityExpand = 1.2;
+        this.volatilityExpand = 1.0;
 
         // Trend model parameters (Model A)
         this.emaFast = 9;
         this.emaSlow = 21;
         this.emaTrend = 50;
-        this.breakoutAtrMult = 1.5;
-        this.pullbackMinPct = 0.003;
-        this.pullbackMaxPct = 0.025;
-        this.trendVolumeMult = 1.3;
+        this.breakoutAtrMult = 0.8;
+        this.pullbackMinPct = 0.001;
+        this.pullbackMaxPct = 0.05;
+        this.trendVolumeMult = 0.8;
         this.trendSlAtrMult = 1.5;
         this.trendTpAtrMult = 2.5;
 
         // Mean reversion model parameters (Model B)
         this.rangeLookback = 30;
-        this.rangeMaxPct = 0.08;
+        this.rangeMaxPct = 0.15;
         this.rangeMinTests = 2;
         this.failBreakPct = 0.005;
         this.failBreakMax = 0.03;
@@ -9812,7 +9825,7 @@ class OutsideBarStrategy extends Strategy {
 
         // Up break
         if (bar.close > bar.open
-                && this._emaFastVal > this._emaSlowVal && this._emaSlowVal > this._emaTrendVal) {
+                && this._emaFastVal > this._emaTrendVal) {
             this._trendBreakoutConfirmed = true;
             this._trendBreakoutDir = 1;
             this._trendBreakoutBar = idx;
@@ -9827,7 +9840,7 @@ class OutsideBarStrategy extends Strategy {
 
         // Down break
         if (bar.close < bar.open
-                && this._emaFastVal < this._emaSlowVal && this._emaSlowVal < this._emaTrendVal) {
+                && this._emaFastVal < this._emaTrendVal) {
             this._trendBreakoutConfirmed = true;
             this._trendBreakoutDir = -1;
             this._trendBreakoutBar = idx;
@@ -10359,8 +10372,7 @@ class OutsideBarStrategy extends Strategy {
 
 window.STRATEGY_TEMPLATES = STRATEGY_TEMPLATES;
 
-</script>
-<script>
+// === app.js ===
 /**
  * myquant Web 主应用控制器.
  */
@@ -10375,7 +10387,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const candleChart = new CandlestickChart('candlestick-canvas');
   const equityChart = new LineChart('equity-canvas', {
     color: '#26a69a', fillColor: 'rgba(38,166,154,0.15)',
-    label: '权益曲线', formatValue: v => '$' + v.toFixed(0),
+    label: '权益曲线', formatValue: v => '
+</html>
+ + v.toFixed(0),
   });
   const drawdownChart = new LineChart('drawdown-canvas', {
     color: '#ef5350', fillColor: 'rgba(239,83,80,0.15)',
@@ -10694,15 +10708,15 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.innerHTML = `
       <div class="stat-item">
         <span class="stat-label">初始资金</span>
-        <span class="stat-value">$${stats.initialWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value">${stats.initialWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">最终资金</span>
-        <span class="stat-value">$${stats.finalWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value">${stats.finalWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">总盈亏</span>
-        <span class="stat-value ${pnlClass}">${stats.totalPnl >= 0 ? '+' : ''}$${stats.totalPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value ${pnlClass}">${stats.totalPnl >= 0 ? '+' : ''}${stats.totalPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">总收益率</span>
@@ -10734,15 +10748,15 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="stat-item">
         <span class="stat-label">多头盈亏</span>
-        <span class="stat-value ${stats.longTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.longTradesPnl >= 0 ? '+' : ''}$${(stats.longTradesPnl || 0).toFixed(2)}</span>
+        <span class="stat-value ${stats.longTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.longTradesPnl >= 0 ? '+' : ''}${(stats.longTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">空头盈亏</span>
-        <span class="stat-value ${stats.shortTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.shortTradesPnl >= 0 ? '+' : ''}$${(stats.shortTradesPnl || 0).toFixed(2)}</span>
+        <span class="stat-value ${stats.shortTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.shortTradesPnl >= 0 ? '+' : ''}${(stats.shortTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">每笔盈亏</span>
-        <span class="stat-value ${stats.pnlPerTrade >= 0 ? 'profit' : 'loss'}">${stats.pnlPerTrade >= 0 ? '+' : ''}$${stats.pnlPerTrade.toFixed(2)}</span>
+        <span class="stat-value ${stats.pnlPerTrade >= 0 ? 'profit' : 'loss'}">${stats.pnlPerTrade >= 0 ? '+' : ''}${stats.pnlPerTrade.toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">最大回撤</span>
