@@ -10387,9 +10387,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const candleChart = new CandlestickChart('candlestick-canvas');
   const equityChart = new LineChart('equity-canvas', {
     color: '#26a69a', fillColor: 'rgba(38,166,154,0.15)',
-    label: '权益曲线', formatValue: v => '
-</html>
- + v.toFixed(0),
+    label: '权益曲线', formatValue: v => '$' + v.toFixed(0),
   });
   const drawdownChart = new LineChart('drawdown-canvas', {
     color: '#ef5350', fillColor: 'rgba(239,83,80,0.15)',
@@ -10708,15 +10706,15 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.innerHTML = `
       <div class="stat-item">
         <span class="stat-label">初始资金</span>
-        <span class="stat-value">${stats.initialWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value">$${stats.initialWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">最终资金</span>
-        <span class="stat-value">${stats.finalWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value">$${stats.finalWealth.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">总盈亏</span>
-        <span class="stat-value ${pnlClass}">${stats.totalPnl >= 0 ? '+' : ''}${stats.totalPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        <span class="stat-value ${pnlClass}">${stats.totalPnl >= 0 ? '+' : ''}$${stats.totalPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">总收益率</span>
@@ -10748,15 +10746,15 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="stat-item">
         <span class="stat-label">多头盈亏</span>
-        <span class="stat-value ${stats.longTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.longTradesPnl >= 0 ? '+' : ''}${(stats.longTradesPnl || 0).toFixed(2)}</span>
+        <span class="stat-value ${stats.longTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.longTradesPnl >= 0 ? '+' : ''}$${(stats.longTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">空头盈亏</span>
-        <span class="stat-value ${stats.shortTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.shortTradesPnl >= 0 ? '+' : ''}${(stats.shortTradesPnl || 0).toFixed(2)}</span>
+        <span class="stat-value ${stats.shortTradesPnl >= 0 ? 'profit' : 'loss'}">${stats.shortTradesPnl >= 0 ? '+' : ''}$${(stats.shortTradesPnl || 0).toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">每笔盈亏</span>
-        <span class="stat-value ${stats.pnlPerTrade >= 0 ? 'profit' : 'loss'}">${stats.pnlPerTrade >= 0 ? '+' : ''}${stats.pnlPerTrade.toFixed(2)}</span>
+        <span class="stat-value ${stats.pnlPerTrade >= 0 ? 'profit' : 'loss'}">${stats.pnlPerTrade >= 0 ? '+' : ''}$${stats.pnlPerTrade.toFixed(2)}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">最大回撤</span>
